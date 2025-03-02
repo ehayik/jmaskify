@@ -69,7 +69,8 @@ String json = """
   "name": "John Doe",
   "age": 30,
   "email": "john.doe@example.com",
-  "phone": "123-456-7890"
+  "phone": "123-456-7890",
+  "creditCard": "4289-3874-8064-8976"
 }
 """;
 
@@ -78,6 +79,7 @@ var masker = Masker.json()
     .prettify(true)
     .withProperty("email") //Mask the email field with a fixed pattern
     .withProperty("phone", Masker.base64())
+    .withProperty("creditCard", Masker.creditCard())    
     .withProperty("name", Masker.delegate(value -> "MASKED"))    
     .build();
 
@@ -95,7 +97,8 @@ System.out.println(maskedJson);
   "name": "MASKED",
   "age": 30,
   "email": "***************",
-  "phone": "MTIzLTQ1Ni03ODkw"
+  "phone": "MTIzLTQ1Ni03ODkw",
+  "creditCard": "XXXX-XXXX-XXXX-8976"
 }
 ```
 
