@@ -6,7 +6,7 @@ _JMaskify_ ensures its security through intuitive APIs and advanced masking stra
 
 ## Key Features
 
-- **Versatile Masking**: Supports fixed-length anonymization, Base64 encoding, JSON, and multiline text masking.
+- **Versatile Masking**: Supports fixed-length anonymization, Base64 encoding, Debit/Credit Card Numbers, JSON, and multiline text masking.
 - **High Performance**: Lightweight and optimized for low memory and processing overhead.
 - **Flexible API**: Easily adaptable for use cases involving [JSON structures](#json-masking) and [ multiline text](#multiline-text-masking).
 - **Open Source**: MIT-licensed to encourage collaboration and transparency.
@@ -166,7 +166,7 @@ assertThatThrownBy(() -> masker.apply("///"))
 
 ## Contributing
 
-If you found a bug or a missing feature - you're very welcome to submit an issue and a pull request with a fix.
+If you found a bug or a missing feature—you're very welcome to submit an issue and a pull request with a fix.
 
 ## License
 

@@ -103,7 +103,7 @@ public sealed interface Masker<T> extends Function<T, String>
     /**
      * Creates a masker that masks strings to a fixed length with a substitution character.
      *
-     * @return a <code>Masker</code> that masks strings to the same length as the input string
+     * @return a {@code Masker} that masks strings to the same length as the input string
      */
     static Masker<String> fixedLength() {
         return new FixedLengthMasker();
@@ -123,7 +123,7 @@ public sealed interface Masker<T> extends Function<T, String>
     /**
      * Creates a masker that applies Base64 encoding to the input string.
      *
-     * @return a <code>Masker</code> that converts the input string to its Base64 encoded representation.
+     * @return a {@code Masker} that converts the input string to its Base64 encoded representation.
      */
     static Masker<String> base64() {
         return new Base64Masker();
@@ -152,12 +152,18 @@ public sealed interface Masker<T> extends Function<T, String>
      *
      * @param <S> the type of the input to the masker
      * @param delegate the function to delegate the masking operation to
-     * @return a <code>Masker</code> that uses the provided function for its masking operation
+     * @return a {@code Masker} that uses the provided function for its masking operation
      */
     static <S> Masker<S> delegate(Function<S, String> delegate) {
         return new DelegateMasker<>(delegate);
     }
 
+    /**
+     * Creates a masker that focuses on masking credit card numbers, ensuring that only specific
+     * parts of the credit card number remain visible after masking.
+     *
+     * @return a {@code Masker} that focuses on masking credit card numbers
+     */
     static Masker<String> creditCard() {
         return new CreditCardMasker();
     }
