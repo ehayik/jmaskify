@@ -16,14 +16,13 @@ _JMaskify_ ensures its security through intuitive APIs and advanced masking stra
 Future versions of _JMaskify_ aim to extend its capabilities by:
 
 - Supporting XML and YAML formats for masking operations.
-- Introducing new masking strategies such as credit card numbers and IBANs (International Bank Account Numbers).
 
-## Project Requirements (Review this)
+## Project Requirements
 
 To work with JMaskify, ensure the following tools and dependencies are installed:
 
 - **JDK**: Version 17 or higher
-- **Build Tool**: Maven (recommended)
+- **Build Tool**: Maven
 
 ## Dependencies
 
