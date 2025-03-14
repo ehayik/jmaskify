@@ -2,7 +2,6 @@ package io.github.ehayik.jmaskify;
 
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import net.datafaker.Faker;
 import org.junit.jupiter.api.Test;
