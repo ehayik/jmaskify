@@ -2,6 +2,7 @@
 
 ![](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white&style=flat)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ehayik_jmaskify&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ehayik_jmaskify)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=ehayik_jmaskify&metric=coverage)](https://sonarcloud.io/summary/new_code?id=ehayik_jmaskify)
 [![License: GPL v3](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 **JMaskify** is an open-source Java library designed to safeguard sensitive data with versatile and customizable
