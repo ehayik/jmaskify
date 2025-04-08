@@ -1,5 +1,8 @@
 package io.github.ehayik.jmaskify;
 
+import static org.apache.commons.lang3.StringUtils.repeat;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -7,7 +10,10 @@ import lombok.extern.slf4j.Slf4j;
  * card number remain visible after masking.
  */
 @Slf4j
+@RequiredArgsConstructor
 final class CreditCardMasker implements Masker<String> {
+
+    private final char substitution;
 
     /**
      * Masks provided credit card value based on predefined rules.
@@ -35,7 +41,7 @@ final class CreditCardMasker implements Masker<String> {
 
         // Handle cards without dashes (LASER)
         if (!cleanValue.contains("-")) {
-            return "XXXXXXXXXXXX" + cleanValue.substring(cleanValue.length() - 4);
+            return repeat(substitution, 12) + cleanValue.substring(cleanValue.length() - 4);
         }
 
         // Split the string by dashes
@@ -45,11 +51,12 @@ final class CreditCardMasker implements Masker<String> {
         // Special handling for AMERICAN_EXPRESS and DINERS_CLUB
         // Format: XXXX-XXXXXX-42008 (keeping last 5 digits)
         if (parts.length == 3 && parts[1].length() == 6) {
-            return "XXXX-XXXXXX-" + parts[2];
+            return "%s-%s-%s".formatted(repeat(substitution, 4), repeat(substitution, 6), parts[2]);
         }
 
         // Standard handling for other card types
-        masked.append("XXXX-".repeat(Math.max(0, parts.length - 1)));
+        var standardCardMask = repeat(substitution, 4) + "-";
+        masked.append(standardCardMask.repeat(Math.max(0, parts.length - 1)));
         return masked.append(parts[parts.length - 1]).toString();
     }
 }

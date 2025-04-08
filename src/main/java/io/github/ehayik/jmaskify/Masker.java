@@ -163,8 +163,20 @@ public sealed interface Masker<T> extends Function<T, String>
      * parts of the credit card number remain visible after masking.
      *
      * @return a {@code Masker} that focuses on masking credit card numbers
+     * @implNote Uses the {@link #DEF_SUBSTITUTION_CHAR default} substitution character
      */
     static Masker<String> creditCard() {
-        return new CreditCardMasker();
+        return new CreditCardMasker(DEF_SUBSTITUTION_CHAR);
+    }
+
+    /**
+     * Creates a masker that focuses on masking credit card numbers, ensuring that only specific
+     * parts of the credit card number remain visible after masking.
+     *
+     * @param substitution character to be used
+     * @return a {@code Masker} that focuses on masking credit card numbers
+     */
+    static Masker<String> creditCard(char substitution) {
+        return new CreditCardMasker(substitution);
     }
 }
