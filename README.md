@@ -22,6 +22,14 @@ Future versions of _JMaskify_ aim to extend its capabilities by:
 
 - Supporting XML and YAML formats for masking operations.
 
+## Support the Project
+
+If you find JMaskify useful for your projects, consider supporting its development:
+
+<a href="https://www.buymeacoffee.com/eduardoeljaiek" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee" style="height: 35px !important;width: 125px !important;" ></a>
+
+Your support helps ensure that JMaskify continues to improve and remain available as an open-source tool.
+
 ## Project Requirements
 
 To work with JMaskify, ensure the following tools and dependencies are installed:
