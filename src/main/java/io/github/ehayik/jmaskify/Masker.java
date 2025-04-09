@@ -21,7 +21,7 @@ import java.util.function.Function;
  *      different Maskers.
  *
  * <p>
- * <h6>Masking sensitive fields within JSON strings:</h6>
+ * <strong>Masking sensitive fields within JSON strings:</strong>
  * <pre>{@code
  * String json = """
  * {
@@ -58,7 +58,7 @@ import java.util.function.Function;
  * }</pre>
  *
  * <p>
- * <h6>Finding and masking specific patterns in text:</h6>
+ * <strong>Finding and masking specific patterns in text:</strong>
  * <pre>
  * {@code
  * // Define patterns to mask sensitive data

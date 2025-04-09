@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
  *     This class is immutable and thread-safe.
  *
  * <p>
- * <h6>Usage Example:</h6>
+ * <strong>Usage Example:</strong>
  * <pre>
  * {@code
  * // Define patterns to mask sensitive data
