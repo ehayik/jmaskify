@@ -12,7 +12,6 @@ _JMaskify_ ensures its security through intuitive APIs and advanced masking stra
 ## Table of Contents
 
 - [Key Features](#key-features)
-- [Planned Features](#planned-features)
 - [Support the Project](#support-the-project)
 - [Project Requirements](#project-requirements)
 - [Dependencies](#dependencies)
@@ -29,12 +28,6 @@ _JMaskify_ ensures its security through intuitive APIs and advanced masking stra
 - **Versatile Masking**: Supports fixed-length anonymization, Base64 encoding, Debit/Credit Card Numbers, JSON, and multiline text masking.
 - **Flexible API**: Easily adaptable for use cases involving [JSON structures](#2-json-masking) and [ multiline text](#3-multiline-text-masking).
 - **Open Source**: MIT-licensed to encourage collaboration and transparency.
-
-## Planned Features
-
-Future versions of _JMaskify_ aim to extend its capabilities by:
-
-- Supporting XML and YAML formats for masking operations.
 
 ## Support the Project
 
