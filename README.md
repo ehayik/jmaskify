@@ -9,11 +9,25 @@
 masking techniques. Whether your application handles personal, financial, or confidential information,
 _JMaskify_ ensures its security through intuitive APIs and advanced masking strategies.
 
+## Table of Contents
+
+- [Key Features](#key-features)
+- [Planned Features](#planned-features)
+- [Support the Project](#support-the-project)
+- [Project Requirements](#project-requirements)
+- [Dependencies](#dependencies)
+- [Getting Started](#getting-started)
+    - [Installation](#installation)
+    - [Basic Usage](#basic-usage)
+        - [Simple String Masking](#1-simple-string-masking)
+        - [JSON Masking](#2-json-masking)
+- [Logging](#logging)
+- [Handling Edge Cases](#handling-edge-cases)
+
 ## Key Features
 
 - **Versatile Masking**: Supports fixed-length anonymization, Base64 encoding, Debit/Credit Card Numbers, JSON, and multiline text masking.
-- **High Performance**: Lightweight and optimized for low memory and processing overhead.
-- **Flexible API**: Easily adaptable for use cases involving [JSON structures](#json-masking) and [ multiline text](#multiline-text-masking).
+- **Flexible API**: Easily adaptable for use cases involving [JSON structures](#2-json-masking) and [ multiline text](#3-multiline-text-masking).
 - **Open Source**: MIT-licensed to encourage collaboration and transparency.
 
 ## Planned Features
@@ -46,34 +60,44 @@ JMaskify leverages the following key libraries:
 - **Apache Commons Codec**: Encoding utilities
 - **SLF4J**: Logging framework
 
+## Getting Started
+
+### Installation
+
+JMaskify is available on Maven Central. Add the dependency to your project:
+
+```xml
+<dependency>
+    <groupId>io.github.ehayik</groupId>
+    <artifactId>jmaskify</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
+This includes [jackson-core](https://github.com/FasterXML/jackson-core) and [jackson-databind](https://github.com/FasterXML/jackson-databind) for JSON processing.
 All dependencies and versions are managed in the project's `pom.xml`
 
-## How to install
+### Basic Usage
 
-Includes [jackson-core](https://github.com/FasterXML/jackson-core) and 
-[jackson-databind](https://github.com/FasterXML/jackson-databind) for JSON processing.
+#### 1. Simple String Masking
 
-Add the dependency to `jmaskify`:
+The quickest way to mask sensitive data:
 
-    ```xml
-    <dependency>
-        <groupId>io.github.ehayik</groupId>
-        <artifactId>jmaskify</artifactId>
-        <version>1.0.0</version>
-    </dependency>
-    ```
+```java
+// Mask a credit card number
+var creditCardNumber = "4289-3874-8064-8976";
+var masked = Masker.creditCard().apply(creditCardNumber);
+// Result: "****-****-****-8976"
 
-## How to use
+// Mask an email address
+var email = "john.doe@example.com";
+var maskedEmail = Masker.fixedLength().apply(email);
+// Result: "****************"
+```
 
-### JSON Masking
+#### 2. JSON Masking
 
-_JMaskify_ supports JSON field masking through the `Masker.json()` API.
-Users can specify individual fields for masking and define strategies, such as fixed-length masking, delegate masking, or Base64 encoding.
-
-Below is an example of masking specific fields in a JSON object, such as `email` and `phone`.
-In this example the `name` is masked using a custom strategy, the `email` field is masked with a fixed pattern,
-while the `phone` field is masked using Base64 encoding.
-Users can add more fields and specify their preferred masking strategies:
+For masking fields within JSON objects:
 
 ```java
 String json = """
@@ -89,60 +113,43 @@ String json = """
 // Create a JsonMasker instance
 var masker = Masker.json()
     .prettify(true)
-    .withProperty("email") //Mask the email field with a fixed pattern
+    .withProperty("email") // Default fixed pattern masking
     .withProperty("phone", Masker.base64())
-    .withProperty("creditCard", Masker.creditCard())    
+    .withProperty("creditCard", Masker.creditCard('X'))    
     .withProperty("name", Masker.delegate(value -> "MASKED"))    
     .build();
 
 // Apply masking
-var maskedJson = masker.apply(json);
-
-// Output
-System.out.println(maskedJson);
+var maskedJson = masker.mask(json);
+/*
+ Result: {
+            "name": "MASKED",
+            "age": 30,
+            "email": "***************",
+            "phone": "MTIzLTQ1Ni03ODkw",
+            "creditCard": "XXXX-XXXX-XXXX-8976"
+          }
+ */
 ```
 
-**Result:**
+### 3. Multiline Text Masking
 
-```json
-{
-  "name": "MASKED",
-  "age": 30,
-  "email": "***************",
-  "phone": "MTIzLTQ1Ni03ODkw",
-  "creditCard": "XXXX-XXXX-XXXX-8976"
-}
-```
+When working with log files or other text that spans multiple lines, you can use multiline text masking to identify and mask patterns:
 
-#### Multiline Text Masking
-
-Using `Masker.multilinePattern()`, _JMaskify_ allows masking sensitive patterns in multiline text.
-Users define regular expressions to redact sensitive data, such as usernames or IP addresses, in unstructured input:
-        
 ```java
-// Create a MultilinePatternMasker instance
+String logContent = """
+          2023-05-15 INFO User john.doe@example.com logged in
+          2023-05-15 INFO IP Address: 192.168.1.1
+        """;
+
 var masker = Masker.multilinePattern()
     .withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)")
-    .withMaskPattern("User\\s*:\\s*([^\\s]+)")
+    .withMaskPattern("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")
     .build();
 
-var input = """
-User: johndoe
-IP: 192.168.1.1
-""";
-
-// Apply masking
-var maskedOutput = masker.apply(input);
-
-// Output
-System.out.println(maskedOutput);
-```
-
-**Result:**
-
-```plaintext
-User: *******
-IP: **********
+// Result:
+// 2023-05-15 INFO User ******************** logged in
+// 2023-05-15 INFO IP Address: **********
 ```
 
 ## Logging
