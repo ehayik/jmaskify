@@ -20,6 +20,7 @@ _JMaskify_ ensures its security through intuitive APIs and advanced masking stra
     - [Basic Usage](#basic-usage)
         - [Simple String Masking](#1-simple-string-masking)
         - [JSON Masking](#2-json-masking)
+        - [Multiline Text Masking](#3-multiline-text-masking)
 - [Logging](#logging)
 - [Handling Edge Cases](#handling-edge-cases)
 
@@ -48,7 +49,6 @@ To work with JMaskify, ensure the following tools and dependencies are installed
 
 JMaskify leverages the following key libraries:
 
-- **SLF4J Facade**: Used for logging purposes.
 - **Jackson**: JSON processing (`jackson-databind`)
 - **Apache Commons Codec**: Encoding utilities
 - **SLF4J**: Logging framework
@@ -113,7 +113,7 @@ var masker = Masker.json()
     .build();
 
 // Apply masking
-var maskedJson = masker.mask(json);
+var maskedJson = masker.apply(json);
 /*
  Result: {
             "name": "MASKED",
@@ -135,10 +135,14 @@ String logContent = """
           2023-05-15 INFO IP Address: 192.168.1.1
         """;
 
+// Create a MultilinePatternMasker instance
 var masker = Masker.multilinePattern()
     .withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)")
     .withMaskPattern("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")
     .build();
+
+// Apply masking
+var maskedContent = masker.apply(logContent);
 
 // Result:
 // 2023-05-15 INFO User ******************** logged in
@@ -174,9 +178,14 @@ JMaskify provides robust handling for invalid inputs.
 For instance, attempting to mask invalid JSON results in exceptions with clear error messages:
 
 ```java
-assertThatThrownBy(() -> masker.apply("///"))
-    .isInstanceOf(MaskingException.class)
-    .hasMessage("Failed to mask JSON content");
+var masker = Masker.json().withProperty("email").build();
+
+var exception = assertThrows(MaskingException.class, () -> masker.apply("///"));
+
+var expectedMessage = "Failed to mask JSON content";
+var actualMessage = exception.getMessage();
+
+assertTrue(actualMessage.contains(expectedMessage));
 ```
 
 ## Contributing
