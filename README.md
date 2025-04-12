@@ -206,7 +206,7 @@ var maskedContent = jsonMasker
         .andThen(Masker.base64())
         .apply(json);
 
-// // Result applies all masking strategies in sequence
+// Result applies all masking strategies in sequence
 ```
 
 ### Logging
