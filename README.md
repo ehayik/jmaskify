@@ -21,8 +21,11 @@ _JMaskify_ ensures its security through intuitive APIs and advanced masking stra
         - [Simple String Masking](#1-simple-string-masking)
         - [JSON Masking](#2-json-masking)
         - [Multiline Text Masking](#3-multiline-text-masking)
-- [Logging](#logging)
-- [Handling Edge Cases](#handling-edge-cases)
+- [Advanced Usage](#advanced-usage)
+  - [Custom Masking Strategies](#custom-masking-strategies) 
+  - [Combining Masking Strategies](#combining-masking-strategies)
+  - [Logging](#logging)
+  - [Handling Edge Cases](#handling-edge-cases)
 
 ## Key Features
 
@@ -43,7 +46,7 @@ Your support helps ensure that JMaskify continues to improve and remain availabl
 To work with JMaskify, ensure the following tools and dependencies are installed:
 
 - **JDK**: Version 17 or higher
-- **Build Tool**: Maven
+- **Build Tool**: Maven or Gradle
 
 ## Dependencies
 
@@ -138,25 +141,82 @@ String logContent = """
 // Create a MultilinePatternMasker instance
 var masker = Masker.multilinePattern()
     .withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)")
-    .withMaskPattern("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")
     .build();
 
 // Apply masking
 var maskedContent = masker.apply(logContent);
 
 // Result:
-// 2023-05-15 INFO User ******************** logged in
+// 2023-05-15 INFO User john.doe@example.com logged in
 // 2023-05-15 INFO IP Address: **********
 ```
 
-## Logging
+## Advanced Usage
+
+Once you're comfortable with the basic masking operations,
+JMaskify offers more sophisticated features to handle complex masking requirements.
+
+### Custom Masking Strategies
+
+Create your own masking strategies for specialized requirements:
+
+```java
+var masker = Masker.delegate((String input) -> {
+    if (input == null || input.length() <= 2) {
+        return input;
+    }
+
+    var first = input.charAt(0);
+    var last = input.charAt(input.length() - 1);
+    
+    return first +
+           "*".repeat(input.length() - 2) +
+           last;
+});
+
+var maskedName = masker.apply("Johnson");
+// Result: "J*****n"
+```
+
+### Combining Masking Strategies
+
+For complex scenarios, combine different masking approaches:
+
+```java
+var json = """
+        {
+          "name": "John Doe",
+          "logs": [
+            "2023-05-15 INFO User john.doe@example.com logged in",
+            "2023-05-15 INFO IP Address: 192.168.1.1"
+          ]
+        }
+""";
+
+var jsonMasker = Masker.json()
+        .withProperty("name", Masker.delegate(value -> "■■■■■■"))
+        .build();
+
+var multilineMasker = Masker.multilinePattern()
+        .withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)")
+        .build();
+
+var maskedContent = jsonMasker
+        .andThen(multilineMasker)
+        .andThen(Masker.base64())
+        .apply(json);
+
+// // Result applies all masking strategies in sequence
+```
+
+### Logging
 
 JMaskify uses the [SLF4J](https://slf4j.org) logging facade, allowing integration with popular logging frameworks
 such as [Logback](https://logback.qos.ch), [Log4j](https://logging.apache.org/log4j/2.x/index.html),
 [tinylog](https://tinylog.org/v2/) , or [Java Utils Logging](https://docs.oracle.com/javase/8/docs/api/java/util/logging/package-summary.html).
 Refer to your logging framework's documentation to set the `DEBUG` log level for the package `io.github.ehayik.jmaskify`.
 
-### Logback Configuration Example
+#### Logback Configuration Example
 
 Add the following configuration to your `logback.xml` file to enable debug logs:
 
@@ -172,7 +232,7 @@ Add the following configuration to your `logback.xml` file to enable debug logs:
 </configuration>
 ```
 
-#### Handling Edge Cases
+### Handling Edge Cases
 
 JMaskify provides robust handling for invalid inputs.
 For instance, attempting to mask invalid JSON results in exceptions with clear error messages:
