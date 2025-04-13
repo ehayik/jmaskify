@@ -2,9 +2,13 @@ package io.github.ehayik.jmaskify;
 
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import net.datafaker.Faker;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class MultilinePatternMaskerTests {
 
@@ -68,5 +72,21 @@ class MultilinePatternMaskerTests {
 
         // When -Then
         assertThat(masker.apply(inputValue)).isEqualTo(expectedValue);
+    }
+
+    @Test
+    void shouldFailsWhenNoPatternAddedToBuilder() {
+        assertThatThrownBy(() -> Masker.multilinePattern().apply("Hello World!"))
+                .isInstanceOf(MaskingException.class)
+                .hasMessage("Mask patterns cannot be empty");
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = " ")
+    void shouldFailsWhenMaskPatternIsBlank(String maskPattern) {
+        assertThatThrownBy(() -> Masker.multilinePattern().withMaskPattern(maskPattern).apply("Hello World!"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Mask pattern cannot be blank");
     }
 }
