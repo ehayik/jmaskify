@@ -143,9 +143,6 @@ public final class MultilinePatternMasker implements Masker<String> {
          *
          * @param text the input string to be processed, may be {@code null}
          * @return the processed string with substitutions, or {@code null} if the input text was {@code null}
-         * @throws MaskingException if no patterns were added to the builder
-         *  @implNote All the specified mask patterns will be combined into a single pattern
-         *            using the {@link Pattern#MULTILINE} flag.
          * @see MultilinePatternMasker#apply(String)
          */
         @Nullable
