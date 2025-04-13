@@ -17,6 +17,7 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -290,6 +291,44 @@ public final class JsonMasker implements Masker<String> {
         public Builder prettify(boolean prettify) {
             this.prettify = prettify;
             return this;
+        }
+
+        /**
+         * Constructs a new {@link JsonMasker} instance and applies transformations to the given JSON string,
+         * such as masking specific fields.
+         *
+         * @param content the JSON string to be transformed, can be {@code null}
+         * @return the transformed JSON string, or {@code null} if the input string was {@code null}
+         * @see JsonMasker#apply(String)
+         */
+        @Nullable
+        public String apply(@Nullable String content) {
+            return build().apply(content);
+        }
+
+        /**
+         * Constructs a new {@link JsonMasker} instance
+         * and serializes the given object to a JSON string applying masking to specific fields.
+         *
+         * @param value the object to be masked, which will be converted to a JSON string
+         * @return the masked JSON string, or {@code null} if the input object is {@code null}
+         * @see JsonMasker#applyToObject(Object)
+         */
+        @Nullable
+        public String applyToObject(@Nullable Object value) {
+            return build().applyToObject(value);
+        }
+
+        /**
+         * Returns a composed {@link Function} that first applies the current masking operation and then
+         * applies the given {@code Masker<String>} operation.
+         *
+         * @param after the {@code Masker<String>} operation to apply after the current masking operation
+         * @return a composed {@code Function<String, String>} that applies the current operation followed by the given one
+         * @throws NullPointerException if {@code after} is {@code null}
+         */
+        public Function<String, String> andThen(Masker<String> after) {
+            return build().andThen(after);
         }
 
         /**

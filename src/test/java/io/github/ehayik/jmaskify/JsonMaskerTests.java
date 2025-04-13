@@ -82,7 +82,6 @@ class JsonMaskerTests {
                 .prettify(true)
                 .withProperty("phone", base64())
                 .withProperties(fixedLength(), "name", "email")
-                .build()
                 .apply(JSON_OBJECT);
 
         // Then
@@ -94,7 +93,6 @@ class JsonMaskerTests {
         // When
         var actual = JsonMasker.builder()
                 .withProperties(Set.of("name", "email", "street", "value"), fixedLength())
-                .build()
                 .apply(JSON_NESTED_OBJECT);
 
         // Then
@@ -111,7 +109,6 @@ class JsonMaskerTests {
                 .prettify(true)
                 .withProperty("phone", base64())
                 .withProperties(fixedLength(), "name", "email")
-                .build()
                 .applyToObject(person);
 
         // Then
@@ -161,7 +158,7 @@ class JsonMaskerTests {
 		{"email":"*****","phone":"123-456-7890"}
 		""";
 
-        var actual = JsonMasker.builder().withProperty("email").build().apply(givenJson);
+        var actual = JsonMasker.builder().withProperty("email").apply(givenJson);
 
         // Then
         JSONAssert.assertEquals(expectedJson, actual, STRICT);
@@ -177,8 +174,7 @@ class JsonMaskerTests {
 		{"email":"*****","phone":"************"}
 		""";
 
-        var actual =
-                JsonMasker.builder().withProperties("email", "phone").build().apply(givenJson);
+        var actual = JsonMasker.builder().withProperties("email", "phone").apply(givenJson);
 
         // Then
         JSONAssert.assertEquals(expectedJson, actual, STRICT);
@@ -194,10 +190,8 @@ class JsonMaskerTests {
 		{"email":"*****","phone":"************"}
 		""";
 
-        var actual = JsonMasker.builder()
-                .withProperties(Set.of("email", "phone"))
-                .build()
-                .apply(givenJson);
+        var actual =
+                JsonMasker.builder().withProperties(Set.of("email", "phone")).apply(givenJson);
 
         // Then
         JSONAssert.assertEquals(expectedJson, actual, STRICT);
