@@ -112,8 +112,7 @@ var masker = Masker.json()
     .withProperty("email") // Default fixed pattern masking
     .withProperty("phone", Masker.base64())
     .withProperty("creditCard", Masker.creditCard('X'))    
-    .withProperty("name", Masker.delegate(value -> "MASKED"))    
-    .build();
+    .withProperty("name", Masker.delegate(value -> "MASKED"));
 
 // Apply masking
 var maskedJson = masker.apply(json);
@@ -140,8 +139,7 @@ String logContent = """
 
 // Create a MultilinePatternMasker instance
 var masker = Masker.multilinePattern()
-    .withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)")
-    .build();
+    .withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)");
 
 // Apply masking
 var maskedContent = masker.apply(logContent);
