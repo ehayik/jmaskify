@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +62,7 @@ public final class MultilinePatternMasker implements Masker<String> {
      * <p>
      *      Each match found by the patterns is replaced with a specified substitution character.
      *
-     * @param text the input string to be processed; may be {@code null}
+     * @param text the input string to be processed, may be {@code null}
      * @return the processed string with substitutions, or {@code null} if the input text was {@code null}
      */
     @Nullable
@@ -131,6 +132,37 @@ public final class MultilinePatternMasker implements Masker<String> {
         public Builder withSubstitution(char substitution) {
             this.substitution = substitution;
             return this;
+        }
+
+        /**
+         * Constructs a new {@link MultilinePatternMasker} instance
+         * and applies the specified multiline pattern to the given text.
+         *
+         * <p>
+         *      Each match found by the patterns is replaced with a specified substitution character.
+         *
+         * @param text the input string to be processed, may be {@code null}
+         * @return the processed string with substitutions, or {@code null} if the input text was {@code null}
+         * @throws MaskingException if no patterns were added to the builder
+         *  @implNote All the specified mask patterns will be combined into a single pattern
+         *            using the {@link Pattern#MULTILINE} flag.
+         * @see MultilinePatternMasker#apply(String)
+         */
+        @Nullable
+        public String apply(@Nullable String text) {
+            return build().apply(text);
+        }
+
+        /**
+         * Returns a composed {@link Function} that first applies the current masking operation and then
+         * applies the given {@code Masker<String>} operation.
+         *
+         * @param after the {@code Masker<String>} operation to apply after the current masking operation
+         * @return a composed {@code Function<String, String>} that applies the current operation followed by the given one
+         * @throws NullPointerException if {@code after} is {@code null}
+         */
+        public Function<String, String> andThen(Masker<String> after) {
+            return build().andThen(after);
         }
 
         /**

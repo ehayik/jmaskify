@@ -18,7 +18,7 @@ class MultilinePatternMaskerTests {
         var username = FAKER.internet().username();
         var inputValue = "This is username=%s sensitive data.".formatted(username);
         var expectedValue = "This is username=%s sensitive data.".formatted(repeat("*", username.length()));
-        var masker = Masker.multilinePattern().withMaskPattern(USERNAME_PATTERN).build();
+        var masker = Masker.multilinePattern().withMaskPattern(USERNAME_PATTERN);
 
         // When -Then
         assertThat(masker.apply(inputValue)).isEqualTo(expectedValue);
@@ -42,10 +42,7 @@ class MultilinePatternMaskerTests {
 		"""
                 .formatted(repeat("*", username.length()), repeat("*", ipAddress.length()));
 
-        var masker = Masker.multilinePattern()
-                .withMaskPattern(USERNAME_PATTERN)
-                .withMaskPattern(IP_ADDRESS_PATTERN)
-                .build();
+        var masker = Masker.multilinePattern().withMaskPattern(USERNAME_PATTERN).withMaskPattern(IP_ADDRESS_PATTERN);
 
         // When -Then
         assertThat(masker.apply(inputValue)).isEqualTo(expectedValue);
@@ -54,8 +51,7 @@ class MultilinePatternMaskerTests {
     @Test
     void shouldNotMaskNull() {
         // Given
-        var masker =
-                Masker.multilinePattern().withMaskPattern(IP_ADDRESS_PATTERN).build();
+        var masker = Masker.multilinePattern().withMaskPattern(IP_ADDRESS_PATTERN);
 
         // When - Then
         assertThat(masker.apply(null)).isNull();
@@ -67,10 +63,8 @@ class MultilinePatternMaskerTests {
         var ipAddress = FAKER.internet().ipV4Address();
         var inputValue = "This is %s sensitive data.".formatted(ipAddress);
         var expectedValue = "This is %s sensitive data.".formatted(repeat("#", ipAddress.length()));
-        var masker = Masker.multilinePattern()
-                .withMaskPattern(IP_ADDRESS_PATTERN)
-                .withSubstitution('#')
-                .build();
+        var masker =
+                Masker.multilinePattern().withMaskPattern(IP_ADDRESS_PATTERN).withSubstitution('#');
 
         // When -Then
         assertThat(masker.apply(inputValue)).isEqualTo(expectedValue);
