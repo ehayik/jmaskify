@@ -100,9 +100,14 @@ String json = """
 {
   "name": "John Doe",
   "age": 30,
-  "email": "john.doe@example.com",
-  "phone": "123-456-7890",
-  "creditCard": "4289-3874-8064-8976"
+  "contactInfo": {
+    "email": "john.doe@example.com",
+    "phone": "123-456-7890"
+  },
+  "creditCards": [
+     "1234-5678-9012-3456",
+     "4289-3874-8064-8976"
+  ]
 }
 """;
 
@@ -111,18 +116,23 @@ var masker = Masker.json()
     .prettify(true)
     .withProperty("email") // Default fixed pattern masking
     .withProperty("phone", Masker.base64())
-    .withProperty("creditCard", Masker.creditCard('X'))    
-    .withProperty("name", Masker.delegate(value -> "MASKED"));
+    .withProperty("creditCards", Masker.creditCard('X'))    
+    .withProperty("name", Masker.delegate(value -> "■■■■■■"));
 
 // Apply masking
 var maskedJson = masker.apply(json);
 /*
  Result: {
-            "name": "MASKED",
+            "name": "■■■■■■",
             "age": 30,
-            "email": "***************",
-            "phone": "MTIzLTQ1Ni03ODkw",
-            "creditCard": "XXXX-XXXX-XXXX-8976"
+            "contactInfo": {
+              "email": "***************",
+              "phone": "MTIzLTQ1Ni03ODkw"
+            },
+            "creditCards": [
+			  "XXXX-XXXX-XXXX-3456",
+			  "XXXX-XXXX-XXXX-8976"
+			]
           }
  */
 ```
