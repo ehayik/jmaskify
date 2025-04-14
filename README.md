@@ -137,6 +137,15 @@ var maskedJson = masker.apply(json);
  */
 ```
 
+> **NOTE**:
+> Non-string values (numbers, booleans, nulls) are preserved without masking.
+
+> **NOTE**: Masking string values within a JSON array
+> 
+> - Direct string elements of the array
+> - String values within nested objects inside the array
+> - Some string values within nested arrays, depending on their position and structure
+
 ### 3. Multiline Text Masking
 
 When working with log files or other text that spans multiple lines, you can use multiline text masking to identify and mask patterns:
