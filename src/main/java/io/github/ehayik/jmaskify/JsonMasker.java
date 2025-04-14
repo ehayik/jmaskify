@@ -1,7 +1,6 @@
 package io.github.ehayik.jmaskify;
 
-import static com.fasterxml.jackson.core.JsonToken.FIELD_NAME;
-import static com.fasterxml.jackson.core.JsonToken.VALUE_STRING;
+import static com.fasterxml.jackson.core.JsonToken.*;
 import static java.util.Objects.requireNonNullElseGet;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -20,6 +19,7 @@ import java.util.Set;
 import java.util.function.Function;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -172,13 +172,38 @@ public final class JsonMasker implements Masker<String> {
             return;
         }
 
+        if (masker != null && token == START_ARRAY) {
+            maskArrayValues(fieldName, masker, generator, parser);
+            return;
+        }
+
         if (masker == null) {
             log.debug("No masker found for field: {}", fieldName);
         } else {
-            log.debug("Ignoring field: {}. Only fields of type String will be masked.", fieldName);
+            log.debug("Ignoring field: {}. Only values of type String will be masked.", fieldName);
         }
 
         generator.copyCurrentEvent(parser);
+    }
+
+    @SneakyThrows
+    private void maskArrayValues(String fieldName, Masker<String> masker, JsonGenerator generator, JsonParser parser) {
+        generator.writeStartArray();
+        var valueToken = parser.nextToken();
+
+        while (valueToken != null && valueToken != END_ARRAY) {
+
+            if (valueToken == VALUE_STRING) {
+                generator.writeString(masker.apply(parser.getValueAsString()));
+            } else {
+                log.debug("Ignoring array: {} values. Only values of type String will be masked.", fieldName);
+                generator.copyCurrentEvent(parser);
+            }
+
+            valueToken = parser.nextToken();
+        }
+
+        generator.writeEndArray();
     }
 
     /**
