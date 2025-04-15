@@ -290,7 +290,6 @@ class JsonMaskerTests {
 			]
 		}
 		""";
-
         String expectedJson =
                 """
 		{
@@ -298,7 +297,7 @@ class JsonMaskerTests {
 			"nestedArrays": [
 				["*********************", "*************"],
 				42,
-				["not-masked-1", "not-masked-2"]
+				["************", "************"]
 			]
 		}
 		""";

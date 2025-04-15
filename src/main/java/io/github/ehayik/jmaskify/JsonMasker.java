@@ -191,13 +191,9 @@ public final class JsonMasker implements Masker<String> {
      * This implementation masks:
      * - Direct string elements of the array
      * - String values within nested objects inside the array
-     * - Some string values within nested arrays, depending on their position and structure
+     * - String values within nested arrays (recursively)
      * <p>
      * Non-string values (numbers, booleans, nulls) are preserved without masking.
-     * <p>
-     * Note: The behavior for nested arrays is complex and may vary depending on the structure
-     * of the JSON.
-     * Not all string values in all nested arrays will be masked.
      *
      * @param fieldName the name of the field containing the array
      * @param masker the masking strategy to apply to string values
@@ -205,14 +201,17 @@ public final class JsonMasker implements Masker<String> {
      * @param parser the JSON parser to read the array values
      * @throws IOException if an I/O error occurs during JSON processing
      */
-    private void maskArrayValues(String fieldName, Masker<String> masker, JsonGenerator generator, JsonParser parser) throws IOException {
+    private void maskArrayValues(String fieldName, Masker<String> masker, JsonGenerator generator, JsonParser parser)
+            throws IOException {
         generator.writeStartArray();
         var valueToken = parser.nextToken();
 
         while (valueToken != null && valueToken != END_ARRAY) {
-
             if (valueToken == VALUE_STRING) {
                 generator.writeString(masker.apply(parser.getValueAsString()));
+            } else if (valueToken == START_ARRAY) {
+                // Recursively process nested arrays
+                maskArrayValues(fieldName, masker, generator, parser);
             } else {
                 log.debug("Ignoring array: {} value. Only values of type String will be masked.", fieldName);
                 generator.copyCurrentEvent(parser);
