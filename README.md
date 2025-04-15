@@ -104,10 +104,7 @@ String json = """
     "email": "john.doe@example.com",
     "phone": "123-456-7890"
   },
-  "creditCards": [
-     "1234-5678-9012-3456",
-     "4289-3874-8064-8976"
-  ]
+  "creditCards": "1234-5678-9012-3456"
 }
 """;
 
@@ -116,7 +113,7 @@ var masker = Masker.json()
     .prettify(true)
     .withProperty("email") // Default fixed pattern masking
     .withProperty("phone", Masker.base64())
-    .withProperty("creditCards", Masker.creditCard('X'))    
+    .withProperty("creditCard", Masker.creditCard('X'))    
     .withProperty("name", Masker.delegate(value -> "■■■■■■"));
 
 // Apply masking
@@ -129,10 +126,7 @@ var maskedJson = masker.apply(json);
               "email": "***************",
               "phone": "MTIzLTQ1Ni03ODkw"
             },
-            "creditCards": [
-			  "XXXX-XXXX-XXXX-3456",
-			  "XXXX-XXXX-XXXX-8976"
-			]
+            "creditCard": "XXXX-XXXX-XXXX-3456"
           }
  */
 ```
@@ -140,13 +134,121 @@ var maskedJson = masker.apply(json);
 > **NOTE**:
 > Non-string values (numbers, booleans, nulls) are preserved without masking.
 
-> **NOTE**: Masking string values within a JSON array
-> 
-> - Direct string elements of the array
-> - String values within nested objects inside the array
-> - Some string values within nested arrays, depending on their position and structure
+##### Masking string values within a JSON array
 
-### 3. Multiline Text Masking
+JMaskify provides powerful capabilities for masking string values within JSON arrays.
+Here are examples of different array masking scenarios:
+
+###### Example 1: Simple Array of Strings
+
+When you need to mask an array of sensitive string values, such as credit card numbers:
+
+```java
+String json = """
+{
+    "name": "John Doe",
+    "creditCards": [
+        "1234-5678-9012-3456",
+        "4289-3874-8064-8976"
+    ]
+}
+""";
+
+var masker = JsonMasker.builder()
+    .withProperty("creditCards", Masker.creditCard('X'))
+    .build();
+
+var maskedJson = masker.apply(json);
+
+/* Result:
+{
+    "name": "John Doe",
+    "creditCards": [
+        "XXXX-XXXX-XXXX-3456",
+        "XXXX-XXXX-XXXX-8976"
+    ]
+}
+*/
+```
+
+###### Example 2: Arrays with Mixed Value Types
+
+JMaskify can handle arrays containing a mix of different value types, masking only the string values:
+
+```java
+String json = """
+{
+    "name": "John Doe",
+    "mixedArray": [
+        "sensitive-string-data",
+        42,
+        true,
+        null,
+        {"nestedKey": "nestedValue"},
+        ["nested", "array"]
+    ]
+}
+""";
+
+var masker = JsonMasker.builder()
+    .withProperty("mixedArray", Masker.fixedLength())
+    .build();
+
+var maskedJson = masker.apply(json);
+
+/* Result:
+{
+    "name": "John Doe",
+    "mixedArray": [
+        "*********************",
+        42,
+        true,
+        null,
+        {"nestedKey": "***********"},
+        ["******", "*****"]
+    ]
+}
+*/
+```
+
+###### Example 3: Nested Arrays
+
+JMaskify handles nested arrays with specific masking behavior:
+
+```java
+String json = """
+{
+    "name": "John Doe",
+    "nestedArrays": [
+        ["sensitive-outer-inner", "another-value"],
+        42,
+        ["not-masked-1", "not-masked-2"]
+    ]
+}
+""";
+
+var masker = JsonMasker.builder()
+    .withProperty("nestedArrays", Masker.fixedLength())
+    .build();
+
+var maskedJson = masker.apply(json);
+
+/* Result:
+{
+    "name": "John Doe",
+    "nestedArrays": [
+        ["*********************", "*************"],
+        42,
+        ["************", "************"]
+    ]
+}
+*/
+```
+
+> **NOTE**: This example demonstrates how JMaskify recursively processes nested arrays. 
+> All string values within nested arrays are masked consistently, regardless of their position or nesting level.
+
+#### 3. Multiline Text Masking
 
 When working with log files or other text that spans multiple lines, you can use multiline text masking to identify and mask patterns:
 
@@ -185,7 +287,7 @@ var masker = Masker.delegate((String input) -> {
 
     var first = input.charAt(0);
     var last = input.charAt(input.length() - 1);
-    
+
     return first +
            "*".repeat(input.length() - 2) +
            last;
@@ -255,14 +357,12 @@ JMaskify provides robust handling for invalid inputs.
 For instance, attempting to mask invalid JSON results in exceptions with clear error messages:
 
 ```java
+// Create a masker for email fields
 var masker = Masker.json().withProperty("email").build();
 
-var exception = assertThrows(MaskingException.class, () -> masker.apply("///"));
-
-var expectedMessage = "Failed to mask JSON content";
-var actualMessage = exception.getMessage();
-
-assertTrue(actualMessage.contains(expectedMessage));
+// When applying to invalid JSON, a MaskingException will be thrown
+// with the message "Failed to mask JSON content"
+// masker.apply("///");  // This would throw MaskingException
 ```
 
 ## Contributing
