@@ -104,7 +104,7 @@ String json = """
     "email": "john.doe@example.com",
     "phone": "123-456-7890"
   },
-  "creditCards": "1234-5678-9012-3456"
+  "creditCard": "1234-5678-9012-3456"
 }
 """;
 
