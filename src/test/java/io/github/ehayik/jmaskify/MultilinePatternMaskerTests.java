@@ -85,7 +85,8 @@ class MultilinePatternMaskerTests {
     @NullAndEmptySource
     @ValueSource(strings = " ")
     void shouldFailsWhenMaskPatternIsBlank(String maskPattern) {
-        assertThatThrownBy(() -> Masker.multilinePattern().withMaskPattern(maskPattern).apply("Hello World!"))
+        assertThatThrownBy(() ->
+                        Masker.multilinePattern().withMaskPattern(maskPattern).apply("Hello World!"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Mask pattern cannot be blank");
     }

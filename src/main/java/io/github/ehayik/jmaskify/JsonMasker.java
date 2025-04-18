@@ -1,7 +1,6 @@
 package io.github.ehayik.jmaskify;
 
-import static com.fasterxml.jackson.core.JsonToken.FIELD_NAME;
-import static com.fasterxml.jackson.core.JsonToken.VALUE_STRING;
+import static com.fasterxml.jackson.core.JsonToken.*;
 import static java.util.Objects.requireNonNullElseGet;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -167,18 +166,61 @@ public final class JsonMasker implements Masker<String> {
 
         var masker = properties.get(fieldName);
 
-        if (masker != null && token == VALUE_STRING) {
+        if (masker == null) {
+            log.debug("Ignoring field: {}. No masker found.", fieldName);
+            generator.copyCurrentEvent(parser);
+            return;
+        }
+
+        if (token == VALUE_STRING) {
             generator.writeString(masker.apply(parser.getValueAsString()));
             return;
         }
 
-        if (masker == null) {
-            log.debug("No masker found for field: {}", fieldName);
-        } else {
-            log.debug("Ignoring field: {}. Only fields of type String will be masked.", fieldName);
+        if (token == START_ARRAY) {
+            maskArrayValues(fieldName, masker, generator, parser);
+            return;
         }
 
+        log.debug("Ignoring field: {}. Only values of type String will be masked.", fieldName);
         generator.copyCurrentEvent(parser);
+    }
+
+    /**
+     * Masks string values within a JSON array.
+     * This implementation masks:
+     * - Direct string elements of the array
+     * - String values within nested objects inside the array
+     * - String values within nested arrays (recursively)
+     * <p>
+     * Non-string values (numbers, booleans, nulls) are preserved without masking.
+     *
+     * @param fieldName the name of the field containing the array
+     * @param masker the masking strategy to apply to string values
+     * @param generator the JSON generator to write the masked array
+     * @param parser the JSON parser to read the array values
+     * @throws IOException if an I/O error occurs during JSON processing
+     */
+    private void maskArrayValues(String fieldName, Masker<String> masker, JsonGenerator generator, JsonParser parser)
+            throws IOException {
+        generator.writeStartArray();
+        var valueToken = parser.nextToken();
+
+        while (valueToken != null && valueToken != END_ARRAY) {
+            if (valueToken == VALUE_STRING) {
+                generator.writeString(masker.apply(parser.getValueAsString()));
+            } else if (valueToken == START_ARRAY) {
+                // Recursively process nested arrays
+                maskArrayValues(fieldName, masker, generator, parser);
+            } else {
+                log.debug("Ignoring array: {} value. Only values of type String will be masked.", fieldName);
+                generator.copyCurrentEvent(parser);
+            }
+
+            valueToken = parser.nextToken();
+        }
+
+        generator.writeEndArray();
     }
 
     /**

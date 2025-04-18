@@ -174,6 +174,7 @@ class JsonMaskerTests {
 		{"email":"*****","phone":"************"}
 		""";
 
+        // When
         var actual = JsonMasker.builder().withProperties("email", "phone").apply(givenJson);
 
         // Then
@@ -195,6 +196,119 @@ class JsonMaskerTests {
 
         // Then
         JSONAssert.assertEquals(expectedJson, actual, STRICT);
+    }
+
+    @Test
+    void shouldMaskNestedArrayValues() throws Exception {
+        // Given
+        String givenJson =
+                """
+		{
+			"name": "John Doe",
+			"age": 30,
+			"creditCards": [
+				"1234-5678-9012-3456",
+				"4289-3874-8064-8976"
+			]
+		}
+		""";
+
+        String expectedJson =
+                """
+		{
+			"name": "John Doe",
+			"age": 30,
+			"creditCards": [
+				"XXXX-XXXX-XXXX-3456",
+				"XXXX-XXXX-XXXX-8976"
+			]
+		}
+		""";
+
+        var actualJson = JsonMasker.builder()
+                .withProperty("creditCards", Masker.creditCard('X'))
+                .build()
+                .apply(givenJson);
+
+        // Then
+        JSONAssert.assertEquals(expectedJson, actualJson, STRICT);
+    }
+
+    @Test
+    void shouldMaskMixedTypeArrayValues() throws Exception {
+        // Given
+        String givenJson =
+                """
+		{
+			"name": "John Doe",
+			"mixedArray": [
+				"sensitive-string-data",
+				42,
+				true,
+				null,
+				{"nestedKey": "nestedValue"},
+				["nested", "array"]
+			]
+		}
+		""";
+
+        String expectedJson =
+                """
+		{
+			"name": "John Doe",
+			"mixedArray": [
+				"*********************",
+				42,
+				true,
+				null,
+				{"nestedKey": "***********"},
+				["******", "*****"]
+			]
+		}
+		""";
+
+        var actualJson = JsonMasker.builder()
+                .withProperty("mixedArray", fixedLength())
+                .build()
+                .apply(givenJson);
+
+        // Then
+        JSONAssert.assertEquals(expectedJson, actualJson, STRICT);
+    }
+
+    @Test
+    void shouldMaskNestedArrayStringValues() throws Exception {
+        // Given
+        String givenJson =
+                """
+		{
+			"name": "John Doe",
+			"nestedArrays": [
+				["sensitive-outer-inner", "another-value"],
+				42,
+				["not-masked-1", "not-masked-2"]
+			]
+		}
+		""";
+        String expectedJson =
+                """
+		{
+			"name": "John Doe",
+			"nestedArrays": [
+				["*********************", "*************"],
+				42,
+				["************", "************"]
+			]
+		}
+		""";
+
+        var actualJson = JsonMasker.builder()
+                .withProperty("nestedArrays", fixedLength())
+                .build()
+                .apply(givenJson);
+
+        // Then
+        JSONAssert.assertEquals(expectedJson, actualJson, STRICT);
     }
 
     record Person(String name, int age, String city, String email, String phone) {}
