@@ -45,7 +45,7 @@ final class CreditCardMasker implements Masker<String> {
         }
 
         // Split the string by dashes
-        var parts = cleanValue.split("-");
+        var parts = cleanValue.split("-", -1);
         var masked = new StringBuilder();
 
         // Special handling for AMERICAN_EXPRESS and DINERS_CLUB
