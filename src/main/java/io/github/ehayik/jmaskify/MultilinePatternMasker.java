@@ -96,7 +96,7 @@ public final class MultilinePatternMasker implements Masker<String> {
      * to be used when constructing a {@link MultilinePatternMasker}.
      * It allows a flexible and intuitive approach to configuring masker objects through fluent API calls.
      */
-    public static final class Builder {
+    public static final class Builder implements MaskerBuilder<String, MultilinePatternMasker> {
 
         private char substitution = DEF_SUBSTITUTION_CHAR;
         private final List<String> maskPatterns = new ArrayList<>();
@@ -146,6 +146,7 @@ public final class MultilinePatternMasker implements Masker<String> {
          * @see MultilinePatternMasker#apply(String)
          */
         @Nullable
+        @Override
         public String apply(@Nullable String text) {
             return build().apply(text);
         }
@@ -158,6 +159,7 @@ public final class MultilinePatternMasker implements Masker<String> {
          * @return a composed {@code Function<String, String>} that applies the current operation followed by the given one
          * @throws NullPointerException if {@code after} is {@code null}
          */
+        @Override
         public Function<String, String> andThen(Masker<String> after) {
             return build().andThen(after);
         }
@@ -171,6 +173,7 @@ public final class MultilinePatternMasker implements Masker<String> {
          * @implNote All the specified mask patterns will be combined into a single pattern
          *          using the {@link Pattern#MULTILINE} flag.
          */
+        @Override
         public MultilinePatternMasker build() {
 
             if (maskPatterns.isEmpty()) {

@@ -235,7 +235,7 @@ public final class JsonMasker implements Masker<String> {
      * </ul>
      */
     @SuppressWarnings("NullAway.Init")
-    public static final class Builder {
+    public static final class Builder implements MaskerBuilder<String, JsonMasker> {
 
         private boolean prettify;
         private ObjectMapper objectMapper;
@@ -344,6 +344,7 @@ public final class JsonMasker implements Masker<String> {
          * @see JsonMasker#apply(String)
          */
         @Nullable
+        @Override
         public String apply(@Nullable String content) {
             return build().apply(content);
         }
@@ -369,6 +370,7 @@ public final class JsonMasker implements Masker<String> {
          * @return a composed {@code Function<String, String>} that applies the current operation followed by the given one
          * @throws NullPointerException if {@code after} is {@code null}
          */
+        @Override
         public Function<String, String> andThen(Masker<String> after) {
             return build().andThen(after);
         }
@@ -379,6 +381,7 @@ public final class JsonMasker implements Masker<String> {
          * @return a new {@link JsonMasker} instance
          * @implNote If no {@code ObjectMapper} is explicitly set, a new instance will be created internally.
          */
+        @Override
         public JsonMasker build() {
             objectMapper = requireNonNullElseGet(objectMapper, ObjectMapper::new);
             return new JsonMasker(prettify, properties, objectMapper);
