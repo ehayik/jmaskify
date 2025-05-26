@@ -101,12 +101,12 @@ public sealed interface Masker<T> extends Function<T, String>
     char DEF_SUBSTITUTION_CHAR = '*';
 
     /**
-     * Creates a masker that masks strings to a fixed length with a substitution character.
+     * Creates a builder for constructing a {@link FixedLengthMasker} instance.
      *
      * @return a {@code Masker} that masks strings to the same length as the input string
      */
-    static Masker<String> fixedLength() {
-        return new FixedLengthMasker();
+    static FixedLengthMasker.Builder fixedLength() {
+        return FixedLengthMasker.builder();
     }
 
     /**
@@ -115,9 +115,11 @@ public sealed interface Masker<T> extends Function<T, String>
      * @param fixedLength the length to which the input string should be masked.
      *                    If the value is zero or negative, the input string is masked to the same length as the input string.
      * @return a Masker that replaces the input string with a fixed number of substitution characters.
+     * @deprecated Use {@link #fixedLength()}{@code .withFixedLength(int)} instead.
      */
+    @Deprecated
     static Masker<String> fixedLength(int fixedLength) {
-        return new FixedLengthMasker(fixedLength);
+        return fixedLength().withFixedLength(fixedLength).build();
     }
 
     /**

@@ -15,10 +15,18 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @RequiredArgsConstructor
-final class FixedLengthMasker implements Masker<String> {
+public final class FixedLengthMasker implements Masker<String> {
 
     private final int fixedLength;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
+     * @deprecated Use {@link #builder()} or {@link Masker#fixedLength()} instead
+     */
+    @Deprecated
     public FixedLengthMasker() {
         this(0);
     }
@@ -50,5 +58,36 @@ final class FixedLengthMasker implements Masker<String> {
         }
 
         return repeat(DEF_SUBSTITUTION_CHAR, fixedLength);
+    }
+
+    /**
+     * Builder for creating instances of {@link FixedLengthMasker}.
+     */
+    public static final class Builder implements MaskerBuilder<String, FixedLengthMasker> {
+
+        private int fixedLength = 0;
+
+        /**
+         * Sets the fixed length for the masker.
+         *
+         * @param fixedLength the length to which the input string should be masked.
+         *                   If the value is zero or negative,
+         *                  the input string is masked to the same length as the input string.
+         * @return this builder for method chaining
+         */
+        public Builder withFixedLength(int fixedLength) {
+            this.fixedLength = fixedLength;
+            return this;
+        }
+
+        /**
+         * Builds and returns a new {@link FixedLengthMasker} instance with the configured settings.
+         *
+         * @return a new {@link FixedLengthMasker} instance
+         */
+        @Override
+        public FixedLengthMasker build() {
+            return new FixedLengthMasker(fixedLength);
+        }
     }
 }
