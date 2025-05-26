@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 public final class FixedLengthMasker implements Masker<String> {
 
     private final int fixedLength;
-    private final char substitutionChar;
+    private final char substitution;
 
     public static Builder builder() {
         return new Builder();
@@ -55,10 +55,10 @@ public final class FixedLengthMasker implements Masker<String> {
 
         if (fixedLength <= 0) {
             log.debug("Fixed length is less than or equal to zero. Using value length as fixed length.");
-            return repeat(substitutionChar, value.length());
+            return repeat(substitution, value.length());
         }
 
-        return repeat(substitutionChar, fixedLength);
+        return repeat(substitution, fixedLength);
     }
 
     /**
@@ -67,7 +67,7 @@ public final class FixedLengthMasker implements Masker<String> {
     public static final class Builder implements MaskerBuilder<String, FixedLengthMasker> {
 
         private int fixedLength;
-        private char substitutionChar = DEF_SUBSTITUTION_CHAR;
+        private char substitution = DEF_SUBSTITUTION_CHAR;
 
         /**
          * Sets the fixed length for the masker.
@@ -85,12 +85,12 @@ public final class FixedLengthMasker implements Masker<String> {
         /**
          * Sets the substitution character for the masker.
          *
-         * @param substitutionChar the character to use for masking.
+         * @param substitution the character to use for masking.
          *                        If not specified, defaults to {@link Masker#DEF_SUBSTITUTION_CHAR}.
          * @return this builder for method chaining
          */
-        public Builder withSubstitutionChar(char substitutionChar) {
-            this.substitutionChar = substitutionChar;
+        public Builder withSubstitution(char substitution) {
+            this.substitution = substitution;
             return this;
         }
 
@@ -101,7 +101,7 @@ public final class FixedLengthMasker implements Masker<String> {
          */
         @Override
         public FixedLengthMasker build() {
-            return new FixedLengthMasker(fixedLength, substitutionChar);
+            return new FixedLengthMasker(fixedLength, substitution);
         }
     }
 }

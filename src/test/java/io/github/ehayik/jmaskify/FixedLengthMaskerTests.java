@@ -53,7 +53,7 @@ class FixedLengthMaskerTests {
         var expectedText = repeat("■", text.length());
 
         // When
-        var actualText = Masker.fixedLength().withSubstitutionChar('■').apply(text);
+        var actualText = Masker.fixedLength().withSubstitution('■').apply(text);
 
         // Then
         assertThat(actualText).isEqualTo(expectedText);
