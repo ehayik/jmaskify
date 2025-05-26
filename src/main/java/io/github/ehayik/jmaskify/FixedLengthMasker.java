@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 public final class FixedLengthMasker implements Masker<String> {
 
     private final int fixedLength;
+    private final char substitutionChar;
 
     public static Builder builder() {
         return new Builder();
@@ -28,7 +29,7 @@ public final class FixedLengthMasker implements Masker<String> {
      */
     @Deprecated
     public FixedLengthMasker() {
-        this(0);
+        this(0, DEF_SUBSTITUTION_CHAR);
     }
 
     /**
@@ -54,10 +55,10 @@ public final class FixedLengthMasker implements Masker<String> {
 
         if (fixedLength <= 0) {
             log.debug("Fixed length is less than or equal to zero. Using value length as fixed length.");
-            return repeat(DEF_SUBSTITUTION_CHAR, value.length());
+            return repeat(substitutionChar, value.length());
         }
 
-        return repeat(DEF_SUBSTITUTION_CHAR, fixedLength);
+        return repeat(substitutionChar, fixedLength);
     }
 
     /**
@@ -65,7 +66,8 @@ public final class FixedLengthMasker implements Masker<String> {
      */
     public static final class Builder implements MaskerBuilder<String, FixedLengthMasker> {
 
-        private int fixedLength = 0;
+        private int fixedLength;
+        private char substitutionChar = DEF_SUBSTITUTION_CHAR;
 
         /**
          * Sets the fixed length for the masker.
@@ -80,6 +82,11 @@ public final class FixedLengthMasker implements Masker<String> {
             return this;
         }
 
+        public Builder withSubstitutionChar(char substitutionChar) {
+            this.substitutionChar = substitutionChar;
+            return this;
+        }
+
         /**
          * Builds and returns a new {@link FixedLengthMasker} instance with the configured settings.
          *
@@ -87,7 +94,7 @@ public final class FixedLengthMasker implements Masker<String> {
          */
         @Override
         public FixedLengthMasker build() {
-            return new FixedLengthMasker(fixedLength);
+            return new FixedLengthMasker(fixedLength, substitutionChar);
         }
     }
 }
