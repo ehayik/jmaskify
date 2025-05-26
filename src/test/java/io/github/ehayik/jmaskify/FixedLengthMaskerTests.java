@@ -14,7 +14,7 @@ class FixedLengthMaskerTests {
     @ValueSource(strings = {"", " ", "   ", "Hello World!"})
     void shouldMaskStringToFixedLength(String text) {
         // Given
-        var masker = Masker.fixedLength(4);
+        var masker = Masker.fixedLength().withFixedLength(4);
 
         // When
         var actualText = masker.apply(text);
