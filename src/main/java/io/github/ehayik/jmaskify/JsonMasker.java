@@ -249,7 +249,21 @@ public final class JsonMasker implements Masker<String> {
          * @throws NullPointerException if the {@code properties} argument is {@code null}
          */
         public Builder withProperties(@NonNull String... properties) {
-            return withProperties(new FixedLengthMasker(), properties);
+            return withProperties(FixedLengthMasker.builder().build(), properties);
+        }
+
+        /**
+         * Adds properties to be masked with the masker created by the provided {@link MaskerBuilder}.
+         *
+         * @param <S> the type of masker created by the builder
+         * @param maskerBuilder the builder that will create the masker to be applied to the given properties
+         * @param properties the JSON property names to be masked
+         * @return the current {@link Builder} instance for chaining
+         * @throws NullPointerException if either {@code masker} or {@code properties} is {@code null}
+         */
+        public <S extends Masker<String>> Builder withProperties(
+                @NonNull MaskerBuilder<String, S> maskerBuilder, @NonNull String... properties) {
+            return withProperties(Set.of(properties), maskerBuilder.build());
         }
 
         /**
@@ -272,7 +286,22 @@ public final class JsonMasker implements Masker<String> {
          * @throws NullPointerException if the {@code properties} argument is {@code null}
          */
         public Builder withProperties(@NonNull Set<String> properties) {
-            return withProperties(properties, new FixedLengthMasker());
+            return withProperties(properties, FixedLengthMasker.builder().build());
+        }
+
+        /**
+         * Adds properties to be masked with the masker created by the provided {@link MaskerBuilder}.
+         *
+         * @param <S> the type of masker created by the builder
+         * @param properties a {@link Set} of JSON property names to be masked
+         * @param maskerBuilder the builder that will create the masker to be applied to the given properties
+         * @return the current {@link Builder} instance for chaining
+         * @throws NullPointerException if either {@code masker} or {@code properties} is {@code null}
+         */
+        public <S extends Masker<String>> Builder withProperties(
+                @NonNull Set<String> properties, @NonNull MaskerBuilder<String, S> maskerBuilder) {
+            withProperties(properties, maskerBuilder.build());
+            return this;
         }
 
         /**
@@ -296,7 +325,22 @@ public final class JsonMasker implements Masker<String> {
          * @throws NullPointerException if the {@code property} argument is {@code null}
          */
         public Builder withProperty(@NonNull String property) {
-            return withProperty(property, new FixedLengthMasker());
+            return withProperty(property, FixedLengthMasker.builder().build());
+        }
+
+        /**
+         * Adds a single property to be masked with the masker created by the provided {@link MaskerBuilder}..
+         *
+         * @param <S> the type of masker created by the builder
+         * @param property the JSON property name to be masked
+         * @param maskerBuilder the builder that will create the masker to be applied to the given properties
+         * @return the current {@link Builder} instance for chaining
+         * @throws NullPointerException if either {@code masker} or {@code property} is {@code null}
+         */
+        public <S extends Masker<String>> Builder withProperty(
+                @NonNull String property, @NonNull MaskerBuilder<String, S> maskerBuilder) {
+            withProperty(property, maskerBuilder.build());
+            return this;
         }
 
         /**
