@@ -82,6 +82,13 @@ public final class FixedLengthMasker implements Masker<String> {
             return this;
         }
 
+        /**
+         * Sets the substitution character for the masker.
+         *
+         * @param substitutionChar the character to use for masking.
+         *                        If not specified, defaults to {@link Masker#DEF_SUBSTITUTION_CHAR}.
+         * @return this builder for method chaining
+         */
         public Builder withSubstitutionChar(char substitutionChar) {
             this.substitutionChar = substitutionChar;
             return this;
