@@ -3,6 +3,7 @@ package io.github.ehayik.jmaskify;
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import net.datafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -13,7 +14,7 @@ class FixedLengthMaskerTests {
     @ValueSource(strings = {"", " ", "   ", "Hello World!"})
     void shouldMaskStringToFixedLength(String text) {
         // Given
-        var masker = Masker.fixedLength(4);
+        var masker = Masker.fixedLength().withFixedLength(4);
 
         // When
         var actualText = masker.apply(text);
@@ -43,5 +44,18 @@ class FixedLengthMaskerTests {
 
         // When - Then
         assertThat(masker.apply(null)).isNull();
+    }
+
+    @Test
+    void shouldMaskStringWithCustomSubstitution() {
+        // Given
+        var text = new Faker().finance().iban();
+        var expectedText = repeat("■", text.length());
+
+        // When
+        var actualText = Masker.fixedLength().withSubstitution('■').apply(text);
+
+        // Then
+        assertThat(actualText).isEqualTo(expectedText);
     }
 }
