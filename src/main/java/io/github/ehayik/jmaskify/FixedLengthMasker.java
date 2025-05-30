@@ -3,7 +3,6 @@ package io.github.ehayik.jmaskify;
 import static org.apache.commons.lang3.StringUtils.repeat;
 
 import jakarta.annotation.Nullable;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -14,11 +13,19 @@ import lombok.extern.slf4j.Slf4j;
  *      This class is immutable and thread-safe.
  */
 @Slf4j
-@RequiredArgsConstructor
 public final class FixedLengthMasker implements Masker<String> {
 
     private final int fixedLength;
     private final char substitution;
+    private final int prefixLength;
+    private final int suffixLength;
+
+    public FixedLengthMasker(int fixedLength, char substitution, int prefixLength, int suffixLength) {
+        this.fixedLength = fixedLength;
+        this.substitution = substitution;
+        this.prefixLength = prefixLength;
+        this.suffixLength = suffixLength;
+    }
 
     public static Builder builder() {
         return new Builder();
@@ -29,7 +36,7 @@ public final class FixedLengthMasker implements Masker<String> {
      */
     @Deprecated
     public FixedLengthMasker() {
-        this(0, DEF_SUBSTITUTION_CHAR);
+        this(0, DEF_SUBSTITUTION_CHAR, 0, 0);
     }
 
     /**
@@ -53,12 +60,50 @@ public final class FixedLengthMasker implements Masker<String> {
             return null;
         }
 
+        if (prefixLength > 0 || suffixLength > 0) {
+            return applyWithSuffixAndPrefixPreservation(value);
+        }
+
         if (fixedLength <= 0) {
             log.debug("Fixed length is less than or equal to zero. Using value length as fixed length.");
             return repeat(substitution, value.length());
         }
 
         return repeat(substitution, fixedLength);
+    }
+
+    private String applyWithSuffixAndPrefixPreservation(String value) {
+        var result = new StringBuilder();
+
+        // Add prefix if specified and not exceeding the value length
+        var effectivePrefixLength = Math.min(prefixLength, value.length());
+
+        if (effectivePrefixLength > 0) {
+            result.append(value, 0, effectivePrefixLength);
+        }
+
+        // Calculate the middle section to be masked
+        var effectiveSuffixLength = Math.min(suffixLength, value.length() - effectivePrefixLength);
+
+        // Use fixed length for the middle section if specified, otherwise calculate based on the original string
+        int middleLength;
+
+        if (fixedLength > 0) {
+            middleLength = fixedLength;
+        } else {
+            middleLength = value.length() - effectivePrefixLength - effectiveSuffixLength;
+        }
+
+        if (middleLength > 0) {
+            result.append(repeat(substitution, middleLength));
+        }
+
+        // Add suffix if specified and not exceeding the remaining value length
+        if (effectiveSuffixLength > 0) {
+            result.append(value.substring(value.length() - effectiveSuffixLength));
+        }
+
+        return result.toString();
     }
 
     /**
@@ -68,6 +113,8 @@ public final class FixedLengthMasker implements Masker<String> {
 
         private int fixedLength;
         private char substitution = DEF_SUBSTITUTION_CHAR;
+        private int prefixLength;
+        private int suffixLength;
 
         /**
          * Sets the fixed length for the masker.
@@ -94,6 +141,16 @@ public final class FixedLengthMasker implements Masker<String> {
             return this;
         }
 
+        public Builder preserveSuffix(int suffixLength) {
+            this.suffixLength = suffixLength;
+            return this;
+        }
+
+        public Builder preservePrefix(int prefixLength) {
+            this.prefixLength = prefixLength;
+            return this;
+        }
+
         /**
          * Builds and returns a new {@link FixedLengthMasker} instance with the configured settings.
          *
@@ -101,7 +158,7 @@ public final class FixedLengthMasker implements Masker<String> {
          */
         @Override
         public FixedLengthMasker build() {
-            return new FixedLengthMasker(fixedLength, substitution);
+            return new FixedLengthMasker(fixedLength, substitution, prefixLength, suffixLength);
         }
     }
 }

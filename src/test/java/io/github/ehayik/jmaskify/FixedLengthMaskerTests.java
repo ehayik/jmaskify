@@ -3,9 +3,12 @@ package io.github.ehayik.jmaskify;
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.stream.Stream;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class FixedLengthMaskerTests {
@@ -57,5 +60,52 @@ class FixedLengthMaskerTests {
 
         // Then
         assertThat(actualText).isEqualTo(expectedText);
+    }
+
+    @ParameterizedTest
+    @MethodSource("preservationTestCases")
+    void shouldMaskStringWithSectionsPreservation(Masker<String> masker, String expectedText) {
+        // Given
+        var text = "123-45-6789";
+
+        // When
+        var actualText = masker.apply(text);
+
+        // Then
+        assertThat(actualText).isEqualTo(expectedText);
+    }
+
+    private static Stream<Arguments> preservationTestCases() {
+        return Stream.of(
+                // pre-configured masker, expectedText
+                // Preserving suffix sections with fixed length
+                Arguments.of(
+                        Masker.fixedLength()
+                                .withFixedLength(4)
+                                .preservePrefix(2)
+                                .preserveSuffix(3)
+                                .build(),
+                        "12****789"),
+                // Preserving suffix and prefix with default length
+                Arguments.of(
+                        Masker.fixedLength().preservePrefix(2).preserveSuffix(3).build(), "12******789"),
+                // Preserving suffix with default length
+                Arguments.of(Masker.fixedLength().preserveSuffix(3).build(), "********789"),
+
+                // Preserving suffix with fixed length
+                Arguments.of(
+                        Masker.fixedLength()
+                                .preserveSuffix(3)
+                                .withFixedLength(4)
+                                .build(),
+                        "****789"),
+                // Preserving prefix with default length
+                Arguments.of(Masker.fixedLength().preservePrefix(2).build(), "12*********"),
+                // Preserving prefix with fixed length
+                Arguments.of(                        Masker.fixedLength()
+                                .preservePrefix(2)
+                                .withFixedLength(4)
+                                .build(),
+                        "12****"));
     }
 }
