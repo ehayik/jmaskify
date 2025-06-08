@@ -80,8 +80,7 @@ class FixedLengthMaskerTests {
                 // pre-configured masker, expectedText
                 // Preserving suffix sections with fixed length
                 Arguments.of(
-                        Masker.fixedLength()
-                                .withFixedLength(4)
+                        Masker.fixedLength(4)
                                 .preservePrefix(2)
                                 .preserveSuffix(3)
                                 .build(),

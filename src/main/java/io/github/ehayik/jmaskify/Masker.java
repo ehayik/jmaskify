@@ -115,11 +115,9 @@ public sealed interface Masker<T> extends Function<T, String>
      * @param fixedLength the length to which the input string should be masked.
      *                    If the value is zero or negative, the input string is masked to the same length as the input string.
      * @return a Masker that replaces the input string with a fixed number of substitution characters.
-     * @deprecated Use {@link #fixedLength()}{@code .withFixedLength(int)} instead.
      */
-    @Deprecated
-    static Masker<String> fixedLength(int fixedLength) {
-        return fixedLength().withFixedLength(fixedLength).build();
+    static FixedLengthMasker.Builder fixedLength(int fixedLength) {
+        return fixedLength().withFixedLength(fixedLength);
     }
 
     /**
