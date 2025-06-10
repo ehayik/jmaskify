@@ -107,4 +107,33 @@ class FixedLengthMaskerTests {
                                 .build(),
                         "12****"));
     }
+
+    @ParameterizedTest
+    @MethodSource("ignoringCharTestCases")
+    void shouldMaskStringIgnoringSpecifiedChar(Masker<String> masker, String expectedText) {
+        // Given
+        var text = "123-45-6789";
+
+        // When
+        var actualText = masker.apply(text);
+
+        // Then
+        assertThat(actualText).isEqualTo(expectedText);
+    }
+
+    private static Stream<Arguments> ignoringCharTestCases() {
+        return Stream.of(
+                Arguments.of(Masker.fixedLength()
+                        .ignore('-')
+                        .build(), "***-**-****"),
+                Arguments.of(Masker.fixedLength()
+                        .preservePrefix(3)
+                        .ignore('-')
+                        .build(), "123-**-****"),
+                Arguments.of(Masker.fixedLength()
+                        .preserveSuffix(4)
+                        .ignore('-')
+                        .build(), "***-**-6789")
+        );
+    }
 }

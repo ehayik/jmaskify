@@ -19,12 +19,14 @@ public final class FixedLengthMasker implements Masker<String> {
     private final char substitution;
     private final int prefixLength;
     private final int suffixLength;
+    private final char charToIgnore;
 
-    public FixedLengthMasker(int fixedLength, char substitution, int prefixLength, int suffixLength) {
+    public FixedLengthMasker(int fixedLength, char substitution, int prefixLength, int suffixLength, char charToIgnore) {
         this.fixedLength = fixedLength;
         this.substitution = substitution;
         this.prefixLength = prefixLength;
         this.suffixLength = suffixLength;
+        this.charToIgnore = charToIgnore;
     }
 
     public static Builder builder() {
@@ -36,7 +38,7 @@ public final class FixedLengthMasker implements Masker<String> {
      */
     @Deprecated
     public FixedLengthMasker() {
-        this(0, DEF_SUBSTITUTION_CHAR, 0, 0);
+        this(0, DEF_SUBSTITUTION_CHAR, 0, 0, '\0');
     }
 
     /**
@@ -60,6 +62,10 @@ public final class FixedLengthMasker implements Masker<String> {
             return null;
         }
 
+        if (charToIgnore != '\0') {
+            return applyWithCharToIgnore(value);
+        }
+
         if (prefixLength > 0 || suffixLength > 0) {
             return applyWithSuffixAndPrefixPreservation(value);
         }
@@ -70,6 +76,55 @@ public final class FixedLengthMasker implements Masker<String> {
         }
 
         return repeat(substitution, fixedLength);
+    }
+
+    private String applyWithCharToIgnore(String value) {
+        if (prefixLength > 0 || suffixLength > 0) {
+            return applyWithSuffixAndPrefixPreservationAndCharToIgnore(value);
+        }
+
+        var  result = new StringBuilder();
+
+        for (char c : value.toCharArray()) {
+            if (c == charToIgnore) {
+                result.append(c);
+            } else {
+                result.append(substitution);
+            }
+        }
+        return result.toString();
+    }
+
+    private String applyWithSuffixAndPrefixPreservationAndCharToIgnore(String value) {
+        var result = new StringBuilder();
+
+        // Add prefix if specified and not exceeding the value length
+        var effectivePrefixLength = Math.min(prefixLength, value.length());
+
+        if (effectivePrefixLength > 0) {
+            result.append(value, 0, effectivePrefixLength);
+        }
+
+        // Calculate the middle section to be masked
+        var effectiveSuffixLength = Math.min(suffixLength, value.length() - effectivePrefixLength);
+        int middleEnd = value.length() - effectiveSuffixLength;
+
+        // Mask the middle section, preserving the character to ignore
+        for (int i = effectivePrefixLength; i < middleEnd; i++) {
+            char c = value.charAt(i);
+            if (c == charToIgnore) {
+                result.append(c);
+            } else {
+                result.append(substitution);
+            }
+        }
+
+        // Add suffix if specified and not exceeding the remaining value length
+        if (effectiveSuffixLength > 0) {
+            result.append(value.substring(value.length() - effectiveSuffixLength));
+        }
+
+        return result.toString();
     }
 
     private String applyWithSuffixAndPrefixPreservation(String value) {
@@ -115,6 +170,7 @@ public final class FixedLengthMasker implements Masker<String> {
         private char substitution = DEF_SUBSTITUTION_CHAR;
         private int prefixLength;
         private int suffixLength;
+        private char charToIgnore = '\0';
 
         /**
          * Sets the fixed length for the masker.
@@ -152,13 +208,24 @@ public final class FixedLengthMasker implements Masker<String> {
         }
 
         /**
+         * Sets the character to ignore during masking.
+         *
+         * @param charToIgnore the character that should be preserved in the output
+         * @return this builder for method chaining
+         */
+        public Builder ignore(char charToIgnore) {
+            this.charToIgnore = charToIgnore;
+            return this;
+        }
+
+        /**
          * Builds and returns a new {@link FixedLengthMasker} instance with the configured settings.
          *
          * @return a new {@link FixedLengthMasker} instance
          */
         @Override
         public FixedLengthMasker build() {
-            return new FixedLengthMasker(fixedLength, substitution, prefixLength, suffixLength);
+            return new FixedLengthMasker(fixedLength, substitution, prefixLength, suffixLength, charToIgnore);
         }
     }
 }
