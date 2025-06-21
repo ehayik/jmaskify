@@ -2,7 +2,6 @@ package io.github.ehayik.jmaskify;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -10,6 +9,7 @@ import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Provides functionality to mask portions of a string based on specified multiline regular expressions.

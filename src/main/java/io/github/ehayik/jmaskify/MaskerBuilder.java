@@ -1,7 +1,7 @@
 package io.github.ehayik.jmaskify;
 
-import jakarta.annotation.Nullable;
 import java.util.function.Function;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Common interface for all masker builders, providing a standardized way
@@ -27,6 +27,11 @@ public interface MaskerBuilder<T, M extends Masker<T>> {
      */
     @Nullable
     default String apply(@Nullable T value) {
+
+        if (value == null) {
+            return null;
+        }
+
         return build().apply(value);
     }
 

@@ -3,9 +3,9 @@ package io.github.ehayik.jmaskify;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.codec.binary.Base64.encodeBase64String;
 
-import jakarta.annotation.Nullable;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Provides Base64 encoding as a masking strategy for string values.
