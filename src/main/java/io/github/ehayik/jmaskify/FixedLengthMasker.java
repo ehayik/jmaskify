@@ -3,6 +3,7 @@ package io.github.ehayik.jmaskify;
 import static org.apache.commons.lang3.StringUtils.repeat;
 
 import jakarta.annotation.Nullable;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
  *      This class is immutable and thread-safe.
  */
 @Slf4j
+@RequiredArgsConstructor
 public final class FixedLengthMasker implements Masker<String> {
 
     private final int fixedLength;
@@ -20,14 +22,6 @@ public final class FixedLengthMasker implements Masker<String> {
     private final int prefixLength;
     private final int suffixLength;
     private final char charToIgnore;
-
-    public FixedLengthMasker(int fixedLength, char substitution, int prefixLength, int suffixLength, char charToIgnore) {
-        this.fixedLength = fixedLength;
-        this.substitution = substitution;
-        this.prefixLength = prefixLength;
-        this.suffixLength = suffixLength;
-        this.charToIgnore = charToIgnore;
-    }
 
     public static Builder builder() {
         return new Builder();
