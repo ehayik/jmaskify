@@ -101,7 +101,8 @@ class FixedLengthMaskerTests {
                 // Preserving prefix with default length
                 Arguments.of(Masker.fixedLength().preservePrefix(2).build(), "12*********"),
                 // Preserving prefix with fixed length
-                Arguments.of(                        Masker.fixedLength()
+                Arguments.of(
+                        Masker.fixedLength()
                                 .preservePrefix(2)
                                 .withFixedLength(4)
                                 .build(),
@@ -123,17 +124,8 @@ class FixedLengthMaskerTests {
 
     private static Stream<Arguments> ignoringCharTestCases() {
         return Stream.of(
-                Arguments.of(Masker.fixedLength()
-                        .ignore('-')
-                        .build(), "***-**-****"),
-                Arguments.of(Masker.fixedLength()
-                        .preservePrefix(3)
-                        .ignore('-')
-                        .build(), "123-**-****"),
-                Arguments.of(Masker.fixedLength()
-                        .preserveSuffix(4)
-                        .ignore('-')
-                        .build(), "***-**-6789")
-        );
+                Arguments.of(Masker.fixedLength().ignore('-').build(), "***-**-****"),
+                Arguments.of(Masker.fixedLength().preservePrefix(3).ignore('-').build(), "123-**-****"),
+                Arguments.of(Masker.fixedLength().preserveSuffix(4).ignore('-').build(), "***-**-6789"));
     }
 }

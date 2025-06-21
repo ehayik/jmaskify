@@ -1,7 +1,6 @@
 package io.github.ehayik.jmaskify;
 
 import java.util.function.Function;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -16,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 final class DelegateMasker<T> implements Masker<T> {
 
-    @NonNull
     private final Function<T, String> delegate;
 
     @Override

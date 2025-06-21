@@ -2,9 +2,9 @@ package io.github.ehayik.jmaskify;
 
 import static org.apache.commons.lang3.StringUtils.repeat;
 
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Replaces the input string with a fixed number of substitution characters.
@@ -77,7 +77,7 @@ public final class FixedLengthMasker implements Masker<String> {
             return applyWithSuffixAndPrefixPreservationAndCharToIgnore(value);
         }
 
-        var  result = new StringBuilder();
+        var result = new StringBuilder();
 
         for (char c : value.toCharArray()) {
             if (c == charToIgnore) {

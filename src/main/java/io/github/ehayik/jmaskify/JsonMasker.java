@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.Nullable;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -17,9 +16,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Responsible for masking specified fields in a JSON string using customizable masking strategies.
@@ -70,10 +69,8 @@ public final class JsonMasker implements Masker<String> {
 
     private final boolean prettify;
 
-    @NonNull
     private final Map<String, Masker<String>> properties;
 
-    @NonNull
     private final ObjectMapper objectMapper;
 
     public static Builder builder() {
@@ -237,8 +234,9 @@ public final class JsonMasker implements Masker<String> {
     @SuppressWarnings("NullAway.Init")
     public static final class Builder implements MaskerBuilder<String, JsonMasker> {
 
-        private boolean prettify;
+        @Nullable
         private ObjectMapper objectMapper;
+        private boolean prettify;
         private final Map<String, Masker<String>> properties = new HashMap<>();
 
         /**
@@ -248,7 +246,7 @@ public final class JsonMasker implements Masker<String> {
          * @return the current {@link Builder} instance for chaining
          * @throws NullPointerException if the {@code properties} argument is {@code null}
          */
-        public Builder withProperties(@NonNull String... properties) {
+        public Builder withProperties(String... properties) {
             return withProperties(FixedLengthMasker.builder().build(), properties);
         }
 
@@ -262,7 +260,7 @@ public final class JsonMasker implements Masker<String> {
          * @throws NullPointerException if either {@code masker} or {@code properties} is {@code null}
          */
         public <S extends Masker<String>> Builder withProperties(
-                @NonNull MaskerBuilder<String, S> maskerBuilder, @NonNull String... properties) {
+                MaskerBuilder<String, S> maskerBuilder, String... properties) {
             return withProperties(Set.of(properties), maskerBuilder.build());
         }
 
@@ -274,7 +272,7 @@ public final class JsonMasker implements Masker<String> {
          * @return the current {@link Builder} instance for chaining
          * @throws NullPointerException if either {@code masker} or {@code properties} is {@code null}
          */
-        public Builder withProperties(@NonNull Masker<String> masker, @NonNull String... properties) {
+        public Builder withProperties(Masker<String> masker, String... properties) {
             return withProperties(Set.of(properties), masker);
         }
 
@@ -285,7 +283,7 @@ public final class JsonMasker implements Masker<String> {
          * @return the current {@link Builder} instance for chaining
          * @throws NullPointerException if the {@code properties} argument is {@code null}
          */
-        public Builder withProperties(@NonNull Set<String> properties) {
+        public Builder withProperties(Set<String> properties) {
             return withProperties(properties, FixedLengthMasker.builder().build());
         }
 
@@ -299,7 +297,7 @@ public final class JsonMasker implements Masker<String> {
          * @throws NullPointerException if either {@code masker} or {@code properties} is {@code null}
          */
         public <S extends Masker<String>> Builder withProperties(
-                @NonNull Set<String> properties, @NonNull MaskerBuilder<String, S> maskerBuilder) {
+                Set<String> properties, MaskerBuilder<String, S> maskerBuilder) {
             withProperties(properties, maskerBuilder.build());
             return this;
         }
@@ -312,7 +310,7 @@ public final class JsonMasker implements Masker<String> {
          * @return the current {@link Builder} instance for chaining
          * @throws NullPointerException if either {@code masker} or {@code properties} is {@code null}
          */
-        public Builder withProperties(@NonNull Set<String> properties, @NonNull Masker<String> masker) {
+        public Builder withProperties(Set<String> properties, Masker<String> masker) {
             properties.forEach(property -> withProperty(property, masker));
             return this;
         }
@@ -324,7 +322,7 @@ public final class JsonMasker implements Masker<String> {
          * @return the current {@link Builder} instance for chaining
          * @throws NullPointerException if the {@code property} argument is {@code null}
          */
-        public Builder withProperty(@NonNull String property) {
+        public Builder withProperty(String property) {
             return withProperty(property, FixedLengthMasker.builder().build());
         }
 
@@ -338,7 +336,7 @@ public final class JsonMasker implements Masker<String> {
          * @throws NullPointerException if either {@code masker} or {@code property} is {@code null}
          */
         public <S extends Masker<String>> Builder withProperty(
-                @NonNull String property, @NonNull MaskerBuilder<String, S> maskerBuilder) {
+                String property, MaskerBuilder<String, S> maskerBuilder) {
             withProperty(property, maskerBuilder.build());
             return this;
         }
@@ -351,7 +349,7 @@ public final class JsonMasker implements Masker<String> {
          * @return the current {@link Builder} instance for chaining
          * @throws NullPointerException if either {@code masker} or {@code property} is {@code null}
          */
-        public Builder withProperty(@NonNull String property, @NonNull Masker<String> masker) {
+        public Builder withProperty(String property, Masker<String> masker) {
             properties.put(property, masker);
             return this;
         }
@@ -363,7 +361,7 @@ public final class JsonMasker implements Masker<String> {
          * @return the current {@link Builder} instance for chaining
          * @throws NullPointerException if the {@code objectMapper} argument is {@code null}
          */
-        public Builder withObjectMapper(@NonNull ObjectMapper objectMapper) {
+        public Builder withObjectMapper(ObjectMapper objectMapper) {
             this.objectMapper = objectMapper;
             return this;
         }
