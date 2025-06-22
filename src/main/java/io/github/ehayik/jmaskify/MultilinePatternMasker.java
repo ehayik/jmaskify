@@ -209,11 +209,6 @@ public final class MultilinePatternMasker implements Masker<String> {
          * @throws NullPointerException if {@code maskerBuilder} is {@code null}
          */
         public Builder withMaskPattern(String pattern, MaskerBuilder<String, ?> maskerBuilder) {
-
-            if (isBlank(pattern)) {
-                throw new IllegalArgumentException("Pattern cannot be blank");
-            }
-
             return withMaskPattern(pattern, maskerBuilder.build());
         }
 
