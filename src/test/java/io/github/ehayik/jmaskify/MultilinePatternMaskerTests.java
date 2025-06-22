@@ -77,7 +77,7 @@ class MultilinePatternMaskerTests {
     @Test
     void shouldFailsWhenNoPatternAddedToBuilder() {
         assertThatThrownBy(() -> Masker.multilinePattern().apply("Hello World!"))
-                .isInstanceOf(MaskingException.class)
+                .isInstanceOf(IllegalStateException.class)
                 .hasMessage("At least one mask pattern must be specified. Use withMaskPattern() to add patterns.");
     }
 

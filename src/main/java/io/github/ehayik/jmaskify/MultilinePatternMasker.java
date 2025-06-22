@@ -269,8 +269,8 @@ public final class MultilinePatternMasker implements Masker<String> {
         @Override
         public MultilinePatternMasker build() {
 
-            if (defaultMaskerPatterns.isEmpty()) {
-                throw new MaskingException(
+            if (defaultMaskerPatterns.isEmpty() && customMaskerPatterns.isEmpty()) {
+                throw new IllegalStateException(
                         "At least one mask pattern must be specified. Use withMaskPattern() to add patterns.");
             }
 
