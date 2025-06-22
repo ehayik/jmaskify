@@ -153,7 +153,7 @@ public final class MultilinePatternMasker implements Masker<String> {
     public static final class Builder implements MaskerBuilder<String, MultilinePatternMasker> {
 
         private char substitution = DEF_SUBSTITUTION_CHAR;
-        private final List<String> defaultMaskerPatterns = new ArrayList<>();
+        private final Set<String> defaultMaskerPatterns = new HashSet<>();
         private final Map<String, Masker<String>> customMaskerPatterns = new HashMap<>();
 
         /**
