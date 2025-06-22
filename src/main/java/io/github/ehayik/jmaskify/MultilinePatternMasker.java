@@ -189,7 +189,11 @@ public final class MultilinePatternMasker implements Masker<String> {
                 throw new IllegalArgumentException("Pattern cannot be blank");
             }
 
-            //            defaultMaskerPatterns.add(pattern);
+            if (defaultMaskerPatterns.contains(pattern)) {
+                throw new IllegalArgumentException(
+                        "Duplicate pattern detected: '%s' is already registered.".formatted(pattern));
+            }
+
             customMaskerPatterns.put(pattern, masker);
             return this;
         }
