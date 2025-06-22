@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -91,10 +92,8 @@ public final class MultilinePatternMasker implements Masker<String> {
 
         var result = text;
 
-        for (Map.Entry<Pattern, Masker<String>> entry : customMaskerPatterns.entrySet()) {
-            var pattern = entry.getKey();
-            var masker = entry.getValue();
-            result = applyCustomMaskerPattern(pattern, masker, result);
+        for (var entry : customMaskerPatterns.entrySet()) {
+            result = applyCustomMaskerPattern(entry.getKey(), entry.getValue(), result);
         }
 
         return result;
@@ -289,7 +288,7 @@ public final class MultilinePatternMasker implements Masker<String> {
 
         private Map<Pattern, Masker<String>> compileCustomMaskerPatterns() {
             return customMaskerPatterns.entrySet().stream()
-                    .collect(toMap(entry -> Pattern.compile(entry.getKey()), Map.Entry::getValue));
+                    .collect(toMap(entry -> Pattern.compile(entry.getKey()), Entry::getValue));
         }
     }
 }
