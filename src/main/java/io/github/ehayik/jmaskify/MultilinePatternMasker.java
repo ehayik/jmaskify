@@ -1,10 +1,11 @@
 package io.github.ehayik.jmaskify;
 
+import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +51,7 @@ public final class MultilinePatternMasker implements Masker<String> {
 
     private final char substitution;
     private final Pattern multilinePattern;
+    private final Map<Pattern, Masker<String>> customMaskerPatterns;
 
     public static MultilinePatternMasker.Builder builder() {
         return new MultilinePatternMasker.Builder();
@@ -74,16 +76,60 @@ public final class MultilinePatternMasker implements Masker<String> {
             return null;
         }
 
+        return applyMultilinePattern(applyCustomMaskerPatterns(text));
+    }
+
+    private String applyCustomMaskerPatterns(String text) {
+
+        if (customMaskerPatterns.isEmpty()) {
+            log.debug("No custom maskers were specified.");
+            return text;
+        }
+
+        var result = text;
+
+        for (Map.Entry<Pattern, Masker<String>> entry : customMaskerPatterns.entrySet()) {
+            var pattern = entry.getKey();
+            var masker = entry.getValue();
+
+            // Compile the pattern
+            var customMatcher = pattern.matcher(result);
+
+            var customSb = new StringBuilder();
+
+            // Find and replace each match
+            while (customMatcher.find()) {
+                var matched = customMatcher.group(0);
+                var masked = masker.apply(matched);
+                // Quote the replacement string to avoid issues with special characters
+                customMatcher.appendReplacement(customSb, Matcher.quoteReplacement(masked));
+            }
+
+            customMatcher.appendTail(customSb);
+
+            // Update the result for the next pattern
+            result = customSb.toString();
+        }
+
+        return result;
+    }
+
+    private String applyMultilinePattern(String text) {
         var sb = new StringBuilder(text);
         var matcher = multilinePattern.matcher(sb);
 
         while (matcher.find()) {
-            IntStream.rangeClosed(1, matcher.groupCount()).forEach(group -> {
-                if (matcher.group(group) != null) {
-                    IntStream.range(matcher.start(group), matcher.end(group))
-                            .forEach(i -> sb.setCharAt(i, substitution));
-                }
-            });
+            // If no groups were captured, mask the entire match
+            if (matcher.groupCount() == 0) {
+                IntStream.range(matcher.start(), matcher.end()).forEach(i -> sb.setCharAt(i, substitution));
+            } else {
+                IntStream.rangeClosed(1, matcher.groupCount()).forEach(group -> {
+                    if (matcher.group(group) != null) {
+                        IntStream.range(matcher.start(group), matcher.end(group))
+                                .forEach(i -> sb.setCharAt(i, substitution));
+                    }
+                });
+            }
         }
 
         return sb.toString();
@@ -99,7 +145,8 @@ public final class MultilinePatternMasker implements Masker<String> {
     public static final class Builder implements MaskerBuilder<String, MultilinePatternMasker> {
 
         private char substitution = DEF_SUBSTITUTION_CHAR;
-        private final List<String> maskPatterns = new ArrayList<>();
+        private final List<String> defaultMaskerPatterns = new ArrayList<>();
+        private final Map<String, Masker<String>> customMaskerPatterns = new HashMap<>();
 
         /**
          * Adds a new regular expression pattern to the list of patterns that will
@@ -115,8 +162,47 @@ public final class MultilinePatternMasker implements Masker<String> {
                 throw new IllegalArgumentException("Mask pattern cannot be blank");
             }
 
-            maskPatterns.add(maskPattern);
+            defaultMaskerPatterns.add(maskPattern);
             return this;
+        }
+
+        /**
+         * Adds a new regular expression pattern with a specific masking strategy.
+         *
+         * @param pattern the regular expression pattern used for matching sensitive data
+         * @param masker the masking strategy to apply to the matched pattern
+         * @return the builder instance for chaining method calls
+         * @throws IllegalArgumentException if {@code pattern} is {@code null} or blank
+         * @throws NullPointerException if {@code masker} is {@code null}
+         */
+        public Builder withMaskPattern(String pattern, Masker<String> masker) {
+
+            if (isBlank(pattern)) {
+                throw new IllegalArgumentException("Pattern cannot be blank");
+            }
+
+            defaultMaskerPatterns.add(pattern);
+            customMaskerPatterns.put(pattern, masker);
+            return this;
+        }
+
+        /**
+         * Adds a new regular expression pattern with a specific masking strategy builder.
+         * The builder will be built to get the actual masker.
+         *
+         * @param pattern the regular expression pattern used for matching sensitive data
+         * @param maskerBuilder the masking strategy builder to build and apply to the matched pattern
+         * @return the builder instance for chaining method calls
+         * @throws IllegalArgumentException if {@code pattern} is {@code null} or blank
+         * @throws NullPointerException if {@code maskerBuilder} is {@code null}
+         */
+        public Builder withMaskPattern(String pattern, MaskerBuilder<String, ?> maskerBuilder) {
+
+            if (isBlank(pattern)) {
+                throw new IllegalArgumentException("Pattern cannot be blank");
+            }
+
+            return withMaskPattern(pattern, maskerBuilder.build());
         }
 
         /**
@@ -176,12 +262,29 @@ public final class MultilinePatternMasker implements Masker<String> {
         @Override
         public MultilinePatternMasker build() {
 
-            if (maskPatterns.isEmpty()) {
-                throw new MaskingException("Mask patterns cannot be empty");
+            if (defaultMaskerPatterns.isEmpty()) {
+                throw new MaskingException(
+                        "At least one mask pattern must be specified. Use withMaskPattern() to add patterns.");
             }
 
-            var multilinePattern = Pattern.compile(String.join("|", maskPatterns), Pattern.MULTILINE);
-            return new MultilinePatternMasker(substitution, multilinePattern);
+            return new MultilinePatternMasker(substitution, compileMultilinePattern(), compileCustomMaskerPatterns());
+        }
+
+        private Pattern compileMultilinePattern() {
+            var multilinePattern = Pattern.compile(String.join("|", defaultMaskerPatterns), Pattern.MULTILINE);
+            var individualPatterns = Arrays.stream(multilinePattern.pattern().split("\\|", -1));
+
+            // Add patterns that don't have custom maskers
+            var patternsToMask = individualPatterns
+                    .filter(pattern -> !customMaskerPatterns.containsKey(pattern))
+                    .toList();
+
+            return Pattern.compile(String.join("|", patternsToMask));
+        }
+
+        private Map<Pattern, Masker<String>> compileCustomMaskerPatterns() {
+            return customMaskerPatterns.entrySet().stream()
+                    .collect(toMap(entry -> Pattern.compile(entry.getKey()), Map.Entry::getValue));
         }
     }
 }

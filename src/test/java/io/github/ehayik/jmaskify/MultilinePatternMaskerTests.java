@@ -78,7 +78,7 @@ class MultilinePatternMaskerTests {
     void shouldFailsWhenNoPatternAddedToBuilder() {
         assertThatThrownBy(() -> Masker.multilinePattern().apply("Hello World!"))
                 .isInstanceOf(MaskingException.class)
-                .hasMessage("Mask patterns cannot be empty");
+                .hasMessage("At least one mask pattern must be specified. Use withMaskPattern() to add patterns.");
     }
 
     @ParameterizedTest
@@ -89,5 +89,33 @@ class MultilinePatternMaskerTests {
                         Masker.multilinePattern().withMaskPattern(maskPattern).apply("Hello World!"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Mask pattern cannot be blank");
+    }
+
+    @Test
+    void shouldMaskWithConfiguredStrategies() {
+        // Given
+        var text =
+                """
+2023-05-15 INFO User john.doe@example.com logged in
+2023-05-15 INFO Processing payment with card 5431-8923-1203-5467
+2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
+""";
+        var expectedText =
+                """
+2023-05-15 INFO User ******************** logged in
+2023-05-15 INFO Processing payment with card XXXX-XXXX-XXXX-5467
+2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
+""";
+
+        var masker = Masker.multilinePattern()
+                .withMaskPattern("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b")
+                .withMaskPattern("\\b\\d{4}-\\d{4}-\\d{4}-\\d{4}\\b", Masker.creditCard('X'))
+                .build();
+
+        // When
+        var actualText = masker.apply(text);
+
+        // Then
+        assertThat(actualText).isEqualTo(expectedText);
     }
 }
