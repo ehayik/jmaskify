@@ -261,9 +261,7 @@ public final class MultilinePatternMasker implements Masker<String> {
          * based on the configured patterns and substitution character.
          *
          * @return a new {@link MultilinePatternMasker} instance
-         * @throws MaskingException if no patterns were added to the builder
-         * @implNote All the specified mask patterns will be combined into a single pattern
-         *          using the {@link Pattern#MULTILINE} flag.
+         * @throws IllegalStateException if no patterns were added to the builder
          */
         @Override
         public MultilinePatternMasker build() {
