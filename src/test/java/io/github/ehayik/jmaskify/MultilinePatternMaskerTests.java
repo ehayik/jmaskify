@@ -75,10 +75,77 @@ class MultilinePatternMaskerTests {
     }
 
     @Test
-    void shouldFailsWhenNoPatternAddedToBuilder() {
+    void shouldMaskWhenCustomAndDefaultMaskingStrategiesConfigured() {
+        // Given
+        var text =
+                """
+				2023-05-15 INFO User john.doe@example.com logged in
+				2023-05-15 INFO Processing payment with card 5431-8923-1203-5467
+				2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
+				2023-05-15 INFO IP Address: 192.168.1.1
+				""";
+
+        var expectedText =
+                """
+				2023-05-15 INFO User ******************** logged in
+				2023-05-15 INFO Processing payment with card XXXX-XXXX-XXXX-5467
+				2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
+				2023-05-15 INFO IP Address: ■■■.■■■.■.■
+				""";
+
+        var masker = Masker.multilinePattern()
+                .withMaskPattern("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b")
+                .withMaskPattern(
+                        "(\\d+\\.\\d+\\.\\d+\\.\\d+)",
+                        Masker.fixedLength().withSubstitution('■').ignore('.'))
+                .withMaskPattern("\\b\\d{4}-\\d{4}-\\d{4}-\\d{4}\\b", Masker.creditCard('X'))
+                .build();
+
+        // When
+        var actualText = masker.apply(text);
+
+        // Then
+        assertThat(actualText).isEqualTo(expectedText);
+    }
+
+    @Test
+    void shouldMaskWhenCustomMaskingStrategiesConfigured() {
+        // Given
+        var text =
+                """
+				2023-05-15 INFO User john.doe@example.com logged in
+				2023-05-15 INFO Processing payment with card 5431-8923-1203-5467
+				2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
+				2023-05-15 INFO IP Address: 192.168.1.1
+				""";
+
+        var expectedText =
+                """
+				2023-05-15 INFO User john.doe@example.com logged in
+				2023-05-15 INFO Processing payment with card XXXX-XXXX-XXXX-5467
+				2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
+				2023-05-15 INFO IP Address: ■■■.■■■.■.■
+				""";
+
+        var masker = Masker.multilinePattern()
+                .withMaskPattern(
+                        "(\\d+\\.\\d+\\.\\d+\\.\\d+)",
+                        Masker.fixedLength().withSubstitution('■').ignore('.'))
+                .withMaskPattern("\\b\\d{4}-\\d{4}-\\d{4}-\\d{4}\\b", Masker.creditCard('X'))
+                .build();
+
+        // When
+        var actualText = masker.apply(text);
+
+        // Then
+        assertThat(actualText).isEqualTo(expectedText);
+    }
+
+    @Test
+    void shouldFailsWhenNoPatternSpecified() {
         assertThatThrownBy(() -> Masker.multilinePattern().apply("Hello World!"))
-                .isInstanceOf(MaskingException.class)
-                .hasMessage("Mask patterns cannot be empty");
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("At least one masking pattern must be specified. Use withMaskPattern() to add patterns.");
     }
 
     @ParameterizedTest
@@ -86,8 +153,32 @@ class MultilinePatternMaskerTests {
     @ValueSource(strings = " ")
     void shouldFailsWhenMaskPatternIsBlank(String maskPattern) {
         assertThatThrownBy(() ->
-                        Masker.multilinePattern().withMaskPattern(maskPattern).apply("Hello World!"))
+                Masker.multilinePattern().withMaskPattern(maskPattern).apply("Hello World!"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Mask pattern cannot be blank");
+    }
+
+    @Test
+    void shouldFailsWhenDuplicateDefaultMaskingPatternSpecified() {
+        // Given
+        var masker = Masker.multilinePattern()
+                .withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)", Masker.fixedLength());
+
+        // When - Then
+        assertThatThrownBy(() -> masker.withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Duplicate pattern detected: '(\\d+\\.\\d+\\.\\d+\\.\\d+)' is already registered.");
+    }
+
+    @Test
+    void shouldFailsWhenCustomMaskingPatternSpecified() {
+        // Given
+        var masker = Masker.multilinePattern()
+                .withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)");
+
+        // When - Then
+        assertThatThrownBy(() -> masker.withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)", Masker.fixedLength()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Duplicate pattern detected: '(\\d+\\.\\d+\\.\\d+\\.\\d+)' is already registered.");
     }
 }

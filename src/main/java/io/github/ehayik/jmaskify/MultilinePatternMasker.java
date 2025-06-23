@@ -1,10 +1,12 @@
 package io.github.ehayik.jmaskify;
 
+import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.Map.Entry;
 import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +29,8 @@ import org.jspecify.annotations.Nullable;
  * // Create an instance of MultilinePatternMasker using the builder
  * MultilinePatternMasker masker = MultilinePatternMasker.builder()
  *     .withMaskPattern(usernamePattern)
- *     .withMaskPattern(ipAddressPattern)
- *     .withSubstitution('*')  // Define the substitution character
+ *     .withSubstitution('*')  // Define the substitution character for default masking strategy
+ *     .withMaskPattern(ipAddressPattern, Masker.fixedLength().withSubstitution('■').ignore('.'))
  *     .build();
  *
  * // Input string with sensitive data spread across multiple lines
@@ -40,7 +42,7 @@ import org.jspecify.annotations.Nullable;
  *
  * // Result: sensitive data is masked, i.e.,
  * // Line 1 with username=******* sensitive data.
- * // Line 2 ********** with more sensitive info.
+ * // Line 2 ■■■.■■■.■.■ with more sensitive info.
  * }
  * </pre>
  */
@@ -49,7 +51,11 @@ import org.jspecify.annotations.Nullable;
 public final class MultilinePatternMasker implements Masker<String> {
 
     private final char substitution;
+
+    @Nullable
     private final Pattern multilinePattern;
+
+    private final Map<Pattern, Masker<String>> customMaskerPatterns;
 
     public static MultilinePatternMasker.Builder builder() {
         return new MultilinePatternMasker.Builder();
@@ -74,16 +80,63 @@ public final class MultilinePatternMasker implements Masker<String> {
             return null;
         }
 
+        return applyMultilinePattern(applyCustomMaskerPatterns(text));
+    }
+
+    private String applyCustomMaskerPatterns(String text) {
+
+        if (customMaskerPatterns.isEmpty()) {
+            log.debug("No custom masker patterns were specified.");
+            return text;
+        }
+
+        var result = text;
+
+        for (var entry : customMaskerPatterns.entrySet()) {
+            result = applyCustomMaskerPattern(entry.getKey(), entry.getValue(), result);
+        }
+
+        return result;
+    }
+
+    private String applyCustomMaskerPattern(Pattern pattern, Masker<String> masker, String text) {
+        var matcher = pattern.matcher(text);
+        var sb = new StringBuilder();
+
+        // Find and replace each match
+        while (matcher.find()) {
+            var matched = matcher.group(0);
+            var masked = masker.apply(matched);
+            // Quote the replacement string to avoid issues with special characters
+            matcher.appendReplacement(sb, Matcher.quoteReplacement(masked));
+        }
+
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+
+    private String applyMultilinePattern(String text) {
+
+        if (multilinePattern == null) {
+            log.debug("No default masker patterns were specified.");
+            return text;
+        }
+
         var sb = new StringBuilder(text);
         var matcher = multilinePattern.matcher(sb);
 
         while (matcher.find()) {
-            IntStream.rangeClosed(1, matcher.groupCount()).forEach(group -> {
-                if (matcher.group(group) != null) {
-                    IntStream.range(matcher.start(group), matcher.end(group))
-                            .forEach(i -> sb.setCharAt(i, substitution));
-                }
-            });
+            // If no groups were captured, mask the entire match
+            if (matcher.groupCount() == 0) {
+                IntStream.range(matcher.start(), matcher.end()).forEach(i -> sb.setCharAt(i, substitution));
+            } else {
+                IntStream.rangeClosed(1, matcher.groupCount()).forEach(group -> {
+                    if (matcher.group(group) != null) {
+                        IntStream.range(matcher.start(group), matcher.end(group))
+                                .forEach(i -> sb.setCharAt(i, substitution));
+                    }
+                });
+            }
         }
 
         return sb.toString();
@@ -99,7 +152,8 @@ public final class MultilinePatternMasker implements Masker<String> {
     public static final class Builder implements MaskerBuilder<String, MultilinePatternMasker> {
 
         private char substitution = DEF_SUBSTITUTION_CHAR;
-        private final List<String> maskPatterns = new ArrayList<>();
+        private final Set<String> defaultMaskerPatterns = new HashSet<>();
+        private final Map<String, Masker<String>> customMaskerPatterns = new HashMap<>();
 
         /**
          * Adds a new regular expression pattern to the list of patterns that will
@@ -107,7 +161,8 @@ public final class MultilinePatternMasker implements Masker<String> {
          *
          * @param maskPattern the regular expression pattern used for matching sensitive data
          * @return the builder instance for chaining method calls
-         * @throws IllegalArgumentException if {@code maskPattern} is {@code null} or blank
+         * @throws IllegalArgumentException if {@code maskPattern} is {@code null}, blank or
+         * a duplicate pattern is detected
          */
         public Builder withMaskPattern(String maskPattern) {
 
@@ -115,12 +170,57 @@ public final class MultilinePatternMasker implements Masker<String> {
                 throw new IllegalArgumentException("Mask pattern cannot be blank");
             }
 
-            maskPatterns.add(maskPattern);
+            if (customMaskerPatterns.containsKey(maskPattern)) {
+                throw new IllegalArgumentException(
+                        "Duplicate pattern detected: '%s' is already registered.".formatted(maskPattern));
+            }
+
+            defaultMaskerPatterns.add(maskPattern);
             return this;
         }
 
         /**
-         * Sets the substitution character to be used for replacing matched sensitive data.
+         * Adds a new regular expression pattern with a specific masking strategy.
+         *
+         * @param pattern the regular expression pattern used for matching sensitive data
+         * @param masker the masking strategy to apply to the matched pattern
+         * @return the builder instance for chaining method calls
+         * @throws IllegalArgumentException if {@code pattern} is {@code null}, blank or
+         * a duplicate pattern is detected
+         * @throws NullPointerException if {@code masker} is {@code null}
+         */
+        public Builder withMaskPattern(String pattern, Masker<String> masker) {
+
+            if (isBlank(pattern)) {
+                throw new IllegalArgumentException("Pattern cannot be blank");
+            }
+
+            if (defaultMaskerPatterns.contains(pattern)) {
+                throw new IllegalArgumentException(
+                        "Duplicate pattern detected: '%s' is already registered.".formatted(pattern));
+            }
+
+            customMaskerPatterns.put(pattern, masker);
+            return this;
+        }
+
+        /**
+         * Adds a new regular expression pattern with a specific masking strategy builder.
+         * The builder will be built to get the actual masker.
+         *
+         * @param pattern the regular expression pattern used for matching sensitive data
+         * @param maskerBuilder the masking strategy builder to build and apply to the matched pattern
+         * @return the builder instance for chaining method calls
+         * @throws IllegalArgumentException if {@code pattern} is {@code null}, blank or
+         * a duplicate pattern is detected
+         * @throws NullPointerException if {@code maskerBuilder} is {@code null}
+         */
+        public Builder withMaskPattern(String pattern, MaskerBuilder<String, ?> maskerBuilder) {
+            return withMaskPattern(pattern, maskerBuilder.build());
+        }
+
+        /**
+         * Sets the substitution character to be used for replacing matched sensitive data with the default masking strategy.
          *
          * <p>
          *      If not explicitly set, the default substitution character defined in the implementation
@@ -169,19 +269,32 @@ public final class MultilinePatternMasker implements Masker<String> {
          * based on the configured patterns and substitution character.
          *
          * @return a new {@link MultilinePatternMasker} instance
-         * @throws MaskingException if no patterns were added to the builder
-         * @implNote All the specified mask patterns will be combined into a single pattern
-         *          using the {@link Pattern#MULTILINE} flag.
+         * @throws IllegalStateException if no patterns were added to the builder
          */
         @Override
         public MultilinePatternMasker build() {
 
-            if (maskPatterns.isEmpty()) {
-                throw new MaskingException("Mask patterns cannot be empty");
+            if (defaultMaskerPatterns.isEmpty() && customMaskerPatterns.isEmpty()) {
+                throw new IllegalStateException(
+                        "At least one masking pattern must be specified. Use withMaskPattern() to add patterns.");
             }
 
-            var multilinePattern = Pattern.compile(String.join("|", maskPatterns), Pattern.MULTILINE);
-            return new MultilinePatternMasker(substitution, multilinePattern);
+            return new MultilinePatternMasker(substitution, compileMultilinePattern(), compileCustomMaskerPatterns());
+        }
+
+        @Nullable
+        private Pattern compileMultilinePattern() {
+
+            if (defaultMaskerPatterns.isEmpty()) {
+                return null;
+            }
+
+            return Pattern.compile(String.join("|", defaultMaskerPatterns), Pattern.MULTILINE);
+        }
+
+        private Map<Pattern, Masker<String>> compileCustomMaskerPatterns() {
+            return customMaskerPatterns.entrySet().stream()
+                    .collect(toMap(entry -> Pattern.compile(entry.getKey()), Entry::getValue));
         }
     }
 }
