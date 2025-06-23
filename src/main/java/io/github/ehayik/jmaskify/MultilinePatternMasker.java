@@ -29,8 +29,8 @@ import org.jspecify.annotations.Nullable;
  * // Create an instance of MultilinePatternMasker using the builder
  * MultilinePatternMasker masker = MultilinePatternMasker.builder()
  *     .withMaskPattern(usernamePattern)
- *     .withMaskPattern(ipAddressPattern)
- *     .withSubstitution('*')  // Define the substitution character
+ *     .withSubstitution('*')  // Define the substitution character for default masking strategy
+ *     .withMaskPattern(ipAddressPattern, Masker.fixedLength().withSubstitution('■').ignore('.'))
  *     .build();
  *
  * // Input string with sensitive data spread across multiple lines
@@ -42,7 +42,7 @@ import org.jspecify.annotations.Nullable;
  *
  * // Result: sensitive data is masked, i.e.,
  * // Line 1 with username=******* sensitive data.
- * // Line 2 ********** with more sensitive info.
+ * // Line 2 ■■■.■■■.■.■ with more sensitive info.
  * }
  * </pre>
  */
@@ -212,7 +212,7 @@ public final class MultilinePatternMasker implements Masker<String> {
         }
 
         /**
-         * Sets the substitution character to be used for replacing matched sensitive data.
+         * Sets the substitution character to be used for replacing matched sensitive data with the default masking strategy.
          *
          * <p>
          *      If not explicitly set, the default substitution character defined in the implementation
