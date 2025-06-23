@@ -162,6 +162,7 @@ public final class MultilinePatternMasker implements Masker<String> {
          * @param maskPattern the regular expression pattern used for matching sensitive data
          * @return the builder instance for chaining method calls
          * @throws IllegalArgumentException if {@code maskPattern} is {@code null} or blank
+         * @throws IllegalArgumentException if a duplicate pattern is detected
          */
         public Builder withMaskPattern(String maskPattern) {
 
@@ -185,6 +186,7 @@ public final class MultilinePatternMasker implements Masker<String> {
          * @param masker the masking strategy to apply to the matched pattern
          * @return the builder instance for chaining method calls
          * @throws IllegalArgumentException if {@code pattern} is {@code null} or blank
+         * @throws IllegalArgumentException if a duplicate pattern is detected
          * @throws NullPointerException if {@code masker} is {@code null}
          */
         public Builder withMaskPattern(String pattern, Masker<String> masker) {
@@ -210,6 +212,7 @@ public final class MultilinePatternMasker implements Masker<String> {
          * @param maskerBuilder the masking strategy builder to build and apply to the matched pattern
          * @return the builder instance for chaining method calls
          * @throws IllegalArgumentException if {@code pattern} is {@code null} or blank
+         * @throws IllegalArgumentException if a duplicate pattern is detected
          * @throws NullPointerException if {@code maskerBuilder} is {@code null}
          */
         public Builder withMaskPattern(String pattern, MaskerBuilder<String, ?> maskerBuilder) {
