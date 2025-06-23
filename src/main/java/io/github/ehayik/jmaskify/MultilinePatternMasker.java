@@ -169,6 +169,11 @@ public final class MultilinePatternMasker implements Masker<String> {
                 throw new IllegalArgumentException("Mask pattern cannot be blank");
             }
 
+            if (customMaskerPatterns.containsKey(maskPattern)) {
+                throw new IllegalArgumentException(
+                        "Duplicate pattern detected: '%s' is already registered.".formatted(maskPattern));
+            }
+
             defaultMaskerPatterns.add(maskPattern);
             return this;
         }
@@ -268,7 +273,7 @@ public final class MultilinePatternMasker implements Masker<String> {
 
             if (defaultMaskerPatterns.isEmpty() && customMaskerPatterns.isEmpty()) {
                 throw new IllegalStateException(
-                        "At least one mask pattern must be specified. Use withMaskPattern() to add patterns.");
+                        "At least one masking pattern must be specified. Use withMaskPattern() to add patterns.");
             }
 
             return new MultilinePatternMasker(substitution, compileMultilinePattern(), compileCustomMaskerPatterns());
