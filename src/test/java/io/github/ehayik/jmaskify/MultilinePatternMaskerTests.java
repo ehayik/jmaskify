@@ -7,19 +7,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.util.stream.Stream;
 
 class MultilinePatternMaskerTests {
 
     private static final Faker FAKER = new Faker();
     private static final String USERNAME_PATTERN = "username\\s*=\\s*([^\\s]+)";
     private static final String IP_ADDRESS_PATTERN = "(\\d+\\.\\d+\\.\\d+\\.\\d+)";
-    private static final String GIVEN_MULTILINE_TEXT =                 """
+    private static final String EMAIL_PATTERN = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b";
+    private static final String CREDIT_CARD_PATTERN = "\\b\\d{4}-\\d{4}-\\d{4}-\\d{4}\\b";
+    private static final String GIVEN_MULTILINE_TEXT =
+            """
 				2023-05-15 INFO User john.doe@example.com logged in
 				2023-05-15 INFO Processing payment with card 5431-8923-1203-5467
 				2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
@@ -96,11 +95,11 @@ class MultilinePatternMaskerTests {
 				""";
 
         var masker = Masker.multilinePattern()
-                .withMaskPattern("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b")
+                .withMaskPattern(EMAIL_PATTERN)
                 .withMaskPattern(
                         IP_ADDRESS_PATTERN,
                         Masker.fixedLength().withSubstitution('■').ignore('.'))
-                .withMaskPattern("\\b\\d{4}-\\d{4}-\\d{4}-\\d{4}\\b", Masker.creditCard('X'))
+                .withMaskPattern(CREDIT_CARD_PATTERN, Masker.creditCard('X'))
                 .build();
 
         // When
@@ -125,7 +124,7 @@ class MultilinePatternMaskerTests {
                 .withMaskPattern(
                         IP_ADDRESS_PATTERN,
                         Masker.fixedLength().withSubstitution('■').ignore('.'))
-                .withMaskPattern("\\b\\d{4}-\\d{4}-\\d{4}-\\d{4}\\b", Masker.creditCard('X'))
+                .withMaskPattern(CREDIT_CARD_PATTERN, Masker.creditCard('X'))
                 .build();
 
         // When
