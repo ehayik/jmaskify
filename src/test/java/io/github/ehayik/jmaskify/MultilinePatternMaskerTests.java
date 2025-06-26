@@ -7,14 +7,24 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.stream.Stream;
 
 class MultilinePatternMaskerTests {
 
     private static final Faker FAKER = new Faker();
     private static final String USERNAME_PATTERN = "username\\s*=\\s*([^\\s]+)";
     private static final String IP_ADDRESS_PATTERN = "(\\d+\\.\\d+\\.\\d+\\.\\d+)";
+    private static final String GIVEN_MULTILINE_TEXT =                 """
+				2023-05-15 INFO User john.doe@example.com logged in
+				2023-05-15 INFO Processing payment with card 5431-8923-1203-5467
+				2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
+				2023-05-15 INFO IP Address: 192.168.1.1
+				""";
 
     @Test
     void shouldMaskSingleLine() {
@@ -77,14 +87,6 @@ class MultilinePatternMaskerTests {
     @Test
     void shouldMaskWhenCustomAndDefaultMaskingStrategiesConfigured() {
         // Given
-        var text =
-                """
-				2023-05-15 INFO User john.doe@example.com logged in
-				2023-05-15 INFO Processing payment with card 5431-8923-1203-5467
-				2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
-				2023-05-15 INFO IP Address: 192.168.1.1
-				""";
-
         var expectedText =
                 """
 				2023-05-15 INFO User ******************** logged in
@@ -96,13 +98,13 @@ class MultilinePatternMaskerTests {
         var masker = Masker.multilinePattern()
                 .withMaskPattern("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b")
                 .withMaskPattern(
-                        "(\\d+\\.\\d+\\.\\d+\\.\\d+)",
+                        IP_ADDRESS_PATTERN,
                         Masker.fixedLength().withSubstitution('■').ignore('.'))
                 .withMaskPattern("\\b\\d{4}-\\d{4}-\\d{4}-\\d{4}\\b", Masker.creditCard('X'))
                 .build();
 
         // When
-        var actualText = masker.apply(text);
+        var actualText = masker.apply(GIVEN_MULTILINE_TEXT);
 
         // Then
         assertThat(actualText).isEqualTo(expectedText);
@@ -111,14 +113,6 @@ class MultilinePatternMaskerTests {
     @Test
     void shouldMaskWhenCustomMaskingStrategiesConfigured() {
         // Given
-        var text =
-                """
-				2023-05-15 INFO User john.doe@example.com logged in
-				2023-05-15 INFO Processing payment with card 5431-8923-1203-5467
-				2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
-				2023-05-15 INFO IP Address: 192.168.1.1
-				""";
-
         var expectedText =
                 """
 				2023-05-15 INFO User john.doe@example.com logged in
@@ -129,13 +123,13 @@ class MultilinePatternMaskerTests {
 
         var masker = Masker.multilinePattern()
                 .withMaskPattern(
-                        "(\\d+\\.\\d+\\.\\d+\\.\\d+)",
+                        IP_ADDRESS_PATTERN,
                         Masker.fixedLength().withSubstitution('■').ignore('.'))
                 .withMaskPattern("\\b\\d{4}-\\d{4}-\\d{4}-\\d{4}\\b", Masker.creditCard('X'))
                 .build();
 
         // When
-        var actualText = masker.apply(text);
+        var actualText = masker.apply(GIVEN_MULTILINE_TEXT);
 
         // Then
         assertThat(actualText).isEqualTo(expectedText);
@@ -161,22 +155,22 @@ class MultilinePatternMaskerTests {
     @Test
     void shouldFailsWhenDuplicateDefaultMaskingPatternSpecified() {
         // Given
-        var masker = Masker.multilinePattern().withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)", Masker.fixedLength());
+        var masker = Masker.multilinePattern().withMaskPattern(IP_ADDRESS_PATTERN, Masker.fixedLength());
 
         // When - Then
-        assertThatThrownBy(() -> masker.withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)"))
+        assertThatThrownBy(() -> masker.withMaskPattern(IP_ADDRESS_PATTERN))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Duplicate pattern detected: '(\\d+\\.\\d+\\.\\d+\\.\\d+)' is already registered.");
+                .hasMessage("Duplicate pattern detected: '%s' is already registered.".formatted(IP_ADDRESS_PATTERN));
     }
 
     @Test
     void shouldFailsWhenCustomMaskingPatternSpecified() {
         // Given
-        var masker = Masker.multilinePattern().withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)");
+        var masker = Masker.multilinePattern().withMaskPattern(IP_ADDRESS_PATTERN);
 
         // When - Then
-        assertThatThrownBy(() -> masker.withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)", Masker.fixedLength()))
+        assertThatThrownBy(() -> masker.withMaskPattern(IP_ADDRESS_PATTERN, Masker.fixedLength()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Duplicate pattern detected: '(\\d+\\.\\d+\\.\\d+\\.\\d+)' is already registered.");
+                .hasMessage("Duplicate pattern detected: '%s' is already registered.".formatted(IP_ADDRESS_PATTERN));
     }
 }
