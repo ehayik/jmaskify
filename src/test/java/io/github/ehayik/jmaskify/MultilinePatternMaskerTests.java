@@ -153,7 +153,7 @@ class MultilinePatternMaskerTests {
     @ValueSource(strings = " ")
     void shouldFailsWhenMaskPatternIsBlank(String maskPattern) {
         assertThatThrownBy(() ->
-                Masker.multilinePattern().withMaskPattern(maskPattern).apply("Hello World!"))
+                        Masker.multilinePattern().withMaskPattern(maskPattern).apply("Hello World!"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Mask pattern cannot be blank");
     }
@@ -161,8 +161,7 @@ class MultilinePatternMaskerTests {
     @Test
     void shouldFailsWhenDuplicateDefaultMaskingPatternSpecified() {
         // Given
-        var masker = Masker.multilinePattern()
-                .withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)", Masker.fixedLength());
+        var masker = Masker.multilinePattern().withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)", Masker.fixedLength());
 
         // When - Then
         assertThatThrownBy(() -> masker.withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)"))
@@ -173,8 +172,7 @@ class MultilinePatternMaskerTests {
     @Test
     void shouldFailsWhenCustomMaskingPatternSpecified() {
         // Given
-        var masker = Masker.multilinePattern()
-                .withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)");
+        var masker = Masker.multilinePattern().withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)");
 
         // When - Then
         assertThatThrownBy(() -> masker.withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)", Masker.fixedLength()))
