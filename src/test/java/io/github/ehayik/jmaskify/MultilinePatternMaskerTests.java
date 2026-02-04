@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.stream.Stream;
 import net.datafaker.Faker;
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -153,10 +154,10 @@ class MultilinePatternMaskerTests {
     @ValueSource(strings = " ")
     void shouldFailsWhenMaskPatternIsBlank(String maskPattern) {
         // Given
-        var multilineMasker = Masker.multilinePattern().withMaskPattern(maskPattern);
+        var multilineMasker = Masker.multilinePattern();
 
         // When - Then
-        assertThatThrownBy(() -> multilineMasker.apply("Hello World!"))
+        assertThatThrownBy(() -> multilineMasker.withMaskPattern(maskPattern))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Mask pattern cannot be blank");
     }
@@ -173,7 +174,7 @@ class MultilinePatternMaskerTests {
     }
 
     @Test
-    void shouldFailsWhenCustomMaskingPatternSpecified() {
+    void shouldFailsWhenDuplicateCustomMaskingPatternSpecified() {
         // Given
         var masker = Masker.multilinePattern().withMaskPattern(IP_ADDRESS_PATTERN);
         var fixedLengthMasker = Masker.fixedLength();
