@@ -224,7 +224,8 @@ class MultilinePatternMaskerTests {
 				2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
 				2023-05-15 INFO IP Address: ###########
 				"""),
-                // 4) Retain existing settings and add a custom masking strategy (credit card) plus a new default pattern (email)
+                // 4) Retain existing settings and add a custom masking strategy (credit card) plus a new default
+                // pattern (email)
                 Arguments.of(
                         masker.mutate()
                                 .withMaskPattern(EMAIL_PATTERN)
@@ -246,7 +247,6 @@ class MultilinePatternMaskerTests {
 				2023-05-15 INFO Processing payment with card 5431-8923-1203-5467
 				2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
 				2023-05-15 INFO IP Address: ■■■■■■■■■■■
-				""")
-        );
+				"""));
     }
 }

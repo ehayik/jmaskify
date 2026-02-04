@@ -192,7 +192,8 @@ public final class MultilinePatternMasker implements Masker<String>, Buildable<S
      */
     public static final class Builder implements MaskerBuilder<String, MultilinePatternMasker> {
 
-        private  static final String DUPLICATE_PATTERN_ERROR_MSG = "Duplicate pattern detected: '%s' is already registered.";
+        private static final String DUPLICATE_PATTERN_ERROR_MSG =
+                "Duplicate pattern detected: '%s' is already registered.";
 
         private char substitution = DEF_SUBSTITUTION_CHAR;
         private final Set<String> defaultMaskerPatterns = new HashSet<>();
@@ -217,8 +218,7 @@ public final class MultilinePatternMasker implements Masker<String>, Buildable<S
                     customMaskerPatterns.keySet().stream().map(Pattern::pattern).anyMatch(maskPattern::equals);
 
             if (isDuplicateDetect) {
-                throw new IllegalArgumentException(
-                        DUPLICATE_PATTERN_ERROR_MSG.formatted(maskPattern));
+                throw new IllegalArgumentException(DUPLICATE_PATTERN_ERROR_MSG.formatted(maskPattern));
             }
 
             defaultMaskerPatterns.add(maskPattern);
@@ -242,8 +242,7 @@ public final class MultilinePatternMasker implements Masker<String>, Buildable<S
             }
 
             if (defaultMaskerPatterns.contains(pattern)) {
-                throw new IllegalArgumentException(
-                        DUPLICATE_PATTERN_ERROR_MSG.formatted(pattern));
+                throw new IllegalArgumentException(DUPLICATE_PATTERN_ERROR_MSG.formatted(pattern));
             }
 
             customMaskerPatterns.put(Pattern.compile(pattern), masker);
@@ -253,8 +252,7 @@ public final class MultilinePatternMasker implements Masker<String>, Buildable<S
         void withMaskPattern(Pattern pattern, Masker<String> masker) {
 
             if (defaultMaskerPatterns.contains(pattern.pattern())) {
-                throw new IllegalArgumentException(
-                        DUPLICATE_PATTERN_ERROR_MSG.formatted(pattern));
+                throw new IllegalArgumentException(DUPLICATE_PATTERN_ERROR_MSG.formatted(pattern));
             }
 
             customMaskerPatterns.put(pattern, masker);
