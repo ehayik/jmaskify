@@ -91,6 +91,10 @@ var maskedEmail = Masker.fixedLength().apply(email);
 // Result: "****************"
 ```
 
+> **NOTE**:
+> When `charToIgnore` is configured on `FixedLengthMasker`, `fixedLength` is ignored and the
+> output length follows the input value while the ignored characters are preserved.
+
 #### 2. JSON Masking
 
 For masking fields within JSON objects:
