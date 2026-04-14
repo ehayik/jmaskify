@@ -337,9 +337,9 @@ default List<String> pickWinners(Set<String> players) {
 
 Update `README.md` when:
 - Adding new masking strategies
-    - Changing public API signatures
-    - Adding new features or examples
-    - Fixing documentation errors
+- Changing public API signatures
+- Adding new features or examples
+- Fixing documentation errors
 
 ### CHANGELOG
 
