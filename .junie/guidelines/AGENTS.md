@@ -224,21 +224,51 @@ git checkout -b feat/my-feature
 
 3. **Make Changes & Commit**
 
+Follow the [Commit Message Format](#commit-message-format) for all commits.
+
 ```bash  
-   git add .   
-   git commit -m "feat: add new masking strategy" 
+git add .   
+git commit -m "feat: add new masking strategy" 
 ```  
 
 4. **Push to Repository**
 
 ```bash  
-   git push origin feat/my-feature  
+git push origin feat/my-feature  
 ```  
 
-5. **Open a Pull Request to the `master` branch on GitHub**
+5. **Open a Pull Request**
 
-```bash  
-gh pr create --base "master" --head "feat/my-feature" --title "<What>" --body "## Why <Why> ## How <How>  ## Acceptance Criteria <Acceptance Criteria>"
+Create a Pull Request to the `master` branch on GitHub. It is recommended to use a temporary file for the PR body to handle multi-line content correctly.
+
+```bash
+# Create a temporary file with the PR body
+cat <<EOF > pr_body.md
+### What
+<Description of the changes>
+
+### Why
+<Justification for the changes>
+
+### How
+<Implementation details>
+
+### Acceptance Criteria
+- [ ] Task 1
+- [ ] Task 2
+EOF
+
+# Create the pull request
+gh pr create --base master --head feat/my-feature --title "feat: add new masking strategy" --body-file pr_body.md
+
+# Clean up
+rm pr_body.md
+```
+
+Alternatively, use the `--fill` flag to automatically use the commit message:
+
+```bash
+gh pr create --base master --head feat/my-feature --fill
 ```
 
 6. **Address Review Comments**
@@ -339,7 +369,7 @@ Maintain a `CHANGELOG.md` documenting:
 7. Add/Update Javadoc accordingly
 8. Update documentation in `README.md`
 9. Update `CHANGELOG.md`
-10. Create a pull request with the new feature
+10. Create a Pull Request with the new feature
 
 ### Fixing a Bug
 
@@ -348,7 +378,7 @@ Maintain a `CHANGELOG.md` documenting:
 3. Implement the fix
 4. Ensure all tests pass
 5. Update `CHANGELOG.md`
-6. Create a pull request with the fix
+6. Create a Pull Request with the fix
 
 ## Code Review Checklist
 
