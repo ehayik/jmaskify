@@ -21,14 +21,14 @@ class JsonMaskerTests {
 
     private static final String JSON_OBJECT =
             """
-				{
-				"name": "John Doe",
-				"age": 30,
-				"city": "New York",
-				"email": "john@example.com",
-				"phone": "123-456-7890"
-				}
-		""";
+                {
+                "name": "John Doe",
+                "age": 30,
+                "city": "New York",
+                "email": "john@example.com",
+                "phone": "123-456-7890"
+                }
+        """;
 
     private static final String EXPECTED_JSON_OBJECT =
             """
@@ -43,29 +43,29 @@ class JsonMaskerTests {
 
     private static final String JSON_NESTED_OBJECT =
             """
-			{
-					"name": "John Doe",
-					"age": 30,
-					"city": "New York",
-					"email": "john@example.com",
-					"phone": "123-456-7890",
-					"address": {
-							"street": "123 Main St",
-							"state": "NY",
-							"zip": "10001"
-					},
-					"contacts": [
-							{
-									"type": "email",
-									"value": "john.doe@example.com"
-							},
-							{
-									"type": "phone",
-									"value": "555-555-5555"
-							}
-					]
-			}
-		""";
+            {
+                    "name": "John Doe",
+                    "age": 30,
+                    "city": "New York",
+                    "email": "john@example.com",
+                    "phone": "123-456-7890",
+                    "address": {
+                            "street": "123 Main St",
+                            "state": "NY",
+                            "zip": "10001"
+                    },
+                    "contacts": [
+                            {
+                                    "type": "email",
+                                    "value": "john.doe@example.com"
+                            },
+                            {
+                                    "type": "phone",
+                                    "value": "555-555-5555"
+                            }
+                    ]
+            }
+        """;
 
     private static final String EXPECTED_JSON_NESTED_OBJECT =
             """
@@ -152,11 +152,11 @@ class JsonMaskerTests {
     void shouldMaskJsonUsingDefaultPropertyMasker() throws Exception {
         // Given
         var givenJson = """
-		{"email":"email","phone":"123-456-7890"}
-		""";
+        {"email":"email","phone":"123-456-7890"}
+        """;
         var expectedJson = """
-		{"email":"*****","phone":"123-456-7890"}
-		""";
+        {"email":"*****","phone":"123-456-7890"}
+        """;
 
         var actual = JsonMasker.builder().withProperty("email").apply(givenJson);
 
@@ -168,11 +168,11 @@ class JsonMaskerTests {
     void shouldMaskJsonUsingDefaultPropertiesMasker() throws Exception {
         // Given
         var givenJson = """
-		{"email":"email","phone":"123-456-7890"}
-		""";
+        {"email":"email","phone":"123-456-7890"}
+        """;
         var expectedJson = """
-		{"email":"*****","phone":"************"}
-		""";
+        {"email":"*****","phone":"************"}
+        """;
 
         // When
         var actual = JsonMasker.builder().withProperties("email", "phone").apply(givenJson);
@@ -185,11 +185,11 @@ class JsonMaskerTests {
     void shouldMaskJsonUsingDefaultPropertiesSetMasker() throws Exception {
         // Given
         var givenJson = """
-		{"email":"email","phone":"123-456-7890"}
-		""";
+        {"email":"email","phone":"123-456-7890"}
+        """;
         var expectedJson = """
-		{"email":"*****","phone":"************"}
-		""";
+        {"email":"*****","phone":"************"}
+        """;
 
         var actual =
                 JsonMasker.builder().withProperties(Set.of("email", "phone")).apply(givenJson);
@@ -203,27 +203,27 @@ class JsonMaskerTests {
         // Given
         String givenJson =
                 """
-		{
-			"name": "John Doe",
-			"age": 30,
-			"creditCards": [
-				"1234-5678-9012-3456",
-				"4289-3874-8064-8976"
-			]
-		}
-		""";
+        {
+            "name": "John Doe",
+            "age": 30,
+            "creditCards": [
+                "1234-5678-9012-3456",
+                "4289-3874-8064-8976"
+            ]
+        }
+        """;
 
         String expectedJson =
                 """
-		{
-			"name": "John Doe",
-			"age": 30,
-			"creditCards": [
-				"XXXX-XXXX-XXXX-3456",
-				"XXXX-XXXX-XXXX-8976"
-			]
-		}
-		""";
+        {
+            "name": "John Doe",
+            "age": 30,
+            "creditCards": [
+                "XXXX-XXXX-XXXX-3456",
+                "XXXX-XXXX-XXXX-8976"
+            ]
+        }
+        """;
 
         var actualJson = JsonMasker.builder()
                 .withProperty("creditCards", Masker.creditCard('X'))
@@ -239,33 +239,33 @@ class JsonMaskerTests {
         // Given
         String givenJson =
                 """
-		{
-			"name": "John Doe",
-			"mixedArray": [
-				"sensitive-string-data",
-				42,
-				true,
-				null,
-				{"nestedKey": "nestedValue"},
-				["nested", "array"]
-			]
-		}
-		""";
+        {
+            "name": "John Doe",
+            "mixedArray": [
+                "sensitive-string-data",
+                42,
+                true,
+                null,
+                {"nestedKey": "nestedValue"},
+                ["nested", "array"]
+            ]
+        }
+        """;
 
         String expectedJson =
                 """
-		{
-			"name": "John Doe",
-			"mixedArray": [
-				"*********************",
-				42,
-				true,
-				null,
-				{"nestedKey": "***********"},
-				["******", "*****"]
-			]
-		}
-		""";
+        {
+            "name": "John Doe",
+            "mixedArray": [
+                "*********************",
+                42,
+                true,
+                null,
+                {"nestedKey": "***********"},
+                ["******", "*****"]
+            ]
+        }
+        """;
 
         var actualJson = JsonMasker.builder()
                 .withProperty("mixedArray", fixedLength())
@@ -281,26 +281,26 @@ class JsonMaskerTests {
         // Given
         String givenJson =
                 """
-		{
-			"name": "John Doe",
-			"nestedArrays": [
-				["sensitive-outer-inner", "another-value"],
-				42,
-				["not-masked-1", "not-masked-2"]
-			]
-		}
-		""";
+        {
+            "name": "John Doe",
+            "nestedArrays": [
+                ["sensitive-outer-inner", "another-value"],
+                42,
+                ["not-masked-1", "not-masked-2"]
+            ]
+        }
+        """;
         String expectedJson =
                 """
-		{
-			"name": "John Doe",
-			"nestedArrays": [
-				["*********************", "*************"],
-				42,
-				["************", "************"]
-			]
-		}
-		""";
+        {
+            "name": "John Doe",
+            "nestedArrays": [
+                ["*********************", "*************"],
+                42,
+                ["************", "************"]
+            ]
+        }
+        """;
 
         var actualJson = JsonMasker.builder()
                 .withProperty("nestedArrays", fixedLength())

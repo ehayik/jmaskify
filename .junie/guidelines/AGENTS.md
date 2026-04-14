@@ -42,7 +42,7 @@ This document outlines coding standards, contribution practices, and development
 
 The project uses **Spotless** with **Palantir Java Format** for code formatting:
 
-- **Indentation**: Tabs (four spaces per tab)
+- **Indentation**: 4 spaces
 - **Line Endings**: Unix-style (LF)
 - **Trailing Whitespace**: Removed
 - **File Ending**: Must end with newline
