@@ -27,7 +27,7 @@ Follow the Java naming conventions.
 
 ## 2. Code Layout
 
-- Use four spaces for indentation. Do not use tabs.
+- Use 4 spaces for indentation. Do not use tabs.
 - Consistent indentation is crucial for readability. Using spaces instead of tabs ensures that the code looks the same on all systems.
 - Keep lines of code under 120 characters.
 - When wrapping lines, break after a comma or an operator. Indent the new line with 8 spaces.
