@@ -236,6 +236,7 @@ public final class JsonMasker implements Masker<String> {
 
         @Nullable
         private ObjectMapper objectMapper;
+
         private boolean prettify;
         private final Map<String, Masker<String>> properties = new HashMap<>();
 

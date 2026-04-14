@@ -10,13 +10,14 @@ class MaskingCombinationTests {
     @Test
     void shouldApplyMaskingStrategiesSequence() {
         // Given
-        var json = """
-		{
-		"name": "John Doe",
-		"logs": [
-			"2023-05-15 INFO IP Address: 192.168.1.1"
-		]
-		}
+        var json =
+                """
+        {
+        "name": "John Doe",
+        "logs": [
+            "2023-05-15 INFO IP Address: 192.168.1.1"
+        ]
+        }
 """;
 
         var jsonMasker = Masker.json()
