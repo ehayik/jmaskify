@@ -373,7 +373,7 @@ var masker = Masker.json().withProperty("email").build();
 
 - **Purpose**: The primary goal is to prevent accidental exposure of sensitive data (PII, PCI, etc.) in logs, reports, or non-secure storage.
 - **Irreversibility**:
-  - Most core maskers (`FixedLengthMasker`, `CreditCardMasker`, `MultilinePatternMasker`) are **irreversible**—the original data cannot be reconstructed from the masked output.
+  - Most core maskers (`FixedLengthMasker`, `CreditCardMasker`, `JsonMasker`, `MultilinePatternMasker`) are **irreversible**—the original data cannot be reconstructed from the masked output.
   - **Base64 Encoding**: `Base64Masker` is **reversible** and should only be used for debugging or non-security-critical obfuscation where visibility is the only concern, not confidentiality.
 - **In-Memory Safety**: Maskers operate on `String` objects, which are immutable in Java and may persist in memory. For extremely sensitive secrets (like passwords), consider using byte arrays or char arrays outside of this library's typical use cases.
 - **Strategy Selection**:
