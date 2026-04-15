@@ -316,14 +316,14 @@ class JsonMaskerTests {
         // Given
         var expectedJson =
                 """
-			{
-				"name" : "********",
-				"age" : 30,
-				"city" : "********",
-				"email" : "****************",
-				"phone" : "MTIzLTQ1Ni03ODkw"
-			}
-		""";
+            {
+                "name" : "********",
+                "age" : 30,
+                "city" : "********",
+                "email" : "****************",
+                "phone" : "MTIzLTQ1Ni03ODkw"
+            }
+        """;
 
         var masker = Masker.json()
                 .prettify(true)

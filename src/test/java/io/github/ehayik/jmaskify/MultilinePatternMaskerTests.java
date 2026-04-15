@@ -22,11 +22,11 @@ class MultilinePatternMaskerTests {
     private static final String CREDIT_CARD_PATTERN = "\\b\\d{4}-\\d{4}-\\d{4}-\\d{4}\\b";
     private static final String GIVEN_MULTILINE_TEXT =
             """
-				2023-05-15 INFO User john.doe@example.com logged in
-				2023-05-15 INFO Processing payment with card 5431-8923-1203-5467
-				2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
-				2023-05-15 INFO IP Address: 192.168.1.1
-				""";
+                2023-05-15 INFO User john.doe@example.com logged in
+                2023-05-15 INFO Processing payment with card 5431-8923-1203-5467
+                2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
+                2023-05-15 INFO IP Address: 192.168.1.1
+                """;
 
     @Test
     void shouldMaskSingleLine() {
@@ -46,17 +46,19 @@ class MultilinePatternMaskerTests {
         var username = FAKER.internet().username();
         var ipAddress = FAKER.internet().ipV4Address();
 
-        var inputValue = """
-		Line 1 with username=%s sensitive data.
-		Line 2 %s with more sensitive info.
-		"""
-                .formatted(username, ipAddress);
+        var inputValue =
+                """
+        Line 1 with username=%s sensitive data.
+        Line 2 %s with more sensitive info.
+        """
+                        .formatted(username, ipAddress);
 
-        var expectedValue = """
-		Line 1 with username=%s sensitive data.
-		Line 2 %s with more sensitive info.
-		"""
-                .formatted(repeat("*", username.length()), repeat("*", ipAddress.length()));
+        var expectedValue =
+                """
+        Line 1 with username=%s sensitive data.
+        Line 2 %s with more sensitive info.
+        """
+                        .formatted(repeat("*", username.length()), repeat("*", ipAddress.length()));
 
         var masker = Masker.multilinePattern().withMaskPattern(USERNAME_PATTERN).withMaskPattern(IP_ADDRESS_PATTERN);
 
@@ -91,11 +93,11 @@ class MultilinePatternMaskerTests {
         // Given
         var expectedText =
                 """
-				2023-05-15 INFO User ******************** logged in
-				2023-05-15 INFO Processing payment with card XXXX-XXXX-XXXX-5467
-				2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
-				2023-05-15 INFO IP Address: ■■■.■■■.■.■
-				""";
+                2023-05-15 INFO User ******************** logged in
+                2023-05-15 INFO Processing payment with card XXXX-XXXX-XXXX-5467
+                2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
+                2023-05-15 INFO IP Address: ■■■.■■■.■.■
+                """;
 
         var masker = Masker.multilinePattern()
                 .withMaskPattern(EMAIL_PATTERN)
@@ -117,11 +119,11 @@ class MultilinePatternMaskerTests {
         // Given
         var expectedText =
                 """
-				2023-05-15 INFO User john.doe@example.com logged in
-				2023-05-15 INFO Processing payment with card XXXX-XXXX-XXXX-5467
-				2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
-				2023-05-15 INFO IP Address: ■■■.■■■.■.■
-				""";
+                2023-05-15 INFO User john.doe@example.com logged in
+                2023-05-15 INFO Processing payment with card XXXX-XXXX-XXXX-5467
+                2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
+                2023-05-15 INFO IP Address: ■■■.■■■.■.■
+                """;
 
         var masker = Masker.multilinePattern()
                 .withMaskPattern(
@@ -201,29 +203,29 @@ class MultilinePatternMaskerTests {
                 Arguments.of(
                         masker.mutate().build(),
                         """
-				2023-05-15 INFO User john.doe@example.com logged in
-				2023-05-15 INFO Processing payment with card 5431-8923-1203-5467
-				2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
-				2023-05-15 INFO IP Address: ■■■■■■■■■■■
-				"""),
+                2023-05-15 INFO User john.doe@example.com logged in
+                2023-05-15 INFO Processing payment with card 5431-8923-1203-5467
+                2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
+                2023-05-15 INFO IP Address: ■■■■■■■■■■■
+                """),
                 // 2) Retain existing settings while adding a new default pattern (email)
                 Arguments.of(
                         masker.mutate().withMaskPattern(EMAIL_PATTERN).build(),
                         """
-				2023-05-15 INFO User ■■■■■■■■■■■■■■■■■■■■ logged in
-				2023-05-15 INFO Processing payment with card 5431-8923-1203-5467
-				2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
-				2023-05-15 INFO IP Address: ■■■■■■■■■■■
-				"""),
+                2023-05-15 INFO User ■■■■■■■■■■■■■■■■■■■■ logged in
+                2023-05-15 INFO Processing payment with card 5431-8923-1203-5467
+                2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
+                2023-05-15 INFO IP Address: ■■■■■■■■■■■
+                """),
                 // 3) Retain patterns but override substitution
                 Arguments.of(
                         masker.mutate().withSubstitution('#').build(),
                         """
-				2023-05-15 INFO User john.doe@example.com logged in
-				2023-05-15 INFO Processing payment with card 5431-8923-1203-5467
-				2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
-				2023-05-15 INFO IP Address: ###########
-				"""),
+                2023-05-15 INFO User john.doe@example.com logged in
+                2023-05-15 INFO Processing payment with card 5431-8923-1203-5467
+                2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
+                2023-05-15 INFO IP Address: ###########
+                """),
                 // 4) Retain existing settings and add a custom masking strategy (credit card) plus a new default
                 // pattern (email)
                 Arguments.of(
@@ -232,21 +234,21 @@ class MultilinePatternMaskerTests {
                                 .withMaskPattern(CREDIT_CARD_PATTERN, Masker.creditCard('X'))
                                 .build(),
                         """
-				2023-05-15 INFO User ■■■■■■■■■■■■■■■■■■■■ logged in
-				2023-05-15 INFO Processing payment with card XXXX-XXXX-XXXX-5467
-				2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
-				2023-05-15 INFO IP Address: ■■■■■■■■■■■
-				"""),
+                2023-05-15 INFO User ■■■■■■■■■■■■■■■■■■■■ logged in
+                2023-05-15 INFO Processing payment with card XXXX-XXXX-XXXX-5467
+                2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
+                2023-05-15 INFO IP Address: ■■■■■■■■■■■
+                """),
                 // 5) Retain existing settings and add a custom masker (Base64) for email
                 Arguments.of(
                         masker.mutate()
                                 .withMaskPattern(EMAIL_PATTERN, Masker.base64())
                                 .build(),
                         """
-				2023-05-15 INFO User am9obi5kb2VAZXhhbXBsZS5jb20= logged in
-				2023-05-15 INFO Processing payment with card 5431-8923-1203-5467
-				2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
-				2023-05-15 INFO IP Address: ■■■■■■■■■■■
-				"""));
+                2023-05-15 INFO User am9obi5kb2VAZXhhbXBsZS5jb20= logged in
+                2023-05-15 INFO Processing payment with card 5431-8923-1203-5467
+                2023-05-15 DEBUG Session ID: aX92mLpQ7zB3
+                2023-05-15 INFO IP Address: ■■■■■■■■■■■
+                """));
     }
 }
