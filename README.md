@@ -26,6 +26,8 @@ _JMaskify_ ensures its security through intuitive APIs and advanced masking stra
   - [Combining Masking Strategies](#combining-masking-strategies)
   - [Logging](#logging)
   - [Handling Edge Cases](#handling-edge-cases)
+- [Security Considerations](#security-considerations)
+- [Contributing](#contributing)
 
 ## Key Features
 
@@ -364,6 +366,20 @@ var masker = Masker.json().withProperty("email").build();
 // with the message "Failed to mask JSON content"
 // masker.apply("///");  // This would throw MaskingException
 ```
+
+## Security Considerations
+
+**JMaskify is designed to enhance data protection by obfuscating sensitive information. Developers must be aware of how different strategies affect security.**
+
+- **Purpose**: The primary goal is to prevent accidental exposure of sensitive data (PII, PCI, etc.) in logs, reports, or non-secure storage.
+- **Irreversibility**:
+  - Most core maskers (`FixedLengthMasker`, `CreditCardMasker`, `JsonMasker`, `MultilinePatternMasker`) are **irreversible**—the original data cannot be reconstructed from the masked output.
+  - **Base64 Encoding**: `Base64Masker` is **reversible** and should only be used for debugging or non-security-critical obfuscation where visibility is the only concern, not confidentiality.
+- **In-Memory Safety**: Maskers operate on `String` objects, which are immutable in Java and may persist in memory. For extremely sensitive secrets (like passwords), consider using byte arrays or char arrays outside of this library's typical use cases.
+- **Strategy Selection**:
+  - Use `CreditCardMasker` for financial data to keep the necessary digits for identification while hiding the rest.
+  - Use `FixedLengthMasker` to hide data completely while preserving the original field's presence/length for context.
+- **JSON Security**: `JsonMasker` uses a streaming API to avoid loading large JSON trees into memory where possible, though the final masked output will still be a string.
 
 ## Contributing
 
