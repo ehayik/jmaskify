@@ -214,10 +214,10 @@ public final class MultilinePatternMasker implements Masker<String>, Buildable<S
                 throw new IllegalArgumentException("Mask pattern cannot be blank");
             }
 
-            var isDuplicateDetect =
+            var isDuplicateDetected =
                     customMaskerPatterns.keySet().stream().map(Pattern::pattern).anyMatch(maskPattern::equals);
 
-            if (isDuplicateDetect) {
+            if (isDuplicateDetected) {
                 throw new IllegalArgumentException(DUPLICATE_PATTERN_ERROR_MSG.formatted(maskPattern));
             }
 
