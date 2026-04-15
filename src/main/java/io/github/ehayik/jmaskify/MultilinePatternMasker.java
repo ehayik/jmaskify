@@ -166,7 +166,7 @@ public final class MultilinePatternMasker implements Masker<String>, Buildable<S
 
     /**
      *
-     * @return @return a {@link MultilinePatternMasker.Builder builder} to create a new {@code MultilinePatternMasker}
+     * @return {@link MultilinePatternMasker.Builder builder} to create a new {@code MultilinePatternMasker}
      * whose settings are replicated from the current {@code MultilinePatternMasker}.
      */
     @Override
