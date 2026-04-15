@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Introduce a new `MaskerBuilder` interface to standardize masker builder functionality
 - Migrate to JSpecify annotations for Null Safety
 
+### Deprecated
+- Deprecate `FixedLengthMasker` default constructor in favor of `FixedLengthMasker#builder()` or `Masker#fixedLength()`
+
 ### Added
 - Add custom substitution character configuration in fixed-length masker
 - Add support for prefix and suffix preservation in `FixedLengthMasker`
