@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Deprecate `FixedLengthMasker` default constructor in favor of `FixedLengthMasker#builder()` or `Masker#fixedLength()`
 
 ### Added
+- Add support for creating new Masker variations from existing ones using the `mutate()` method
 - Add security considerations section to README
 - Add custom substitution character configuration in fixed-length masker
 - Add support for prefix and suffix preservation in `FixedLengthMasker`

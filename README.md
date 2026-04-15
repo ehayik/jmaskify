@@ -26,6 +26,7 @@ _JMaskify_ ensures its security through intuitive APIs and advanced masking stra
   - [Combining Masking Strategies](#combining-masking-strategies)
   - [Logging](#logging)
   - [Handling Edge Cases](#handling-edge-cases)
+  - [Masker Mutation](#masker-mutation)
 - [Security Considerations](#security-considerations)
 - [Contributing](#contributing)
 
@@ -371,7 +372,33 @@ var masker = Masker.json().withProperty("email").build();
 // masker.apply("///");  // This would throw MaskingException
 ```
 
-## Security Considerations
+### Masker Mutation
+
+JMaskify allows you to create new masker variations from existing ones using the `mutate()` method. This is particularly useful when you need multiple maskers that share a common base configuration but differ in specific property or pattern settings.
+
+The `mutate()` method returns a `MaskerBuilder` pre-configured with the settings from the original masker, which you can then further customize and build.
+
+```java
+// Define a base JSON masker with common settings
+var baseMasker = Masker.json()
+    .prettify(true)
+    .withProperty("email")
+    .withProperty("phone", Masker.base64())
+    .build();
+
+// Create a variation for a specific use case
+var userProfileMasker = baseMasker.mutate()
+    .withProperty("creditCard", Masker.creditCard('X'))
+    .withProperty("name", Masker.delegate(value -> "■■■■■■"))
+    .build();
+
+// The userProfileMasker now masks 'email', 'phone', 'creditCard', and 'name'
+// while retaining the 'prettify(true)' setting from the base masker.
+```
+
+Mutation is supported for both `JsonMasker` and `MultilinePatternMasker`.
+
+### Security Considerations
 
 **JMaskify is designed to enhance data protection by obfuscating sensitive information. Developers must be aware of how different strategies affect security.**
 
