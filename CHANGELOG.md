@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix split behavior for dashed credit card numbers
 - Address CVE-2025-48924 by updating `commons-lang3` to version `3.20.0`
+- Address GHSA-72hv-8253-57qq by updating in `jackson-core` to version `2.18.6`
 
 ### Changed
 - Introduce a new `MaskerBuilder` interface to standardize masker builder functionality
