@@ -85,13 +85,13 @@ class FixedLengthMaskerTests {
                                 .preserveSuffix(3)
                                 .build(),
                         "12****789"),
-                // Preserving suffix and prefix with default length
+                // Preserving suffix and prefix with the default length
                 Arguments.of(
                         Masker.fixedLength().preservePrefix(2).preserveSuffix(3).build(), "12******789"),
-                // Preserving suffix with default length
+                // Preserving suffix with the default length
                 Arguments.of(Masker.fixedLength().preserveSuffix(3).build(), "********789"),
 
-                // Preserving suffix with fixed length
+                // Preserving suffix with a fixed length
                 Arguments.of(
                         Masker.fixedLength()
                                 .preserveSuffix(3)
@@ -113,7 +113,7 @@ class FixedLengthMaskerTests {
     @MethodSource("ignoringCharTestCases")
     void shouldMaskStringIgnoringSpecifiedChar(Masker<String> masker, String expectedText) {
         // Given
-        var text = "123-45-6789";
+        var text = "123-45-6780";
 
         // When
         var actualText = masker.apply(text);
@@ -126,6 +126,6 @@ class FixedLengthMaskerTests {
         return Stream.of(
                 Arguments.of(Masker.fixedLength().ignore('-').build(), "***-**-****"),
                 Arguments.of(Masker.fixedLength().preservePrefix(3).ignore('-').build(), "123-**-****"),
-                Arguments.of(Masker.fixedLength().preserveSuffix(4).ignore('-').build(), "***-**-6789"));
+                Arguments.of(Masker.fixedLength().preserveSuffix(4).ignore('-').build(), "***-**-6780"));
     }
 }

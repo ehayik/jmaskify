@@ -65,7 +65,7 @@ import org.jspecify.annotations.Nullable;
  */
 @Slf4j
 @RequiredArgsConstructor
-public final class JsonMasker implements Masker<String> {
+public final class JsonMasker implements Masker<String>, Buildable<String, JsonMasker> {
 
     private final boolean prettify;
 
@@ -221,6 +221,14 @@ public final class JsonMasker implements Masker<String> {
     }
 
     /**
+     * @return a {@link JsonMasker.Builder builder} to create a new {@code JsonMasker} whose settings are replicated from the current {@code JsonMasker}.
+     */
+    @Override
+    public Builder mutate() {
+        return builder().prettify(prettify).withObjectMapper(objectMapper).withProperties(properties);
+    }
+
+    /**
      * Builder class for creating instances of {@link JsonMasker}.
      *
      * <p>This builder allows customizing the behavior of the {@link JsonMasker}, such as:
@@ -239,6 +247,11 @@ public final class JsonMasker implements Masker<String> {
 
         private boolean prettify;
         private final Map<String, Masker<String>> properties = new HashMap<>();
+
+        Builder withProperties(Map<String, Masker<String>> properties) {
+            this.properties.putAll(properties);
+            return this;
+        }
 
         /**
          * Adds properties to be masked with the default {@link FixedLengthMasker}.

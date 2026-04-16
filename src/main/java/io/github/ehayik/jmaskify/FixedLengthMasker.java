@@ -11,7 +11,8 @@ import org.jspecify.annotations.Nullable;
  *
  * <p>
  *      The length of the masked output is determined by a specified fixed length.
- *      This class is immutable and thread-safe.
+ *      When {@code charToIgnore} is set, the output length is determined by the input value and
+ *      {@code fixedLength} is ignored. This class is immutable and thread-safe.
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public final class FixedLengthMasker implements Masker<String> {
     /**
      * @deprecated Use {@link #builder()} or {@link Masker#fixedLength()} instead
      */
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "1.1.0")
     public FixedLengthMasker() {
         this(0, DEF_SUBSTITUTION_CHAR, 0, 0, '\0');
     }
@@ -172,6 +173,8 @@ public final class FixedLengthMasker implements Masker<String> {
          * @param fixedLength the length to which the input string should be masked.
          *                   If the value is zero or negative,
          *                  the input string is masked to the same length as the input string.
+         *                   Ignored when {@link #ignore(char)} is configured, in which case the output
+         *                   length follows the input value and ignored characters are preserved.
          * @return this builder for method chaining
          */
         public Builder withFixedLength(int fixedLength) {
@@ -205,6 +208,8 @@ public final class FixedLengthMasker implements Masker<String> {
          * Sets the character to ignore during masking.
          *
          * @param charToIgnore the character that should be preserved in the output
+         *                     When this is set, {@link #withFixedLength(int)} is ignored and the output
+         *                     length follows the input value.
          * @return this builder for method chaining
          */
         public Builder ignore(char charToIgnore) {

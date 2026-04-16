@@ -311,5 +311,34 @@ class JsonMaskerTests {
         JSONAssert.assertEquals(expectedJson, actualJson, STRICT);
     }
 
+    @Test
+    void shouldRetainExistingSettingsWhenMutating() throws Exception {
+        // Given
+        var expectedJson =
+                """
+            {
+                "name" : "********",
+                "age" : 30,
+                "city" : "********",
+                "email" : "****************",
+                "phone" : "MTIzLTQ1Ni03ODkw"
+            }
+        """;
+
+        var masker = Masker.json()
+                .prettify(true)
+                .withProperty("phone", base64())
+                .withProperties(fixedLength(), "name", "email")
+                .build();
+
+        var maskerCopy = masker.mutate().withProperty("city", fixedLength());
+
+        // When
+        var actualJson = maskerCopy.apply(JSON_OBJECT);
+
+        // Then
+        JSONAssert.assertEquals(expectedJson, actualJson, STRICT);
+    }
+
     record Person(String name, int age, String city, String email, String phone) {}
 }
