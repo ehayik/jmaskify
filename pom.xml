@@ -70,7 +70,7 @@
         <jackson.version>2.18.0</jackson.version>
         <junit.version>5.11.3</junit.version>
         <lombok.version>1.18.34</lombok.version>
-        <commons-lang3.version>3.17.0</commons-lang3.version>
+        <commons-lang3.version>3.20.0</commons-lang3.version>
         <commons-codec.version>1.17.1</commons-codec.version>
         <jsonassert.version>1.5.3</jsonassert.version>
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
