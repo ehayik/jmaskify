@@ -72,7 +72,7 @@ JMaskify is available on Maven Central. Add the dependency to your project:
 <dependency>
     <groupId>io.github.ehayik</groupId>
     <artifactId>jmaskify</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
