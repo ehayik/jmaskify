@@ -368,7 +368,7 @@ Maintain a `CHANGELOG.md` documenting:
 6. Add unit tests in `src/test/java`
 7. Add/Update Javadoc accordingly
 8. Update documentation in `README.md`
-9. Update `CHANGELOG.md`
+9. Update `CHANGELOG.md` (for user-facing changes only)
 10. Create a Pull Request with the new feature
 
 ### Fixing a Bug
@@ -377,7 +377,7 @@ Maintain a `CHANGELOG.md` documenting:
 2. Add a failing test that reproduces the bug
 3. Implement the fix
 4. Ensure all tests pass
-5. Update `CHANGELOG.md`
+5. Update `CHANGELOG.md` (for user-facing changes only)
 6. Create a Pull Request with the fix
 
 ## Code Review Checklist
