@@ -22,6 +22,9 @@ _JMaskify_ ensures its security through intuitive APIs and advanced masking stra
         - [JSON Masking](#2-json-masking)
         - [Multiline Text Masking](#3-multiline-text-masking)
 - [Advanced Usage](#advanced-usage)
+  - [Advanced Masker Configuration](#advanced-masker-configuration)
+    - [FixedLengthMasker Configuration](#1-fixedlengthmasker-configuration)
+    - [MultilinePatternMasker Configuration](#2-multilinepatternmasker-configuration)
   - [Custom Masking Strategies](#custom-masking-strategies) 
   - [Combining Masking Strategies](#combining-masking-strategies)
   - [Logging](#logging)
@@ -93,10 +96,6 @@ var email = "john.doe@example.com";
 var maskedEmail = Masker.fixedLength().apply(email);
 // Result: "****************"
 ```
-
-> **NOTE**:
-> When `ignore(char)` is configured on `FixedLengthMasker`, `fixedLength` is ignored and the
-> output length follows the input value while the ignored characters are preserved.
 
 #### 2. JSON Masking
 
@@ -311,6 +310,10 @@ var maskerWithIgnore = FixedLengthMasker.builder()
 var resultWithIgnore = maskerWithIgnore.apply("123-456-789");
 // Result: "123-###-###" (fixedLength is ignored when ignore() is used)
 ```
+
+> **NOTE**:
+> When `ignore(char)` is configured on `FixedLengthMasker`, `fixedLength` is ignored and the
+> output length follows the input value while the ignored characters are preserved.
 
 #### 2. MultilinePatternMasker Configuration
 
