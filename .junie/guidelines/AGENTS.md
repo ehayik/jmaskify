@@ -243,7 +243,7 @@ Create a Pull Request to the `master` branch on GitHub. It is recommended to use
 
 ```bash
 # Create a temporary file with the PR body
-cat <<EOF > pr_body.md
+cat <<EOF > target/pr_body.md
 ### What
 <Description of the changes>
 
@@ -259,10 +259,7 @@ cat <<EOF > pr_body.md
 EOF
 
 # Create the pull request
-gh pr create --base master --head feat/my-feature --title "feat: add new masking strategy" --body-file pr_body.md
-
-# Clean up
-rm pr_body.md
+gh pr create --base master --head feat/my-feature --title "feat: add new masking strategy" --body-file target/pr_body.md
 ```
 
 Alternatively, use the `--fill` flag to automatically use the commit message:
@@ -368,7 +365,7 @@ Maintain a `CHANGELOG.md` documenting:
 6. Add unit tests in `src/test/java`
 7. Add/Update Javadoc accordingly
 8. Update documentation in `README.md`
-9. Update `CHANGELOG.md`
+9. Update `CHANGELOG.md` (for user-facing changes only)
 10. Create a Pull Request with the new feature
 
 ### Fixing a Bug
@@ -377,7 +374,7 @@ Maintain a `CHANGELOG.md` documenting:
 2. Add a failing test that reproduces the bug
 3. Implement the fix
 4. Ensure all tests pass
-5. Update `CHANGELOG.md`
+5. Update `CHANGELOG.md` (for user-facing changes only)
 6. Create a Pull Request with the fix
 
 ## Code Review Checklist
