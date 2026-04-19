@@ -243,7 +243,7 @@ Create a Pull Request to the `master` branch on GitHub. It is recommended to use
 
 ```bash
 # Create a temporary file with the PR body
-cat <<EOF > pr_body.md
+cat <<EOF > target/pr_body.md
 ### What
 <Description of the changes>
 
@@ -259,10 +259,10 @@ cat <<EOF > pr_body.md
 EOF
 
 # Create the pull request
-gh pr create --base master --head feat/my-feature --title "feat: add new masking strategy" --body-file pr_body.md
+gh pr create --base master --head feat/my-feature --title "feat: add new masking strategy" --body-file target/pr_body.md
 
 # Clean up
-rm pr_body.md
+rm target/pr_body.md
 ```
 
 Alternatively, use the `--fill` flag to automatically use the commit message:
