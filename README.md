@@ -95,7 +95,7 @@ var maskedEmail = Masker.fixedLength().apply(email);
 ```
 
 > **NOTE**:
-> When `charToIgnore` is configured on `FixedLengthMasker`, `fixedLength` is ignored and the
+> When `ignore(char)` is configured on `FixedLengthMasker`, `fixedLength` is ignored and the
 > output length follows the input value while the ignored characters are preserved.
 
 #### 2. JSON Masking
@@ -281,6 +281,52 @@ var maskedContent = masker.apply(logContent);
 
 Once you're comfortable with the basic masking operations,
 JMaskify offers more sophisticated features to handle complex masking requirements.
+
+### Advanced Masker Configuration
+
+JMaskify provides several ways to customize the behavior of its core maskers.
+
+#### 1. FixedLengthMasker Configuration
+
+The `FixedLengthMasker` can be configured to preserve parts of the input, ignore specific characters, or use a custom substitution character.
+
+```java
+// Configure a masker with prefix/suffix preservation and custom substitution
+var masker = FixedLengthMasker.builder()
+    .withFixedLength(10)          // Resulting masked part will be 10 characters
+    .withSubstitution('#')        // Use '#' instead of '*'
+    .preservePrefix(2)            // Keep first 2 characters
+    .preserveSuffix(2)            // Keep last 2 characters
+    .build();
+
+var result = masker.apply("1234567890123");
+// Result: "12##########23" (prefix "12" + 10 '#' + suffix "23")
+
+// Configure a masker to ignore specific characters
+var maskerWithIgnore = FixedLengthMasker.builder()
+    .ignore('-')                  // Do not mask '-' characters
+    .preservePrefix(3)            // Keep first 3 characters
+    .build();
+
+var resultWithIgnore = maskerWithIgnore.apply("123-456-789");
+// Result: "123-###-###" (fixedLength is ignored when ignore() is used)
+```
+
+#### 2. MultilinePatternMasker Configuration
+
+You can assign specific masking strategies to different patterns within a `MultilinePatternMasker`.
+
+```java
+var masker = Masker.multilinePattern()
+    .withMaskPattern("(\\d{4}-\\d{4}-\\d{4}-\\d{4})", Masker.creditCard()) // Specific masker for CC
+    .withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)") // Default masking for IP
+    .withSubstitution('X')
+    .build();
+
+String content = "CC: 1234-5678-9012-3456, IP: 192.168.1.1";
+var result = masker.apply(content);
+// Result: "CC: XXXX-XXXX-XXXX-3456, IP: XXXXXXXXXXX"
+```
 
 ### Custom Masking Strategies
 
