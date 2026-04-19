@@ -260,9 +260,6 @@ EOF
 
 # Create the pull request
 gh pr create --base master --head feat/my-feature --title "feat: add new masking strategy" --body-file target/pr_body.md
-
-# Clean up
-rm target/pr_body.md
 ```
 
 Alternatively, use the `--fill` flag to automatically use the commit message:
