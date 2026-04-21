@@ -1,6 +1,7 @@
 # JMaskify
 
 ![](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white&style=flat)
+[![Maven](https://badges.mvnrepository.com/badge/io.github.ehayik/jmaskify/badge.svg?label=Maven)](https://mvnrepository.com/artifact/io.github.ehayik/jmaskify)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ehayik_jmaskify&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ehayik_jmaskify)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=ehayik_jmaskify&metric=coverage)](https://sonarcloud.io/summary/new_code?id=ehayik_jmaskify)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
