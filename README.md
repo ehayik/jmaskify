@@ -161,7 +161,7 @@ String json = """
 }
 """;
 
-var masker = JsonMasker.builder()
+var masker = Masker.json()
     .withProperty("creditCards", Masker.creditCard('X'))
     .build();
 
@@ -197,7 +197,7 @@ String json = """
 }
 """;
 
-var masker = JsonMasker.builder()
+var masker = Masker.json()
     .withProperty("mixedArray", Masker.fixedLength())
     .build();
 
@@ -234,7 +234,7 @@ String json = """
 }
 """;
 
-var masker = JsonMasker.builder()
+var masker = Masker.json()
     .withProperty("nestedArrays", Masker.fixedLength())
     .build();
 
@@ -291,22 +291,24 @@ JMaskify provides several ways to customize the behavior of its core maskers.
 The `FixedLengthMasker` can be configured to preserve parts of the input, ignore specific characters, or use a custom substitution character.
 
 ```java
+import io.github.ehayik.jmaskify.Masker;
+
 // Configure a masker with prefix/suffix preservation and custom substitution
-var masker = FixedLengthMasker.builder()
-    .withFixedLength(10)          // Resulting masked part will be 10 characters
-    .withSubstitution('#')        // Use '#' instead of '*'
-    .preservePrefix(2)            // Keep first 2 characters
-    .preserveSuffix(2)            // Keep last 2 characters
-    .build();
+var masker = Masker.fixedLength()
+        .withFixedLength(10)          // Resulting masked part will be 10 characters
+        .withSubstitution('#')        // Use '#' instead of '*'
+        .preservePrefix(2)            // Keep first 2 characters
+        .preserveSuffix(2)            // Keep last 2 characters
+        .build();
 
 var result = masker.apply("1234567890123");
 // Result: "12##########23" (prefix "12" + 10 '#' + suffix "23")
 
 // Configure a masker to ignore specific characters
-var maskerWithIgnore = FixedLengthMasker.builder()
-    .ignore('-')                  // Do not mask '-' characters
-    .preservePrefix(3)            // Keep first 3 characters
-    .build();
+var maskerWithIgnore = Masker.fixedLength()
+        .ignore('-')                  // Do not mask '-' characters
+        .preservePrefix(3)            // Keep first 3 characters
+        .build();
 
 var resultWithIgnore = maskerWithIgnore.apply("123-456-789");
 // Result: "123-###-###" (fixedLength is ignored when ignore() is used)
