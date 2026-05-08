@@ -103,7 +103,7 @@ var maskedEmail = Masker.fixedLength().apply(email);
 For masking fields within JSON objects:
 
 ```java
-String json = """
+var json = """
 {
   "name": "John Doe",
   "age": 30,
@@ -121,7 +121,8 @@ var masker = Masker.json()
     .withProperty("email") // Default fixed pattern masking
     .withProperty("phone", Masker.base64())
     .withProperty("creditCard", Masker.creditCard('X'))    
-    .withProperty("name", Masker.delegate(value -> "■■■■■■"));
+    .withProperty("name", Masker.delegate(value -> "■■■■■■"))
+    .build();
 
 // Apply masking
 var maskedJson = masker.apply(json);
@@ -151,7 +152,7 @@ Here are examples of different array masking scenarios:
 When you need to mask an array of sensitive string values, such as credit card numbers:
 
 ```java
-String json = """
+var json = """
 {
     "name": "John Doe",
     "creditCards": [
@@ -183,7 +184,7 @@ var maskedJson = masker.apply(json);
 JMaskify can handle arrays containing a mix of different value types, masking only the string values:
 
 ```java
-String json = """
+var json = """
 {
     "name": "John Doe",
     "mixedArray": [
@@ -223,7 +224,7 @@ var maskedJson = masker.apply(json);
 JMaskify handles nested arrays with specific masking behavior:
 
 ```java
-String json = """
+var json = """
 {
     "name": "John Doe",
     "nestedArrays": [
@@ -260,14 +261,15 @@ var maskedJson = masker.apply(json);
 When working with log files or other text that spans multiple lines, you can use multiline text masking to identify and mask patterns:
 
 ```java
-String logContent = """
+var logContent = """
           2023-05-15 INFO User john.doe@example.com logged in
           2023-05-15 INFO IP Address: 192.168.1.1
         """;
 
 // Create a MultilinePatternMasker instance
 var masker = Masker.multilinePattern()
-    .withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)");
+    .withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)")
+    .build();
 
 // Apply masking
 var maskedContent = masker.apply(logContent);
@@ -291,11 +293,8 @@ JMaskify provides several ways to customize the behavior of its core maskers.
 The `FixedLengthMasker` can be configured to preserve parts of the input, ignore specific characters, or use a custom substitution character.
 
 ```java
-import io.github.ehayik.jmaskify.Masker;
-
 // Configure a masker with prefix/suffix preservation and custom substitution
-var masker = Masker.fixedLength()
-        .withFixedLength(10)          // Resulting masked part will be 10 characters
+var masker = Masker.fixedLength(10)   // Resulting masked part will be 10 characters
         .withSubstitution('#')        // Use '#' instead of '*'
         .preservePrefix(2)            // Keep first 2 characters
         .preserveSuffix(2)            // Keep last 2 characters
@@ -329,7 +328,7 @@ var masker = Masker.multilinePattern()
     .withSubstitution('X')
     .build();
 
-String content = "CC: 1234-5678-9012-3456, IP: 192.168.1.1";
+var content = "CC: 1234-5678-9012-3456, IP: 192.168.1.1";
 var result = masker.apply(content);
 // Result: "CC: XXXX-XXXX-XXXX-3456, IP: XXXXXXXXXXX"
 ```
