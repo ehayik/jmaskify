@@ -289,7 +289,8 @@ The `FixedLengthMasker` can be configured to preserve parts of the input, ignore
 var masker = Masker.fixedLength(10)   // Resulting masked part will be 10 characters
         .withSubstitution('#')        // Use '#' instead of '*'
         .preservePrefix(2)            // Keep first 2 characters
-        .preserveSuffix(2);            // Keep last 2 characters
+        .preserveSuffix(2)            // Keep last 2 characters
+        .build();
 
 var result = masker.apply("1234567890123");
 // Result: "12##########23" (prefix "12" + 10 '#' + suffix "23")
