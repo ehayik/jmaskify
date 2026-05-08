@@ -298,7 +298,8 @@ var result = masker.apply("1234567890123");
 // Configure a masker to ignore specific characters
 var maskerWithIgnore = Masker.fixedLength()
         .ignore('-')                  // Do not mask '-' characters
-        .preservePrefix(3);            // Keep first 3 characters
+        .preservePrefix(3)            // Keep first 3 characters
+        .build();
 
 var resultWithIgnore = maskerWithIgnore.apply("123-456-789");
 // Result: "123-###-###" (fixedLength is ignored when ignore() is used)
