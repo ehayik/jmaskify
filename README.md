@@ -297,8 +297,7 @@ var result = masker.apply("1234567890123");
 // Configure a masker to ignore specific characters
 var maskerWithIgnore = Masker.fixedLength()
         .ignore('-')                  // Do not mask '-' characters
-        .preservePrefix(3)            // Keep first 3 characters
-        .build();
+        .preservePrefix(3);            // Keep first 3 characters
 
 var resultWithIgnore = maskerWithIgnore.apply("123-456-789");
 // Result: "123-###-###" (fixedLength is ignored when ignore() is used)
@@ -316,8 +315,7 @@ You can assign specific masking strategies to different patterns within a `Multi
 var masker = Masker.multilinePattern()
     .withMaskPattern("(\\d{4}-\\d{4}-\\d{4}-\\d{4})", Masker.creditCard()) // Specific masker for CC
     .withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)") // Default masking for IP
-    .withSubstitution('X')
-    .build();
+    .withSubstitution('X');
 
 String content = "CC: 1234-5678-9012-3456, IP: 192.168.1.1";
 var result = masker.apply(content);
