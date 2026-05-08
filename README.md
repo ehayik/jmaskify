@@ -289,7 +289,8 @@ The `FixedLengthMasker` can be configured to preserve parts of the input, ignore
 var masker = Masker.fixedLength(10)   // Resulting masked part will be 10 characters
         .withSubstitution('#')        // Use '#' instead of '*'
         .preservePrefix(2)            // Keep first 2 characters
-        .preserveSuffix(2);            // Keep last 2 characters
+        .preserveSuffix(2)            // Keep last 2 characters
+        .build();
 
 var result = masker.apply("1234567890123");
 // Result: "12##########23" (prefix "12" + 10 '#' + suffix "23")
@@ -316,8 +317,7 @@ You can assign specific masking strategies to different patterns within a `Multi
 var masker = Masker.multilinePattern()
     .withMaskPattern("(\\d{4}-\\d{4}-\\d{4}-\\d{4})", Masker.creditCard()) // Specific masker for CC
     .withMaskPattern("(\\d+\\.\\d+\\.\\d+\\.\\d+)") // Default masking for IP
-    .withSubstitution('X')
-    .build();
+    .withSubstitution('X');
 
 String content = "CC: 1234-5678-9012-3456, IP: 192.168.1.1";
 var result = masker.apply(content);
