@@ -25,8 +25,8 @@ This document outlines coding standards, contribution practices, and development
 ## Feature Checklist
 
 - [ ] Simple, clean, concise code
-- [ ] Follows the [java guidelines](java-guidelines.md)
-- [ ] Follows the [architecture guidelines](architecture-guidelines.md)
+- [ ] Follows the [java guidelines](guidelines/java-guidelines.md)
+- [ ] Follows the [architecture guidelines](guidelines/architecture-guidelines.md)
 - [ ] Error handling + logging
 - [ ] Tests added and passing
 - [ ] Documentation updated (`README.md`) 
@@ -213,7 +213,7 @@ BREAKING CHANGE: `extends` key in config file is now used for extending other co
 
 ### Pull Request Process
 
-1. **Read [Pull Request Description Guidelines](pull-request-description-guidelines.md) before creating a PR**, to
+1. **Read [Pull Request Description Guidelines](guidelines/pull-request-description-guidelines.md) before creating a PR**, to
    ensure the PR title and description adhere to the project's guidelines
 
 2. **Create a branch from the `master` branch**
