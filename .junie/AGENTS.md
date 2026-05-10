@@ -56,7 +56,10 @@ mvn spotless:apply
   
 # Check formatting without applying  
 mvn spotless:check  
-```  
+```
+
+>**NOTE:**
+> Only `.java` and `pom.xml` files are formatted by Spotless.
 
 ### Null Safety & Error Detection
 
