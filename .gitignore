@@ -35,3 +35,6 @@ build/
 .DS_Store
 /project-brief.md
 /.flattened-pom.xml
+
+.junie/memory/
+.junie/plans/
