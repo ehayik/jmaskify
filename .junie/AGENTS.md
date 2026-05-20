@@ -246,7 +246,7 @@ Create a Pull Request to the `master` branch on GitHub. It is recommended to use
 
 ```bash
 # Create a temporary file with the PR body
-cat <<EOF > target/pr_body.md
+cat <<EOF > target/pr_<changes-name>-body.md
 ### What
 <Description of the changes>
 
@@ -266,6 +266,9 @@ gh pr create --base master --head feat/my-feature --title "feat: add new masking
 ```
 
 Alternatively, use the `--fill` flag to automatically use the commit message:
+
+> **NOTE**
+> Do not try to delete the PR body temporary file.
 
 ```bash
 gh pr create --base master --head feat/my-feature --fill
