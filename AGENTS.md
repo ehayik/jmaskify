@@ -27,14 +27,23 @@ This document outlines coding standards, contribution practices, and development
 
 All agent instructions are tool-agnostic and live in `.agents/`. Tool-specific folders (e.g. `.claude/`) contain only symlinks to it, so edit the files in `.agents/`, never the links.
 
-| Path                       | Contents                                                                        |
-|----------------------------|---------------------------------------------------------------------------------|
-| `.agents/project-overview.md` | Project purpose, structure, and architecture                                 |
-| `.agents/guidelines/`      | Java, architecture, and pull request description guidelines                     |
-| `.agents/agents/`          | Specialized agent roles (`discovery` is the main session role and orchestrates the others)                   |
-| `.agents/commands/`        | Reusable workflows (development plans and journals); `$ARGUMENTS` is user input |
-| `.agents/skills/`          | Agent Skills: one folder per skill containing a `SKILL.md` (see below)          |
-| `.agents/artifacts/`       | Generated plans and journals (git-ignored)                                      |
+> **NOTE**
+> On Windows, Git checks out symlinks as plain text files unless symlink support is enabled. Turn on Developer Mode (or run Git as administrator), then clone with symlinks enabled:
+>
+> ```bash
+> git clone -c core.symlinks=true git@github.com:ehayik/jmaskify.git
+> ```
+>
+> For an existing clone, run `git config core.symlinks true` and restore the links with `git checkout -- .claude`.
+
+| Path                          | Contents                                                                                   |
+|-------------------------------|--------------------------------------------------------------------------------------------|
+| `.agents/project-overview.md` | Project purpose, structure, and architecture                                               |
+| `.agents/guidelines/`         | Java, architecture, and pull request description guidelines                                |
+| `.agents/agents/`             | Specialized agent roles (`discovery` is the main session role and orchestrates the others) |
+| `.agents/commands/`           | Reusable workflows (development plans and journals); `$ARGUMENTS` is user input            |
+| `.agents/skills/`             | Agent Skills: one folder per skill containing a `SKILL.md` (see below)                     |
+| `.agents/artifacts/`          | Generated plans and journals (git-ignored)                                                 |
 
 Agent frontmatter `tools` lists use Claude Code tool names (`Read`, `Edit`, `Write`, `Bash`, `Grep`, `Glob`). Agents without a `tools` list may use every tool. Other tools that don't recognize these names should treat the list as the agent's intended permissions: agents without `Edit`/`Write` are read-only.
 
