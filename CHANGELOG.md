@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-11-14
+
+### Fixed
+- Address GHSA-7hhh-6rmp-j9qf, GHSA-p6pp-m3f8-5c89 and GHSA-r7wm-3cxj-wff9 by updating `jackson-core` to version `2.18.11`
+- Address GHSA-5gvw-p9qm-jgwh, GHSA-cxp5-3px4-pw24, GHSA-wv8q-qhhj-9h54, GHSA-gx83-3vf8-gh7j, GHSA-q4xh-88c3-wmh7, GHSA-wjgm-6hv5-3cvf, GHSA-vvgp-rfg2-7rr6, GHSA-mhm7-754m-9p8w, GHSA-3pjw-73gf-8qr5, GHSA-5jmj-h7xm-6q6v, GHSA-hgj6-7826-r7m5, GHSA-rmj7-2vxq-3g9f and GHSA-j3rv-43j4-c7qm by updating `jackson-databind` to version `2.18.11`
+
 ## [1.1.0] - 2026-04-19
 
 ### Fixed
