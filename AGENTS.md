@@ -42,7 +42,7 @@ All agent instructions are tool-agnostic and live in `.agents/`. Tool-specific f
 | `.agents/project-overview.md` | Project purpose, structure, and architecture                                               |
 | `.agents/guidelines/`         | Java, architecture, and pull request description guidelines                                |
 | `.agents/agents/`             | Specialized agent roles (`discovery` is the main session role and orchestrates the others) |
-| `.agents/commands/`           | Reusable workflows (development plans and journals); `$ARGUMENTS` is user input            |
+| `.agents/commands/`           | Reusable workflows (development plans, journals, and releases); `$ARGUMENTS` is user input |
 | `.agents/skills/`             | Agent Skills: one folder per skill containing a `SKILL.md` (see below)                     |
 | `.agents/artifacts/`          | Generated plans and journals (git-ignored)                                                 |
 
@@ -427,6 +427,23 @@ Maintain a `CHANGELOG.md` documenting:
 5. Update `CHANGELOG.md` (for user-facing changes only)
 6. Create a Pull Request with the fix
 
+### Releasing a New Version
+
+Releases are published to Maven Central through the [Sonatype Central Portal](https://central.sonatype.com) by the `central-publishing-maven-plugin` in the `release` profile. Agents prepare releases with the [`release-prepare`](.agents/commands/release/release-prepare.md) command; **only the maintainer runs the publish step**.
+
+**Prerequisites** (maintainer machine):
+- A Central Portal user token in `~/.m2/settings.xml` under the server id `central`
+- A GPG key for signing, published to a public keyserver
+
+**Steps**:
+1. Bump `<version>` in `pom.xml`, add a dated section to `CHANGELOG.md`, and update the version in the `README.md` installation snippet. Merge these changes to `master` through a pull request
+2. Run the `release-prepare` command (e.g. `/release:release-prepare 1.2.0`) for pre-flight checks and a dry-run build
+3. The maintainer publishes from an up-to-date `master`: `./mvnw clean deploy -P release` (without `-B`, so GPG can prompt for the key passphrase)
+4. Once the deployment shows as published, tag the published commit (`git tag -a vX.Y.Z <sha> -m "Release X.Y.Z"`), push the tag, and create a GitHub release from the `CHANGELOG.md` section (the command drafts it; the maintainer publishes it)
+
+> **WARNING**
+> Maven Central releases are immutable. A published version can never be deleted or overwritten, so a mistake needs a new patch release.
+
 ## Code Review Checklist
 
 When reviewing code, verify:
@@ -445,5 +462,5 @@ When reviewing code, verify:
 ### MUST NOT DO
 
 - Bump major versions of core dependencies without a dedicated PR and discussion
-- Publish new versions to Maven Central
+- Publish new versions to Maven Central (prepare releases with the `release-prepare` command and hand the publish step to the maintainer)
 - Merge a pull request without proper review and approval

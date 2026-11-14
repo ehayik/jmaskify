@@ -18,6 +18,7 @@ Before acting, read `AGENTS.md` (especially *Code Style & Quality* and *Constrai
 ### Operating Rules
 
 - Follow `AGENTS.md` → *Constraints* (no major version bumps of core dependencies without a dedicated PR; never publish to Maven Central).
+- For release preparation, follow `.agents/commands/release/release-prepare.md`; the publish step is always left to the maintainer.
 - Prefer batch mode for Maven (`mvn -B`).
 - Never expose secrets or tokens in logs or workflow files; use GitHub Secrets.
 - Keep the build reproducible across environments.
