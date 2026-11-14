@@ -5,6 +5,7 @@ This document outlines coding standards, contribution practices, and development
 ## Table of Contents
 
 - [Quick-start checklist](#quick-start-checklist)
+- [Agent Resources](#agent-resources)
 - [Feature Checklist](#feature-checklist)
 - [Code Style & Quality](#code-style--quality)
 - [Testing Guidelines](#testing-guidelines)
@@ -17,16 +18,51 @@ This document outlines coding standards, contribution practices, and development
 
 ## Quick-start checklist
 
-- [ ] Read this file and `README.md` before acting to:
+- [ ] Read this file and `README.md`, `.agents/project-overview.md` before acting to:
   - Familiarize yourself with the library's core concepts and use cases
   - Explore the available maskers and their use cases
   - Understand the security considerations and guidelines for consumers
 
+## Agent Resources
+
+All agent instructions are tool-agnostic and live in `.agents/`. Tool-specific folders (e.g. `.claude/`) contain only symlinks to it, so edit the files in `.agents/`, never the links.
+
+> **NOTE**
+> On Windows, Git checks out symlinks as plain text files unless symlink support is enabled. Turn on Developer Mode (or run Git as administrator), then clone with symlinks enabled:
+>
+> ```bash
+> git clone -c core.symlinks=true git@github.com:ehayik/jmaskify.git
+> ```
+>
+> For an existing clone, run `git config core.symlinks true` and restore the links with `git checkout -- .claude`.
+
+| Path                          | Contents                                                                                   |
+|-------------------------------|--------------------------------------------------------------------------------------------|
+| `.agents/project-overview.md` | Project purpose, structure, and architecture                                               |
+| `.agents/guidelines/`         | Java, architecture, and pull request description guidelines                                |
+| `.agents/agents/`             | Specialized agent roles (`discovery` is the main session role and orchestrates the others) |
+| `.agents/commands/`           | Reusable workflows (development plans and journals); `$ARGUMENTS` is user input            |
+| `.agents/skills/`             | Agent Skills: one folder per skill containing a `SKILL.md` (see below)                     |
+| `.agents/artifacts/`          | Generated plans and journals (git-ignored)                                                 |
+
+Agent frontmatter `tools` lists use Claude Code tool names (`Read`, `Edit`, `Write`, `Bash`, `Grep`, `Glob`). Agents without a `tools` list may use every tool. Other tools that don't recognize these names should treat the list as the agent's intended permissions: agents without `Edit`/`Write` are read-only.
+
+Skills follow the open [Agent Skills](https://agentskills.io) format, so they work across tools that support it:
+
+```text
+.agents/skills/<skill-name>/
+├── SKILL.md        # required: frontmatter with `name` (matches the folder) and `description`, then instructions
+├── scripts/        # optional: helper scripts the skill runs
+└── references/     # optional: extra docs loaded only when needed
+```
+
+Write the `description` so it says both what the skill does and when to use it; agents decide whether to load a skill from that line alone.
+
 ## Feature Checklist
 
 - [ ] Simple, clean, concise code
-- [ ] Follows the [java guidelines](guidelines/java-guidelines.md)
-- [ ] Follows the [architecture guidelines](guidelines/architecture-guidelines.md)
+- [ ] Follows the [java guidelines](.agents/guidelines/java-guidelines.md)
+- [ ] Follows the [architecture guidelines](.agents/guidelines/architecture-guidelines.md)
 - [ ] Error handling + logging
 - [ ] Tests added and passing
 - [ ] Documentation updated (`README.md`) 
@@ -216,7 +252,7 @@ BREAKING CHANGE: `extends` key in config file is now used for extending other co
 
 ### Pull Request Process
 
-1. **Read [Pull Request Description Guidelines](guidelines/pull-request-description-guidelines.md) before creating a PR**, to
+1. **Read [Pull Request Description Guidelines](.agents/guidelines/pull-request-description-guidelines.md) before creating a PR**, to
    ensure the PR title and description adhere to the project's guidelines
 
 2. **Create a branch from the `master` branch**
@@ -262,13 +298,13 @@ cat <<EOF > target/pr_<changes-name>-body.md
 EOF
 
 # Create the pull request
-gh pr create --base master --head feat/my-feature --title "feat: add new masking strategy" --body-file target/pr_body.md
+gh pr create --base master --head feat/my-feature --title "feat: add new masking strategy" --body-file target/pr_<changes-name>-body.md
 ```
-
-Alternatively, use the `--fill` flag to automatically use the commit message:
 
 > **NOTE**
 > Do not try to delete the PR body temporary file.
+
+Alternatively, use the `--fill` flag to automatically use the commit message:
 
 ```bash
 gh pr create --base master --head feat/my-feature --fill

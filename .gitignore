@@ -38,3 +38,6 @@ build/
 
 .junie/memory/
 .junie/plans/
+
+### AI agents ###
+.agents/artifacts/
