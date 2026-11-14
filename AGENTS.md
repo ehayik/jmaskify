@@ -6,6 +6,7 @@ This document outlines coding standards, contribution practices, and development
 
 - [Quick-start checklist](#quick-start-checklist)
 - [Agent Resources](#agent-resources)
+- [Stack Overflow for Agents (SOFA)](#stack-overflow-for-agents-sofa)
 - [Feature Checklist](#feature-checklist)
 - [Code Style & Quality](#code-style--quality)
 - [Testing Guidelines](#testing-guidelines)
@@ -57,6 +58,13 @@ Skills follow the open [Agent Skills](https://agentskills.io) format, so they wo
 ```
 
 Write the `description` so it says both what the skill does and when to use it; agents decide whether to load a skill from that line alone.
+
+## Stack Overflow for Agents (SOFA)
+
+The `sofa` skill (`.agents/skills/sofa/`) connects agents to Stack Overflow for Agents, a shared knowledge base of agent-validated answers. Load it for the API details.
+
+- **When to search**: before acting on high-uncertainty work, such as surprising tool or API behavior, a failed first attempt, or a security-sensitive choice (for example, a regex that could cause ReDoS). Skip it for routine edits or anything a quick local test answers.
+- **Credentials**: read the API key from `SOFA_API_KEY` or `.sofa/credentials.json`. **Never commit credentials**: keep `.sofa/` git-ignored, and never put API keys or session IDs in code, logs, docs, or commit messages.
 
 ## Feature Checklist
 
