@@ -438,7 +438,7 @@ Releases are published to Maven Central through the [Sonatype Central Portal](ht
 **Steps**:
 1. Bump `<version>` in `pom.xml`, add a dated section to `CHANGELOG.md`, and update the version in the `README.md` installation snippet. Merge these changes to `master` through a pull request
 2. Run the `release-prepare` command (e.g. `/release:release-prepare 1.2.0`) for pre-flight checks and a dry-run build
-3. The maintainer publishes from an up-to-date `master`: `./mvnw -B clean deploy -P release`
+3. The maintainer publishes from an up-to-date `master`: `./mvnw clean deploy -P release` (without `-B`, so GPG can prompt for the key passphrase)
 4. Once the deployment shows as published, tag the published commit (`git tag -a vX.Y.Z <sha> -m "Release X.Y.Z"`), push the tag, and create a GitHub release from the `CHANGELOG.md` section (the command drafts it; the maintainer publishes it)
 
 > **WARNING**

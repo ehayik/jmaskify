@@ -122,10 +122,10 @@ Present the report below and **stop**. The publish command is for the maintainer
 **Maintainer only.** Run this yourself from the repository root, on `master` at the release SHA. It signs with your GPG key and uploads to the Central Portal. `autoPublish` is enabled, so the release goes live without a manual approval step:
 
 ```text
-./mvnw -B clean deploy -P release
+./mvnw clean deploy -P release
 ```
 
-If signing fails with `gpg: signing failed: No pinentry`, run `gpgconf --kill gpg-agent` and try again.
+Do not add `-B`: in batch mode the GPG plugin signs non-interactively, so the passphrase prompt cannot appear and signing fails with `gpg: signing failed: No pinentry`. If it still fails that way without `-B`, run `gpgconf --kill gpg-agent` and try again.
 
 Track the deployment at https://central.sonatype.com/publishing/deployments. It can take up to ~30 minutes to appear on `repo1.maven.org`.
 
