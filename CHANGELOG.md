@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.1.1] - 2026-11-14
 
 ### Fixed
 - Address GHSA-7hhh-6rmp-j9qf, GHSA-p6pp-m3f8-5c89 and GHSA-r7wm-3cxj-wff9 by updating `jackson-core` to version `2.18.11`
