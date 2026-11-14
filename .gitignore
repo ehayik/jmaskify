@@ -41,3 +41,6 @@ build/
 
 ### AI agents ###
 .agents/artifacts/
+
+# Stack Overflow for Agents credentials
+.sofa/
