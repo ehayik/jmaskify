@@ -133,31 +133,67 @@ Track the deployment at https://central.sonatype.com/publishing/deployments. It 
 
 ## Task 5: Post-release ✅
 
-Only after the maintainer confirms the publish and the release SHA:
+Only after the maintainer confirms the publish and the release SHA.
+
+### 5.1 Verify Availability on Maven Central
 
 ```bash
 VERSION="X.Y.Z"
-RELEASE_SHA="<sha>"
-: "${VERSION:?VERSION is not set}" "${RELEASE_SHA:?RELEASE_SHA is not set}"
-
-# 1. Verify availability on Maven Central (expect HTTP 200; on 404 retry later; anything else is an error)
+: "${VERSION:?VERSION is not set}"
+# Expect HTTP 200. On 404, retry later (it can take ~30 minutes); anything else is an error
 curl -s -o /dev/null -w "Maven Central HTTP: %{http_code}\n" "https://repo1.maven.org/maven2/io/github/ehayik/jmaskify/$VERSION/jmaskify-$VERSION.pom"
-
-# 2. Extract the CHANGELOG section as release notes
-mkdir -p target
-awk -v h="## [$VERSION]" 'index($0, h) == 1 {p=1; next} /^## \[/ {p=0} p' CHANGELOG.md > "target/release-notes-$VERSION.md"
-test -s "target/release-notes-$VERSION.md" && echo "release notes: ok" || echo "release notes: FAIL (empty)"
 ```
 
-Then, after asking the maintainer for confirmation, tag the release SHA and create a **draft** GitHub release:
+### 5.2 Compose the Release Notes 📝
+
+Write the GitHub release notes to `target/release-notes-X.Y.Z.md`, following the format of earlier releases (see `gh release view v1.1.0`).
+
+1. Take the items from the `## [X.Y.Z]` section of `CHANGELOG.md` and group them:
+
+   | CHANGELOG section | Release notes heading |
+   |-------------------|-----------------------|
+   | `### Added`       | `## ⭐ New Features`  |
+   | `### Changed`     | `## 🚀 Enhancements`  |
+   | `### Fixed`       | `## 🐛 Bug Fixes`     |
+   | `### Deprecated`  | `## ⚠️ Deprecations`  |
+
+   Keep the sections in the order above, and leave out sections that have no items.
+2. End each item with a reference to the change that introduced it. Use the pull request number when there is one (e.g. `(#16)`). For a commit pushed directly to `master`, use a short-SHA link (e.g. `([1af3a2f](https://github.com/ehayik/jmaskify/commit/<full-sha>))`). Find the references with:
+
+   ```bash
+   git log --oneline "$(git describe --tags --abbrev=0 <release-sha>^)..<release-sha>"
+   gh pr list --state merged --base master --limit 30 --json number,title,mergeCommit
+   ```
+3. Always end with the installation section:
+
+````markdown
+## 📦 Installation
+
+Available on Maven Central:
+
+```xml
+<dependency>
+    <groupId>io.github.ehayik</groupId>
+    <artifactId>jmaskify</artifactId>
+    <version>X.Y.Z</version>
+</dependency>
+```
+````
+
+Show the composed notes to the maintainer before creating the release.
+
+### 5.3 Tag and Draft the GitHub Release
+
+After asking the maintainer for confirmation, tag the release SHA and create a **draft** GitHub release titled with the tag name:
 
 ```bash
 VERSION="X.Y.Z"
 RELEASE_SHA="<sha>"
 : "${VERSION:?VERSION is not set}" "${RELEASE_SHA:?RELEASE_SHA is not set}"
+test -s "target/release-notes-$VERSION.md" || { echo "release notes: FAIL (missing or empty)"; exit 1; }
 git tag -a "v$VERSION" "$RELEASE_SHA" -m "Release $VERSION"
 git push origin "v$VERSION"
-gh release create "v$VERSION" --draft --verify-tag --title "$VERSION" --notes-file "target/release-notes-$VERSION.md"
+gh release create "v$VERSION" --draft --verify-tag --title "v$VERSION" --notes-file "target/release-notes-$VERSION.md"
 ```
 
 > **NOTE**
