@@ -40,3 +40,7 @@ The library follows a clean and extensible architecture centered around the `Mas
 - **ErrorProne & NullAway**: Static analysis tools for catching bugs and ensuring null safety at compile time.
 - **JUnit 5 & AssertJ**: Frameworks used for comprehensive testing.
 - **JaCoCo**: Provides code coverage reports.
+
+## Release Process
+- **Maven Central**: Releases are published through the Sonatype Central Portal by the `central-publishing-maven-plugin` in the `release` profile, which also attaches sources and Javadoc jars and signs artifacts with GPG.
+- **Agents prepare, the maintainer publishes**: The `release-prepare` command (`.agents/commands/release/release-prepare.md`) runs pre-flight checks and a dry-run build. Only the maintainer runs the publish step. See `AGENTS.md` → *Releasing a New Version*.

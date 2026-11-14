@@ -1,0 +1,163 @@
+---
+description: "Prepare a JMaskify release: run pre-flight checks and a dry-run build, hand off the Maven Central publish to the maintainer, then tag and draft the GitHub release"
+---
+
+# Release Preparation
+
+Prepare the release of JMaskify for Maven Central. Requested version: `$ARGUMENTS`.
+
+Execute each task in the order given. If a task fails, stop, report what failed and how to fix it, and do not continue until the maintainer confirms. (Task 2 runs all its checks before reporting; the task fails if any check fails.)
+
+## Guardrails ⛔
+
+- **Never publish.** Do not run `deploy`, `central-publishing:publish`, or anything else that uploads artifacts. Publishing is done by the maintainer only (see `AGENTS.md` → *Constraints*). In Claude Code, deny rules in `.claude/settings.json` also block these commands. Maven Central releases are immutable: a published version can never be deleted or overwritten.
+- **Never expose secrets.** Do not print `~/.m2/settings.xml` contents, tokens, or GPG passphrases. Only check that the required entries exist.
+- **Never rewrite history or tags.** No force-pushes, and no moving or deleting existing tags.
+- Ask for confirmation before any `git push` or `gh release create`.
+
+## Shell Conventions 🐚
+
+Shell variables do not survive between tool calls. Therefore:
+
+- Run each code block below as a **single** shell command.
+- Replace the `X.Y.Z` and `<sha>` placeholders at the top of each block with the literal values resolved in Tasks 1 and 2.
+- Keep the `${VAR:?}` guard lines: they abort the block if a value is missing, instead of letting checks pass on empty input.
+
+## Task 1: Resolve the Version 🏷️
+
+If a version was requested above, use it. Otherwise read it from `pom.xml` and confirm it with the maintainer:
+
+```bash
+./mvnw -B -q help:evaluate -Dexpression=project.version -DforceStdout
+```
+
+Validate the resolved version:
+
+```bash
+VERSION="X.Y.Z"
+: "${VERSION:?VERSION is not set}"
+[[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] && echo "format: ok" || echo "format: FAIL (expected X.Y.Z, no qualifiers)"
+grep -qF "<version>$VERSION</version>" pom.xml && echo "pom.xml: ok" || echo "pom.xml: FAIL (version mismatch)"
+```
+
+## Task 2: Pre-flight Checks ✈️
+
+Run every check below and collect the results. Don't stop after the first failure.
+
+```bash
+VERSION="X.Y.Z"
+: "${VERSION:?VERSION is not set}"
+
+# 1. On master, clean working tree, up to date with origin
+git fetch origin master --tags
+echo "branch: $(git branch --show-current)"
+echo "dirty files: $(git status --porcelain | wc -l | tr -d ' ')"
+echo "HEAD:          $(git rev-parse HEAD)"
+echo "origin/master: $(git rev-parse origin/master)"
+
+# 2. CHANGELOG has a dated section for the version
+grep -nF "## [$VERSION] - " CHANGELOG.md || echo "CHANGELOG: FAIL"
+
+# 3. README installation snippet uses the version
+grep -qF "<version>$VERSION</version>" README.md && echo "README: ok" || echo "README: FAIL"
+
+# 4. Tag does not exist locally or on origin
+test -z "$(git tag -l "v$VERSION")$(git ls-remote --tags origin "refs/tags/v$VERSION")" && echo "tag: ok" || echo "tag: FAIL (v$VERSION exists)"
+
+# 5. Version is not already on Maven Central
+curl -s -o /dev/null -w "Maven Central HTTP: %{http_code}\n" "https://repo1.maven.org/maven2/io/github/ehayik/jmaskify/$VERSION/"
+
+# 6. CI passed for the release commit
+gh run list --commit "$(git rev-parse HEAD)" --workflow jmakify-ci.yml --json status,conclusion \
+  --jq 'if length == 0 then "CI: FAIL (no runs)" elif all(.[]; .status == "completed" and .conclusion == "success") then "CI: ok" else "CI: FAIL" end'
+
+# 7. Publishing credentials exist (never print the file)
+grep -q "<id>central</id>" ~/.m2/settings.xml && echo "central server: ok" || echo "central server: FAIL"
+
+# 8. A GPG signing key is available
+gpg --list-secret-keys --keyid-format LONG | grep -qE "^sec" && echo "GPG key: ok" || echo "GPG key: FAIL"
+```
+
+| # | Check | Passes when |
+|---|-------|-------------|
+| 1 | Branch & tree | Branch is `master`, 0 dirty files, `HEAD` equals `origin/master` |
+| 2 | CHANGELOG | A `## [X.Y.Z] - YYYY-MM-DD` section exists (warn if the date is not today) |
+| 3 | README | `README: ok` |
+| 4 | Tag | `tag: ok` |
+| 5 | Maven Central | HTTP `404`. Any other code (e.g. `000` for a network error) is a failure |
+| 6 | CI | `CI: ok` |
+| 7 | Credentials | `central server: ok` |
+| 8 | GPG | `GPG key: ok` |
+
+Record the `HEAD` SHA as the **release SHA**. It is used in Tasks 4 and 5.
+
+If checks 2 or 3 fail, offer to prepare the version bump (`pom.xml`, `CHANGELOG.md`, `README.md`) as a pull request that follows *Git Workflow* in `AGENTS.md`. The release continues only after that PR is merged.
+
+## Task 3: Dry-run Release Build 🧪
+
+Build everything the `release` profile produces, without signing or uploading:
+
+```bash
+VERSION="X.Y.Z"
+: "${VERSION:?VERSION is not set}"
+./mvnw -B -P release clean verify -Dgpg.skip
+ls target/jmaskify-"$VERSION".jar target/jmaskify-"$VERSION"-sources.jar target/jmaskify-"$VERSION"-javadoc.jar .flattened-pom.xml
+```
+
+- Build succeeds with no new warnings (pay attention to Javadoc warnings).
+- All four files listed above exist.
+- `.flattened-pom.xml` contains `name`, `description`, `url`, `licenses`, `developers`, and `scm`.
+
+## Task 4: Publish Hand-off 🤝
+
+Present the report below and **stop**. The publish command is for the maintainer only. Never execute it.
+
+"🚀 **JMaskify {VERSION} is ready to publish**
+
+{pre-flight results table}
+
+**Release SHA:** `{release-sha}`
+
+**Maintainer only.** Run this yourself from the repository root, on `master` at the release SHA. It signs with your GPG key and uploads to the Central Portal. `autoPublish` is enabled, so the release goes live without a manual approval step:
+
+```text
+./mvnw -B clean deploy -P release
+```
+
+Track the deployment at https://central.sonatype.com/publishing/deployments. It can take up to ~30 minutes to appear on `repo1.maven.org`.
+
+**Reply 'published' once the deployment shows as PUBLISHED, and confirm you deployed the release SHA above. I'll then tag the release and draft the GitHub release.**"
+
+## Task 5: Post-release ✅
+
+Only after the maintainer confirms the publish and the release SHA:
+
+```bash
+VERSION="X.Y.Z"
+RELEASE_SHA="<sha>"
+: "${VERSION:?VERSION is not set}" "${RELEASE_SHA:?RELEASE_SHA is not set}"
+
+# 1. Verify availability on Maven Central (expect HTTP 200; on 404 retry later; anything else is an error)
+curl -s -o /dev/null -w "Maven Central HTTP: %{http_code}\n" "https://repo1.maven.org/maven2/io/github/ehayik/jmaskify/$VERSION/jmaskify-$VERSION.pom"
+
+# 2. Extract the CHANGELOG section as release notes
+mkdir -p target
+awk -v h="## [$VERSION]" 'index($0, h) == 1 {p=1; next} /^## \[/ {p=0} p' CHANGELOG.md > "target/release-notes-$VERSION.md"
+test -s "target/release-notes-$VERSION.md" && echo "release notes: ok" || echo "release notes: FAIL (empty)"
+```
+
+Then, after asking the maintainer for confirmation, tag the release SHA and create a **draft** GitHub release:
+
+```bash
+VERSION="X.Y.Z"
+RELEASE_SHA="<sha>"
+: "${VERSION:?VERSION is not set}" "${RELEASE_SHA:?RELEASE_SHA is not set}"
+git tag -a "v$VERSION" "$RELEASE_SHA" -m "Release $VERSION"
+git push origin "v$VERSION"
+gh release create "v$VERSION" --draft --verify-tag --title "$VERSION" --notes-file "target/release-notes-$VERSION.md"
+```
+
+> **NOTE**
+> Do not try to delete the release notes temporary file.
+
+Finish with a summary: the version, the tag, the draft GitHub release URL (the maintainer publishes it), and the Maven Central URL `https://central.sonatype.com/artifact/io.github.ehayik/jmaskify/{VERSION}`.
