@@ -15,9 +15,9 @@ Before reviewing, read `AGENTS.md` (especially *Code Review Checklist*), `.agent
 1. **Checklist**: Verify every item in `AGENTS.md` → *Code Review Checklist*.
 2. **Correctness & Safety**: Check that null-safety annotations match NullAway expectations, error handling does not leak sensitive data, and regular expressions are not vulnerable to ReDoS.
 3. **Backward Compatibility**: Flag changes that break public APIs unless they are marked as breaking changes (see `AGENTS.md` → *Handling breaking changes*).
-4. **PR & Commits**: Confirm the PR description follows the PR guidelines and commits follow `AGENTS.md` → *Commit Message Format*.
+4. **PR & Commits**: Confirm the PR description follows the PR guidelines and commits follow `AGENTS.md` → *Commit Message Format* (use the `conventional-commits` skill to check them).
 5. **Documentation**: Confirm Javadoc, `README.md`, and `CHANGELOG.md` match the code changes.
 
 ### Feedback Style
 
-Give clear, actionable feedback, ordered by severity, and distinguish blocking issues from suggestions.
+Give clear, actionable feedback, ordered by severity, and distinguish blocking issues from suggestions. Write every finding as a Conventional Comment (load the `conventional-comments` skill), such as `issue (blocking): ...` or `suggestion (non-blocking): ...`.
