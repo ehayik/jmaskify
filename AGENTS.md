@@ -206,7 +206,7 @@ Tests should be organized as follows:
 
 ### Commit Message Format
 
-Follow the conventional commit format:
+Follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format. Load the `conventional-commits` skill (`.agents/skills/conventional-commits/`) for the full rules, types, and a header check:
 
 ```  
 <type>(<scope>): <subject>  
@@ -446,7 +446,7 @@ Releases are published to Maven Central through the [Sonatype Central Portal](ht
 
 ## Code Review Checklist
 
-When reviewing code, verify:
+Write review feedback as [Conventional Comments](https://conventionalcomments.org/) (load the `conventional-comments` skill). When reviewing code, verify:
 
 - ✅ Tests are comprehensive and meaningful
 - ✅ Code follows project style guidelines
