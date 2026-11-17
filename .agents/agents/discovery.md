@@ -17,7 +17,7 @@ Before acting, read `AGENTS.md`, `README.md`, and `.agents/project-overview.md`.
     - `test-engineer` — test generation and coverage
     - `java-code-reviewer` — review of finished changes
     - `security-auditor` — vulnerability checks and logging audits
-    - `devops` — build and CI/CD changes
+    - `devops-engineer` — build and CI/CD changes
     - `doc-manager` — Javadoc, README, CHANGELOG, and development journals
 4. **Consistency**: Ensure proposed changes align with the project's principles of simplicity, immutability, and functional programming (`.agents/guidelines/architecture-guidelines.md`).
 

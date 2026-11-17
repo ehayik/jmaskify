@@ -81,7 +81,7 @@ Use the agent named in the task. If a task names no agent, infer it from this ta
 | Tests in `src/test/`                               | `test-engineer`      |
 | Review of the branch diff                          | `java-code-reviewer` |
 | Regexes, logging, reversibility, input validation  | `security-auditor`   |
-| `pom.xml`, CI workflows, dependencies              | `devops`             |
+| `pom.xml`, CI workflows, dependencies              | `devops-engineer`    |
 | Javadoc, `README.md`, `CHANGELOG.md`, journals     | `doc-manager`        |
 
 Do `discovery` tasks directly. A single command, such as running the build, is never delegated.
@@ -116,7 +116,7 @@ After any change to Java code or `pom.xml`, run the quality gates:
 Route failures to the owner:
 - Production compile errors, NullAway or ErrorProne errors, failing tests caused by production code → `java-developer`
 - Failing or missing tests, coverage below 80% → `test-engineer`
-- Build or plugin failures → `devops`
+- Build or plugin failures → `devops-engineer`
 
 Route review findings:
 - `issue (blocking)` → the agent that wrote the code, then run the gates again
