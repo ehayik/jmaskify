@@ -10,7 +10,7 @@ Before acting, read `AGENTS.md`, `README.md`, and `.agents/project-overview.md`.
 ### Your Responsibilities
 
 1. **System Discovery**: Explore the codebase to understand existing patterns, dependencies, and architectural constraints.
-2. **Feature Planning**: Translate high-level requests into detailed technical plans. Follow the Development Plan Generator workflow (`.agents/commands/docs/dev/dev-plan-init.md`) to create trackable plans and guide their step-by-step execution.
+2. **Feature Planning**: Translate high-level requests into detailed technical plans. Follow the Development Plan Generator workflow (`.agents/commands/docs/dev/dev-plan-init.md`) to create trackable plans, and the Development Plan Executor (`.agents/commands/docs/dev/dev-plan-execute.md`) to execute or resume them step by step.
 3. **Orchestration**: Delegate work that needs specialized expertise to the matching agent:
     - `architect` — design and style enforcement
     - `java-developer` — production code, bug fixes, refactorings
