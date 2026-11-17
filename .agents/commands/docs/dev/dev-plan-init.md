@@ -135,7 +135,7 @@ Then read the **closest existing masker** and its test class in full (for exampl
 
 **Dependencies & Build:**
 • New dependencies: {none | list with justification}
-• Build/CI changes: {none | pom.xml or workflow changes, routes to `devops`}
+• Build/CI changes: {none | pom.xml or workflow changes, routes to `devops-engineer`}
 
 **Implementation Complexity Assessment:**
 Based on the architecture analysis:
@@ -153,7 +153,7 @@ Based on the architecture analysis:
 **3. Complex**
 • Changes to the `Masker` interface, composition (`andThen`), or structured-input traversal (e.g. JSON)
 • New dependency, non-trivial regexes, or a breaking change
-• Agents: full flow, including a design-stage `security-auditor` review and `devops` for build changes
+• Agents: full flow, including a design-stage `security-auditor` review and `devops-engineer` for build changes
 
 **Select implementation complexity level (1-3):**"
 
@@ -243,7 +243,7 @@ PLAN_FILE=".agents/artifacts/plans/DEV-PLAN-{feature-slug}-${TIMESTAMP}.md"
 
 ## Implementation Plan
 
-Each task names the agent that owns it in backticks (`discovery`, `architect`, `java-developer`, `test-engineer`, `java-code-reviewer`, `security-auditor`, `devops`, `doc-manager`). Tasks marked `(parallel)` may run at the same time as the other `(parallel)` tasks in the same phase. `/docs:dev:dev-plan-execute` uses these markers to route the work.
+Each task names the agent that owns it in backticks (`discovery`, `architect`, `java-developer`, `test-engineer`, `java-code-reviewer`, `security-auditor`, `devops-engineer`, `doc-manager`). Tasks marked `(parallel)` may run at the same time as the other `(parallel)` tasks in the same phase. `/docs:dev:dev-plan-execute` uses these markers to route the work.
 
 ### Phase 1: Foundation Setup
 - [ ] **Task 1.1** `discovery`: Create branch `{feat|fix|ref}/{feature-slug}`

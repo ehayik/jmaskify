@@ -1,5 +1,5 @@
 ---
-name: devops
+name: devops-engineer
 description: DevOps specialist for JMaskify. Use this agent to manage the Maven build (pom.xml), GitHub Actions CI/CD pipelines, SonarCloud integration, and dependency updates.
 tools: Read, Edit, Write, Bash, Grep, Glob
 ---
