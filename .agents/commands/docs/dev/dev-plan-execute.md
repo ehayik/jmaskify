@@ -88,23 +88,14 @@ Do `discovery` tasks directly. A single command, such as running the build, is n
 
 ### Step 2: Brief the Agent
 
-The brief is the agent's only context, so make it complete and narrow:
+The brief is the agent's only context, so make it complete and narrow. Use the template in the [orchestration guidelines → Delegation Brief](../../../guidelines/orchestration-guidelines.md#3-delegation-brief), filling `Plan` with the plan file path, `Task` with the task id and text, and `Done when` with the plan's acceptance criteria.
 
-```text
-Plan: {plan-file-path}
-Task: {task-id}: {task-text}
-Context: {decisions from the plan or earlier tasks this task depends on, e.g. the agreed API}
-Files you may change: {paths}
-Done when: {acceptance criteria from the plan}
-Report: files changed, commands run and their results, any deviation from the plan, open questions.
-```
-
-- **Reviewers** (`java-code-reviewer`, `security-auditor`) get the scope of the diff (`git diff master...HEAD`) and the plan, not the orchestrator's opinion of the code. The goal is an independent review.
+- **Reviewers** (`java-code-reviewer`, `security-auditor`) get the diff scope (`git diff master...HEAD`) and the plan, never the orchestrator's opinion of the code.
 - **Parallel groups**: launch all `(parallel)` tasks of the group in a single message, but only if their file scopes do not overlap. Otherwise run them in sequence.
 
 ### Step 3: Check the Result
 
-Read the agent's report and inspect the changes (`git status --short`, `git diff --stat`). Do not take the report on trust.
+Read the agent's report and inspect the changes (`git status --short`, `git diff --stat`). Do not take the report on trust. Show each result to the user with the [orchestration guidelines → Report Templates](../../../guidelines/orchestration-guidelines.md#4-report-templates). The `java-code-reviewer` report must include the verdict (see [§4](../../../guidelines/orchestration-guidelines.md#4-report-templates)).
 
 After any change to Java code or `pom.xml`, run the quality gates:
 
@@ -119,10 +110,12 @@ Route failures to the owner:
 - Build or plugin failures → `devops-engineer`
 
 Route review findings:
-- `issue (blocking)` → the agent that wrote the code, then run the gates again
+- `issue (blocking)` → the agent that wrote the code, then run the gates again and re-review
 - Non-blocking findings → list them for the user to decide; do not fix them silently
 
-If the same gate fails after **two** fix rounds, stop and mark the task `BLOCKED`.
+Documentation tasks for user-facing changes follow the [documentation review loop](../../../guidelines/orchestration-guidelines.md#6-documentation-review-loop) (`doc-manager` ↔ `java-code-reviewer`).
+
+If the same gate still fails or the verdict is still `CHANGES REQUESTED` after **three** fix rounds, stop and mark the task `BLOCKED` (see the [fix loop](../../../guidelines/orchestration-guidelines.md#5-fix-loop)).
 
 ### Step 4: Record Progress
 

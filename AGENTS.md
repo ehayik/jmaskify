@@ -40,7 +40,7 @@ All agent instructions are tool-agnostic and live in `.agents/`. Tool-specific f
 | Path                          | Contents                                                                                   |
 |-------------------------------|--------------------------------------------------------------------------------------------|
 | `.agents/project-overview.md` | Project purpose, structure, and architecture                                               |
-| `.agents/guidelines/`         | Java, architecture, and pull request description guidelines                                |
+| `.agents/guidelines/`         | Java, architecture, orchestration, and pull request description guidelines                 |
 | `.agents/agents/`             | Specialized agent roles (`discovery` is the main session role and orchestrates the others) |
 | `.agents/commands/`           | Reusable workflows (development plans, journals, and releases); `$ARGUMENTS` is user input |
 | `.agents/skills/`             | Agent Skills: one folder per skill containing a `SKILL.md` (see below)                     |
@@ -71,6 +71,7 @@ The `sofa` skill (`.agents/skills/sofa/`) connects agents to Stack Overflow for 
 - [ ] Simple, clean, concise code
 - [ ] Follows the [java guidelines](.agents/guidelines/java-guidelines.md)
 - [ ] Follows the [architecture guidelines](.agents/guidelines/architecture-guidelines.md)
+- [ ] Follows the [orchestration guidelines](.agents/guidelines/orchestration-guidelines.md) (delegation, review, and fix loop)
 - [ ] Error handling + logging
 - [ ] Tests added and passing
 - [ ] Documentation updated (`README.md`) 
