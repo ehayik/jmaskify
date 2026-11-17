@@ -77,63 +77,83 @@ Your choice (1-4):"
 
 ## Task 2: Technical Architecture Analysis 🏗️
 
-Perform comprehensive technical analysis for the confirmed feature:
+Analyze how the confirmed feature fits JMaskify's architecture: the `Masker<T>` sealed interface, its implementations, their builders, and the static factory methods (see `.agents/project-overview.md` and `.agents/guidelines/architecture-guidelines.md`).
 
 **Codebase Architecture Discovery:**
 ```bash
-# Analyze project structure and technology stack
-find . -name "pom.xml" -o -name "package.json" -o -name "build.gradle" -o -name "requirements.txt" | head -5
-grep -r "spring\|react\|express\|django" --include="*.xml" --include="*.json" . | head -5
+SRC=src/main/java/io/github/ehayik/jmaskify
+TEST=src/test/java/io/github/ehayik/jmaskify
 
-# Identify existing patterns and conventions
-find . -name "*Service.java" -o -name "*Controller.java" -o -name "*Repository.java" | head -10
-grep -r "class.*Controller\|class.*Service\|class.*Repository" src/ | head -10
+# Masker hierarchy: permitted implementations and public factory methods
+grep -n "permits" $SRC/Masker.java
+grep -n "^    static " $SRC/Masker.java
 
-# Database and configuration analysis
-find . -name "*.sql" -o -name "schema.sql" -o -name "*migration*" | head -5
-grep -r "datasource\|database\|mongodb" --include="*.yml" --include="*.properties" . | head -5
+# Configuration patterns: which maskers use builders (MaskerBuilder / Buildable / Lombok)
+grep -ln "Builder\|Buildable\|@Builder" $SRC/*.java
+
+# Security-sensitive constructs the feature may touch: regexes and logging
+grep -n "Pattern.compile\|\.matcher(\|replaceAll(" $SRC/*.java
+grep -n "log\.\|@Slf4j" $SRC/*.java
+
+# Error handling conventions
+grep -n "MaskingException\|throw new" $SRC/*.java | head -10
+
+# Existing tests to mirror
+ls $TEST/
+
+# Java release and runtime dependencies (new dependencies need justification)
+grep -n "<maven.compiler.source>\|<artifactId>" pom.xml
 ```
+
+Then read the **closest existing masker** and its test class in full (for example, `CreditCardMasker` for a partial-visibility masker, `MultilinePatternMasker` for a regex-based one, `JsonMasker` for structured input). The new code should mirror its shape unless there is a reason not to.
 
 **Present Architecture Analysis:**
 
 "🏗️ **Technical Architecture Analysis**
 
-**Technology Stack Detected:**
-• Framework: {detected-framework}
-• Database: {detected-database}
-• Build System: {detected-build-system}
-• Testing Framework: {detected-testing}
+**Masker Hierarchy:**
+• Permitted implementations: {permits-list}
+• Closest existing masker: {analogous-masker} ({why-it-is-analogous})
+• Factory methods affected: {new-or-changed-factory-methods}
 
-**Existing Patterns:**
-• Service Layer: {service-pattern-count} services found
-• Controller Layer: {controller-pattern-count} controllers found
-• Data Layer: {repository-pattern-count} repositories found
-• Configuration: {config-pattern-description}
+**Design Fit:**
+• Change type: {new masker | option on existing masker | interface/composition change}
+• Configuration: {static factory only | builder (MaskerBuilder/Buildable)}
+• Input type: {Masker<String> | Masker<other>}
+• Immutability and thread safety: {how the design keeps the masker immutable}
+• Null handling: {behavior for null input; @Nullable usage for NullAway}
 
-**Integration Architecture:**
-• External Services: {external-integrations}
-• Security Framework: {security-framework}
-• Monitoring/Logging: {monitoring-setup}
+**Security Surface:**
+• Regular expressions: {new-or-changed regexes and ReDoS risk | none}
+• Reversibility: {irreversible | reversible, must be documented like Base64Masker}
+• Information leaks: {preserved length/structure; exception messages and logs must not contain input}
+
+**Public API Impact:**
+• Additions: {new types and methods}
+• Breaking changes: {none | list, needs `!` commit and CHANGELOG "Changed"}
+• Sealed hierarchy note: adding a type to `permits` can break consumers' exhaustive `switch` over `Masker` (Java 21+ pattern matching). Call it out in `CHANGELOG.md` if a new implementation is added.
+
+**Dependencies & Build:**
+• New dependencies: {none | list with justification}
+• Build/CI changes: {none | pom.xml or workflow changes, routes to `devops`}
 
 **Implementation Complexity Assessment:**
 Based on the architecture analysis:
 
-**1. Simple Implementation** (1-3 days)
-• Basic CRUD operations
-• Minimal external integrations
-• Standard patterns only
+**1. Small**
+• Option or overload on an existing masker (e.g. a configurable mask character)
+• No new type in the `permits` list
+• Agents: `java-developer`, `test-engineer`, `doc-manager`
 
-**2. Moderate Implementation** (1-2 weeks)
-• Complex business logic
-• Multiple service integrations
-• Security considerations
-• Testing requirements
+**2. Moderate**
+• New masker implementation following an existing pattern
+• New factory method, possibly a builder
+• Agents: + `architect` for the API, `java-code-reviewer`, `security-auditor` if regexes or reversibility are involved
 
-**3. Complex Implementation** (2-4 weeks)
-• Advanced architecture patterns
-• Multiple external systems
-• Performance optimization
-• Comprehensive testing strategy
+**3. Complex**
+• Changes to the `Masker` interface, composition (`andThen`), or structured-input traversal (e.g. JSON)
+• New dependency, non-trivial regexes, or a breaking change
+• Agents: full flow, including a design-stage `security-auditor` review and `devops` for build changes
 
 **Select implementation complexity level (1-3):**"
 
@@ -210,6 +230,7 @@ PLAN_FILE=".agents/artifacts/plans/DEV-PLAN-{feature-slug}-${TIMESTAMP}.md"
 **Generated**: {timestamp}
 **Branch**: {current-branch}
 **Complexity**: {selected-complexity}
+**Execution Style**: {guided | batch}
 **Estimated Duration**: {duration-estimate}
 
 ## Executive Summary
@@ -222,25 +243,30 @@ PLAN_FILE=".agents/artifacts/plans/DEV-PLAN-{feature-slug}-${TIMESTAMP}.md"
 
 ## Implementation Plan
 
-### Phase 1: Foundation Setup
-- [ ] **Task 1.1**: {foundation-task-1}
-- [ ] **Task 1.2**: {foundation-task-2}
-- [ ] **Task 1.n**: {foundation-task-n}
+Each task names the agent that owns it in backticks (`discovery`, `architect`, `java-developer`, `test-engineer`, `java-code-reviewer`, `security-auditor`, `devops`, `doc-manager`). Tasks marked `(parallel)` may run at the same time as the other `(parallel)` tasks in the same phase. `/docs:dev:dev-plan-execute` uses these markers to route the work.
 
-### Phase 2: Core Implementation  
-- [ ] **Task 2.1**: {core-task-1}
-- [ ] **Task 2.2**: {core-task-2}
-- [ ] **Task 2.n**: {core-task-n}
+### Phase 1: Foundation Setup
+- [ ] **Task 1.1** `discovery`: Create branch `{feat|fix|ref}/{feature-slug}`
+- [ ] **Task 1.2** `{agent}`: {foundation-task-2}
+- [ ] **Task 1.n** `{agent}`: {foundation-task-n}
+
+### Phase 2: Core Implementation
+- [ ] **Task 2.1** `{agent}` (parallel): {core-task-1}
+- [ ] **Task 2.2** `{agent}` (parallel): {core-task-2}
+- [ ] **Task 2.n** `{agent}`: {core-task-n}
 
 ### Phase 3: Integration & Testing
-- [ ] **Task 3.1**: {integration-task-1}
-- [ ] **Task 3.2**: {integration-task-2}
-- [ ] **Task 3.n**: {integration-task-n}
+- [ ] **Task 3.1** `discovery`: Run `./mvnw spotless:apply` and `./mvnw -B verify`
+- [ ] **Task 3.n** `{agent}`: {integration-task-n}
 
-### Phase 4: Quality & Deployment
-- [ ] **Task 4.1**: {quality-task-1}
-- [ ] **Task 4.2**: {quality-task-2}
-- [ ] **Task 4.n**: {quality-task-n}
+### Phase 4: Quality & Documentation
+- [ ] **Task 4.1** `java-code-reviewer` (parallel): Review the branch diff
+- [ ] **Task 4.2** `doc-manager` (parallel): Update Javadoc, `README.md`, and `CHANGELOG.md`
+- [ ] **Task 4.n** `{agent}`: {quality-task-n}
+
+## Progress Log
+
+<!-- Appended by /docs:dev:dev-plan-execute: one line per completed task or blocker -->
 
 ## Technical Considerations
 
@@ -296,27 +322,13 @@ Based on user choice, either start execution or save plan:
 
 "🚀 **Initiating Plan Execution**
 
-**Execution Framework Loading:**
-Loading embedded execution framework from `embedded/execute-plan.md`
-
-**Framework Configuration:**
 • Plan File: {plan-file-path}
-• Execution Mode: Human-guided step-by-step
-• Quality Gates: Enabled
-• Progress Tracking: Active
+• Execution Mode: {selected-execution-style}
 
-**Starting execution framework...**"
+**Starting execution...**"
 
-**Execute Embedded Framework:**
-Execute the complete embedded execution framework from `embedded/execute-plan.md`:
-
-**Framework Execution:**
-- Framework handles plan detection and loading
-- Applies systematic task-by-task execution methodology  
-- Provides human review and approval workflow
-- All execution logic contained within embedded framework
-
-**Self-Contained Execution:** The embedded framework is fully self-executing and requires no additional coordination from this command.
+**Execute the Plan:**
+Follow `.agents/commands/docs/dev/dev-plan-execute.md` with the plan file path as its argument. It routes each task to its owning agent, runs the quality gates, records progress in the plan file, and asks for approval at the configured checkpoints.
 
 **For Plan Modification (Choice 2):**
 
@@ -341,9 +353,8 @@ Return to Task 3 with different configuration options.
 
 **Plan Location:** `.agents/artifacts/plans/DEV-PLAN-{feature-slug}-{timestamp}.md`
 
-**To Resume Later:**
-• Use `/user:dev-plan-resume` command
-• Or reference the plan file directly
+**To Start or Resume Later:**
+• Run `/docs:dev:dev-plan-execute {plan-file-path}` (it continues from the first unchecked task)
 
 **Plan Summary:**
 • {total-task-count} tasks across {phase-count} phases
@@ -352,7 +363,7 @@ Return to Task 3 with different configuration options.
 
 **Next Steps:**
 1. Review the generated plan
-2. Use `/user:dev-plan-resume` to start execution
+2. Run `/docs:dev:dev-plan-execute {plan-file-path}` to start execution
 3. Share plan with team for review"
 
 ## Task 7: Session Summary and Next Steps 📊
@@ -385,7 +396,7 @@ Provide comprehensive session summary and guidance:
 **How to Use This Plan:**
 
 **For Immediate Development:**
-1. Use `/user:dev-plan-resume` to continue execution
+1. Run `/docs:dev:dev-plan-execute {plan-file-path}` to continue execution
 2. Follow step-by-step implementation with approval gates
 3. Track progress with automated plan updates
 
@@ -400,9 +411,8 @@ Provide comprehensive session summary and guidance:
 3. Use as template for similar features
 
 **Related Commands:**
-• `/user:dev-plan-resume` - Continue plan execution
-• `/user:feature-explain` - Deep dive into specific components
-• `/user:pr-create` - Generate PR documentation for completed phases
+• `/docs:dev:dev-plan-execute` - Start or resume plan execution
+• `/docs:dev:dev-journal-create` - Record progress and decisions in a development journal
 
 **Ready for Implementation!** 🚀"
 
