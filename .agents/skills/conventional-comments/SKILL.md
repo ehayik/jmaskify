@@ -1,6 +1,6 @@
 ---
 name: conventional-comments
-description: Writes review feedback in the Conventional Comments format (`<label> [decorations]: <subject>` plus optional discussion), using labels such as praise, issue, suggestion, question, nitpick, todo, and chore, and decorations such as blocking, non-blocking, and if-minor. Use when reviewing code, pull requests, plans, or documentation, when posting PR review comments, or when reporting review findings so each comment's intent and severity are clear.
+description: Writes review feedback in the Conventional Comments format (`<label> [decorations], <subject>` plus optional discussion), using labels such as praise, issue, suggestion, question, nitpick, todo, and chore, and decorations such as blocking, non-blocking, and if-minor. Use when reviewing code, pull requests, plans, or documentation, when posting PR review comments, or when reporting review findings so each comment's intent and severity are clear.
 ---
 
 # Conventional Comments
