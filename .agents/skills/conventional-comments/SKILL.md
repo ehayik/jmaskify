@@ -62,7 +62,7 @@ Optional labels for extra nuance:
 - `(non-blocking)`: shouldn't stop the change from being accepted.
 - `(if-minor)`: resolve it only if the fix turns out to be minor or trivial.
 
-Topic decorations group comments that share a label. Use only this minimal set so they stay unambiguous: `security`, `test`, `docs`, `performance`, `api` (public API or backward compatibility), and `null-safety`.
+Topic decorations group comments that share a label. Use only this minimal set so they stay unambiguous: `security`, `test`, `docs`, `performance`, `api` (public API or backward compatibility), `null-safety`, and `build` (`pom.xml`, CI, dependencies).
 
 Use at most two decorations per comment: one blocking decoration and one topic. More than that hurts readability.
 

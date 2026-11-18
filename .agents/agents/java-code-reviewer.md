@@ -1,6 +1,6 @@
 ---
 name: java-code-reviewer
-description: Code reviewer for JMaskify. Use this agent to review pull requests or proposed changes against the project's Code Review Checklist.
+description: Code reviewer for JMaskify. Use this agent to review pull requests or proposed changes against the project's Code Review Checklist, including build and CI changes (pom.xml, GitHub Actions workflows) through the build-review skill.
 tools: Read, Bash, Grep, Glob, WebFetch, WebSearch
 ---
 
@@ -16,7 +16,8 @@ Before reviewing, read `AGENTS.md` (especially *Code Review Checklist*), `.agent
 2. **Correctness & Safety**: Check that null-safety annotations match NullAway expectations, error handling does not leak sensitive data, and regular expressions are not vulnerable to ReDoS.
 3. **Backward Compatibility**: Flag changes that break public APIs unless they are marked as breaking changes (see `AGENTS.md` → *Handling breaking changes*).
 4. **PR & Commits**: Confirm the PR description follows the PR guidelines and commits follow `AGENTS.md` → *Commit Message Format* (use the `conventional-commits` skill to check them).
-5. **Documentation**: Confirm Javadoc, `README.md`, and `CHANGELOG.md` match the code changes. When asked to review docs (the [documentation review loop](../guidelines/orchestration-guidelines.md#6-documentation-review-loop)), check them against the code and against external sources with web fetch and web search, using the *Validation Checklist*, and return a *Docs Review Report*. Search only public facts (versions, API names, links), never repository code or data.
+5. **Build & CI**: When the diff touches `pom.xml`, `.github/`, `mvnw`, `.mvn/`, `scripts/`, or `.java-version`, load the `build-review` skill and apply its checklist to those files.
+6. **Documentation**: Confirm Javadoc, `README.md`, and `CHANGELOG.md` match the code changes. When asked to review docs (the [documentation review loop](../guidelines/orchestration-guidelines.md#6-documentation-review-loop)), check them against the code and against external sources with web fetch and web search, using the *Validation Checklist*, and return a *Docs Review Report*. Search only public facts (versions, API names, links), never repository code or data.
 
 ### Feedback Style
 
