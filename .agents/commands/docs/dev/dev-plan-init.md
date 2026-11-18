@@ -143,7 +143,7 @@ Based on the architecture analysis:
 **1. Small**
 • Option or overload on an existing masker (e.g. a configurable mask character)
 • No new type in the `permits` list
-• Agents: `java-developer`, `test-engineer`, `doc-manager`
+• Agents: `java-developer`, `java-test-engineer`, `doc-manager`
 
 **2. Moderate**
 • New masker implementation following an existing pattern
@@ -243,7 +243,7 @@ PLAN_FILE=".agents/artifacts/plans/DEV-PLAN-{feature-slug}-${TIMESTAMP}.md"
 
 ## Implementation Plan
 
-Each task names the agent that owns it in backticks (`discovery`, `architect`, `java-developer`, `test-engineer`, `java-code-reviewer`, `security-auditor`, `devops-engineer`, `doc-manager`). Tasks marked `(parallel)` may run at the same time as the other `(parallel)` tasks in the same phase. `/docs:dev:dev-plan-execute` uses these markers to route the work.
+Each task names the agent that owns it in backticks (`discovery`, `architect`, `java-developer`, `java-test-engineer`, `java-code-reviewer`, `security-auditor`, `devops-engineer`, `doc-manager`). Tasks marked `(parallel)` may run at the same time as the other `(parallel)` tasks in the same phase. `/docs:dev:dev-plan-execute` uses these markers to route the work.
 
 ### Phase 1: Foundation Setup
 - [ ] **Task 1.1** `discovery`: Create branch `{feat|fix|ref}/{feature-slug}`

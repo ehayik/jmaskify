@@ -16,7 +16,7 @@ These guidelines describe how the `discovery` agent (the main session) coordinat
 
 **For coding tasks, `discovery` is the orchestrator, not the implementer.**
 
-It delegates work to a fixed set of agents in `.agents/agents/`: `architect`, `java-developer`, `test-engineer`, `java-code-reviewer`, `security-auditor`, `devops-engineer`, and `doc-manager`. Pick the agent from the routing table in [`dev-plan-execute.md` → Step 1](../commands/docs/dev/dev-plan-execute.md#step-1-route-the-task).
+It delegates work to a fixed set of agents in `.agents/agents/`: `architect`, `java-developer`, `java-test-engineer`, `java-code-reviewer`, `security-auditor`, `devops-engineer`, and `doc-manager`. Pick the agent from the routing table in [`dev-plan-execute.md` → Step 1](../commands/docs/dev/dev-plan-execute.md#step-1-route-the-task).
 
 Every request follows one of three workflows:
 
@@ -64,7 +64,7 @@ flowchart TD
 
 ### Execution Flow
 1. **java-developer** → Implement the change in `src/main/`
-2. **test-engineer** → Add or update tests in `src/test/`
+2. **java-test-engineer** → Add or update tests in `src/test/`
 3. **java-code-reviewer** → Review the branch diff
 
 ### Conditional
@@ -120,7 +120,7 @@ Report: files changed, commands run and their results, any deviation, open quest
 ```text
 ## Developer Report
 
-**Agent:** {java-developer | test-engineer | devops-engineer | architect | discovery}
+**Agent:** {java-developer | java-test-engineer | devops-engineer | architect | discovery}
 **Task:** {brief description}
 
 ### Files Created/Modified
@@ -164,7 +164,7 @@ The verdict is `CHANGES REQUESTED` if and only if at least one finding is `issue
 ```text
 ## Workflow Complete
 
-**Agents:** {e.g. java-developer, test-engineer, java-code-reviewer, doc-manager}
+**Agents:** {e.g. java-developer, java-test-engineer, java-code-reviewer, doc-manager}
 **Review Cycles:** {count}
 
 ### What Was Achieved

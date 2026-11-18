@@ -14,7 +14,7 @@ Before acting, read `AGENTS.md`, `README.md`, `.agents/project-overview.md`, and
 3. **Orchestration**: For coding tasks, orchestrate rather than implement. Delegate work that needs specialized expertise to the matching agent, following the [orchestration guidelines](../guidelines/orchestration-guidelines.md) (preview, briefs, reports, fix loop, and docs review loop):
     - `architect` — design and style enforcement
     - `java-developer` — production code, bug fixes, refactorings
-    - `test-engineer` — test generation and coverage
+    - `java-test-engineer` — test generation and coverage
     - `java-code-reviewer` — review of finished changes
     - `security-auditor` — vulnerability checks and logging audits
     - `devops-engineer` — build and CI/CD changes
@@ -24,7 +24,7 @@ Before acting, read `AGENTS.md`, `README.md`, `.agents/project-overview.md`, and
 ### Operating Principles
 
 - Always start with a thorough research phase.
-- Prefer surgical changes over broad refactorings unless explicitly requested.
+- Prefer surgical changes to broad refactorings unless explicitly requested.
 - Use the step lists in `AGENTS.md` → *Common Development Tasks* when planning new maskers or bug fixes.
 - Maintain a high-level view of the project's health and technical debt.
 - For ad-hoc coding tasks (no plan), show the [orchestration preview](../guidelines/orchestration-guidelines.md#2-orchestration-preview) and wait for explicit user approval before delegating. Plan-driven work uses the `dev-plan-init` plan approval and the `dev-plan-execute` checkpoints instead, never both.

@@ -13,7 +13,7 @@ Execute each task in the order given. The `discovery` agent (the main session) r
 - **Stay in scope.** Execute only the tasks in the plan. If a task turns out to need extra work, stop and propose a plan change instead of doing it silently.
 - **Ask before anything that leaves the machine or rewrites history.** No `git commit`, `git push`, `gh pr create`, or force operations without the user's confirmation.
 - **Never publish.** Releases follow the `release-prepare` command and the maintainer runs the publish step (see `AGENTS.md` → *Constraints*).
-- **Respect agent roles.** `test-engineer` edits only `src/test/`, `doc-manager` edits only documentation and Javadoc, and `java-code-reviewer` and `security-auditor` never edit files.
+- **Respect agent roles.** `java-test-engineer` edits only `src/test/`, `doc-manager` edits only documentation and Javadoc, and `java-code-reviewer` and `security-auditor` never edit files.
 - **No sensitive data.** Never put credentials, tokens, or realistic personal data in plans, briefs, logs, or commit messages.
 
 ## Task 1: Load the Plan and Restore State 📂
@@ -78,7 +78,7 @@ Use the agent named in the task. If a task names no agent, infer it from this ta
 | Branches, quality gates, plan updates, git and PRs | `discovery` (self)   |
 | API design, scaffolding, style enforcement         | `architect`          |
 | Production code in `src/main/`                     | `java-developer`     |
-| Tests in `src/test/`                               | `test-engineer`      |
+| Tests in `src/test/`                               | `java-test-engineer` |
 | Review of the branch diff                          | `java-code-reviewer` |
 | Regexes, logging, reversibility, input validation  | `security-auditor`   |
 | `pom.xml`, CI workflows, dependencies              | `devops-engineer`    |
@@ -106,7 +106,7 @@ After any change to Java code or `pom.xml`, run the quality gates:
 
 Route failures to the owner:
 - Production compile errors, NullAway or ErrorProne errors, failing tests caused by production code → `java-developer`
-- Failing or missing tests, coverage below 80% → `test-engineer`
+- Failing or missing tests, coverage below 80% → `java-test-engineer`
 - Build or plugin failures → `devops-engineer`
 
 Route review findings:
