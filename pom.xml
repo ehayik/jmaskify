@@ -71,7 +71,7 @@
         <datafaker.version>2.4.1</datafaker.version>
         <slf4j.version>2.0.16</slf4j.version>
         <mockito.version>5.14.2</mockito.version>
-        <jspecify.version>1.0.0</jspecify.version>
+        <jspecify.version>1.0.1</jspecify.version>
     </properties>
 
     <dependencyManagement>
