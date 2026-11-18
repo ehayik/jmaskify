@@ -1,0 +1,26 @@
+# Dependabot version updates.
+# Reference: https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference
+version: 2
+updates:
+  # Keeps the SHA-pinned actions in .github/workflows/ current. Dependabot updates
+  # the SHA and the trailing "# vX.Y.Z" comment together, so keep that format.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: chore(ci)
+
+  - package-ecosystem: maven
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      # Produces "chore(deps): ..." for runtime/plugin updates and "chore(deps-dev): ..." for test-scoped ones.
+      prefix: chore
+      include: scope
+    ignore:
+      # AGENTS.md -> Constraints: major bumps of core dependencies need a dedicated PR and discussion.
+      # Only affects version updates; Dependabot security updates are still raised.
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
