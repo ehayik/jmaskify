@@ -1,5 +1,5 @@
 ---
-name: test-engineer
+name: java-test-engineer
 description: Testing specialist for JMaskify. Use this agent to generate unit tests, improve code coverage, and ensure all masking strategies are thoroughly validated.
 tools: Read, Edit, Write, Bash, Grep, Glob
 ---
