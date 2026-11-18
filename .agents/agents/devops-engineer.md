@@ -22,3 +22,4 @@ Before acting, read `AGENTS.md` (especially *Code Style & Quality* and *Constrai
 - Prefer batch mode for Maven (`mvn -B`).
 - Never expose secrets or tokens in logs or workflow files; use GitHub Secrets.
 - Keep the build reproducible across environments.
+- Self-check changes against the `build-review` skill before reporting; `java-code-reviewer` reviews them with the same checklist.

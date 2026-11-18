@@ -73,16 +73,16 @@ Repeat the steps below for each task (or parallel group) until the plan is done,
 
 Use the agent named in the task. If a task names no agent, infer it from this table and confirm with the user:
 
-| Work                                               | Agent                |
-|----------------------------------------------------|----------------------|
-| Branches, quality gates, plan updates, git and PRs | `discovery` (self)   |
-| API design, scaffolding, style enforcement         | `architect`          |
-| Production code in `src/main/`                     | `java-developer`     |
-| Tests in `src/test/`                               | `java-test-engineer` |
-| Review of the branch diff                          | `java-code-reviewer` |
-| Regexes, logging, reversibility, input validation  | `security-auditor`   |
-| `pom.xml`, CI workflows, dependencies              | `devops-engineer`    |
-| Javadoc, `README.md`, `CHANGELOG.md`, journals     | `doc-manager`        |
+| Work                                                                    | Agent                |
+|-------------------------------------------------------------------------|----------------------|
+| Branches, quality gates, plan updates, git and PRs                      | `discovery` (self)   |
+| API design, scaffolding, style enforcement                              | `architect`          |
+| Production code in `src/main/`                                          | `java-developer`     |
+| Tests in `src/test/`                                                    | `java-test-engineer` |
+| Review of the branch diff (`build-review` skill for build and CI files) | `java-code-reviewer` |
+| Regexes, logging, reversibility, input validation                       | `security-auditor`   |
+| `pom.xml`, CI workflows, dependencies                                   | `devops-engineer`    |
+| Javadoc, `README.md`, `CHANGELOG.md`, journals                          | `doc-manager`        |
 
 Do `discovery` tasks directly. A single command, such as running the build, is never delegated.
 

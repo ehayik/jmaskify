@@ -447,7 +447,7 @@ Releases are published to Maven Central through the [Sonatype Central Portal](ht
 
 ## Code Review Checklist
 
-Write review feedback as [Conventional Comments](https://conventionalcomments.org/) (load the `conventional-comments` skill). When reviewing code, verify:
+Write review feedback as [Conventional Comments](https://conventionalcomments.org/) (load the `conventional-comments` skill). For changes to `pom.xml`, CI workflows, or the Maven wrapper, also apply the `build-review` skill. When reviewing code, verify:
 
 - ✅ Tests are comprehensive and meaningful
 - ✅ Code follows project style guidelines

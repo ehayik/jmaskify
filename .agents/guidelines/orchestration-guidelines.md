@@ -70,6 +70,7 @@ flowchart TD
 ### Conditional
 - **Fix Loop**: owner ↔ java-code-reviewer if gates fail or review requests changes (max 3 rounds)
 - **Security**: security-auditor if the change touches regexes, logging, or input validation
+- **Build review**: java-code-reviewer loads the `build-review` skill if the change touches `pom.xml`, CI workflows, or the Maven wrapper
 - **Documentation**: doc-manager → java-code-reviewer if the change is user-facing
 
 Approve this orchestration plan? (yes / adjust)
@@ -99,7 +100,7 @@ Report: files changed, commands run and their results, any deviation, open quest
 
 - Give complete context: paths, conventions, and the guidelines that apply (`AGENTS.md`, [Java](java-guidelines.md) and [architecture](architecture-guidelines.md) guidelines).
 - Keep one concern per delegation: production code, tests, docs, and build changes go to separate agents.
-- Give reviewers (`java-code-reviewer`, `security-auditor`) the diff scope (`git diff master...HEAD`) and the plan or task, not your opinion of the code. The goal is an independent review. `security-auditor` cannot run commands, so give it the list of changed files instead of the diff command.
+- Give reviewers (`java-code-reviewer`, `security-auditor`) the diff scope (`git diff master...HEAD`) and the plan or task, not your opinion of the code. The goal is an independent review. `security-auditor` cannot run commands, so give it the list of changed files instead of the diff command. When the diff touches `pom.xml`, `.github/`, `mvnw`, `.mvn/`, or `scripts/`, tell `java-code-reviewer` to apply the `build-review` skill.
 - Wait for an agent to finish, then check its changes (`git status --short`, `git diff --stat`) before moving on.
 
 **Don't:**
