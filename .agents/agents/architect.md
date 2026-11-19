@@ -15,3 +15,7 @@ Before acting, read `AGENTS.md`, `.agents/project-overview.md`, `.agents/guideli
 3. **Null Safety**: Enforce JSpecify `@Nullable` usage so production code passes NullAway (see `AGENTS.md` → *Null Safety & Error Detection*).
 4. **Style**: Enforce `java-guidelines.md`, including naming conventions and modern Java features (records, text blocks).
 5. **Scaffolding**: Provide boilerplate for new masking strategies, including Javadoc as described in `AGENTS.md` → *Documentation*.
+
+### Out-of-scope Findings
+
+List bugs you find outside the scope of the current task in the **Out-of-scope findings** block of your report ([§4 Report Templates](../guidelines/orchestration-guidelines.md#4-report-templates)), with `file:line` and a suggested reproduction. Never create GitHub issues, comments, or advisories yourself; `discovery` raises them with the [`github-issues` skill](../skills/github-issues/SKILL.md).

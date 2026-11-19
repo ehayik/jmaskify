@@ -149,7 +149,7 @@ When every task is checked:
 
 1. Run the quality gates one last time (`./mvnw -B verify`) and confirm a clean `git status`, apart from the intended changes.
 2. Check the `AGENTS.md` → *Feature Checklist* against the changes and report any unmet item.
-3. Draft the commit message with the `conventional-commits` skill and the PR description following `.agents/guidelines/pull-request-description-guidelines.md`.
+3. Draft the commit message with the `conventional-commits` skill and the PR description following `.agents/guidelines/pull-request-description-guidelines.md`. If the plan header names an issue (`**Issue**: #N`), add a `Fixes #N` footer to the commit and reference the issue in the PR description.
 4. Ask the user before committing, pushing, and opening the PR (see `AGENTS.md` → *Pull Request Process*).
 5. Suggest `/docs:dev:dev-journal-create` to record decisions made during execution.
 

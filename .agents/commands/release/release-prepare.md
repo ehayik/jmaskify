@@ -92,7 +92,7 @@ ls "${GNUPGHOME:-$HOME/.gnupg}"/private-keys-v1.d/*.key >/dev/null 2>&1 && echo 
 
 Record the `HEAD` SHA as the **release SHA**. It is used in Tasks 4 and 5.
 
-If checks 2 or 3 fail, offer to prepare the version bump (`pom.xml`, `CHANGELOG.md`, `README.md`) as a pull request that follows *Git Workflow* in `AGENTS.md`. The release continues only after that PR is merged.
+If checks 2 or 3 fail, offer to prepare the version bump (`pom.xml`, `CHANGELOG.md`, `README.md`, and the Supported Versions table in `SECURITY.md` for a minor or major version) as a pull request that follows *Git Workflow* in `AGENTS.md`. The release continues only after that PR is merged.
 
 ## Task 3: Dry-run Release Build 🧪
 

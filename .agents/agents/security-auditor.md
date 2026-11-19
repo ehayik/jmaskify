@@ -22,3 +22,9 @@ Before auditing, read `AGENTS.md` → *Security Best Practices* and `.agents/pro
 - Default to irreversible strategies.
 - Reversible strategies (like `Base64Masker`) must be clearly documented as such.
 - Watch for side-channel leaks in masking logic (e.g., preserving lengths or structure unintentionally).
+
+### Out-of-scope Findings
+
+- List bugs you find outside the scope of the current audit in the **Out-of-scope findings** block of your report ([§4 Report Templates](../guidelines/orchestration-guidelines.md#4-report-templates)), with `file:line` and a suggested reproduction.
+- Flag security-relevant findings as **security** so `discovery` uses the private advisory route of the [`github-issues` skill](../skills/github-issues/SKILL.md), never a public issue.
+- Never create GitHub issues, comments, or advisories yourself.
