@@ -13,13 +13,22 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 final class CreditCardMasker implements Masker<String> {
 
+    private static final int UNDASHED_VISIBLE_DIGITS = 4;
+    private static final int UNDASHED_MASKED_DIGITS = 12;
+    private static final int UNDASHED_FULL_MASK_LENGTH = UNDASHED_MASKED_DIGITS + UNDASHED_VISIBLE_DIGITS;
+
     private final char substitution;
 
     /**
      * Masks provided credit card value based on predefined rules.
      * <ul>
      *     <li>If the input is {@code null} or blank, it returns the input as is.</li>
-     *     <li>For card numbers without dashes, it keeps only the last four digits visible and masks the rest.</li>
+     *     <li>For card numbers without dashes longer than four characters (after removing leading and
+     *         trailing whitespace and control characters), it returns twelve substitution characters
+     *         followed by the last four characters.</li>
+     *     <li>For card numbers without dashes of four characters or fewer (after removing leading and
+     *         trailing whitespace and control characters), it fully masks the value, returning sixteen
+     *         substitution characters.</li>
      *     <li>For card numbers with dashes, it masks all parts except the last segment, with special handling
      *         for cards formatted as "XXXX-XXXXXX-XXXXX" (e.g., American Express or Diners Club),
      *         where only the last segment is preserved.</li>
@@ -36,12 +45,15 @@ final class CreditCardMasker implements Masker<String> {
             return value;
         }
 
-        // Remove any whitespace
-        var cleanValue = value.trim();
+        var cleanValue = stripPadding(value);
 
         // Handle cards without dashes (LASER)
         if (!cleanValue.contains("-")) {
-            return repeat(substitution, 12) + cleanValue.substring(cleanValue.length() - 4);
+            if (cleanValue.length() <= UNDASHED_VISIBLE_DIGITS) {
+                return repeat(substitution, UNDASHED_FULL_MASK_LENGTH);
+            }
+            return repeat(substitution, UNDASHED_MASKED_DIGITS)
+                    + cleanValue.substring(cleanValue.length() - UNDASHED_VISIBLE_DIGITS);
         }
 
         // Split the string by dashes
@@ -58,5 +70,22 @@ final class CreditCardMasker implements Masker<String> {
         var standardCardMask = repeat(substitution, 4) + "-";
         masked.append(standardCardMask.repeat(Math.max(0, parts.length - 1)));
         return masked.append(parts[parts.length - 1]).toString();
+    }
+
+    // Remove leading and trailing whitespace and control characters
+    private static String stripPadding(String value) {
+        var start = 0;
+        var end = value.length();
+        while (start < end && isPadding(value.charAt(start))) {
+            start++;
+        }
+        while (end > start && isPadding(value.charAt(end - 1))) {
+            end--;
+        }
+        return value.substring(start, end);
+    }
+
+    private static boolean isPadding(char c) {
+        return c <= ' ' || Character.isWhitespace(c);
     }
 }
