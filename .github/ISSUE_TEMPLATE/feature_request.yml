@@ -1,0 +1,53 @@
+name: Feature request
+description: Propose a new feature or a larger change to JMaskify before you write code.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to propose a feature.
+
+        > [!WARNING]
+        > **Do not report security vulnerabilities here.** If your proposal comes from a flaw that exposes masked or sensitive data (including in logs or exceptions), reveals more than the masker documents or skips masking on malformed input, makes masking reversible or predictable, enables ReDoS or another denial of service, allows injection, or comes from an exploitable dependency, report it privately instead (see [SECURITY.md](https://github.com/ehayik/jmaskify/blob/master/SECURITY.md)).
+        >
+        > Use only synthetic data in this request (for example `jane@example.com`, `s3cr3tValue`). Never paste real personal data, card numbers, or credentials.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / use case
+      description: What are you trying to do, and why can't you do it with the current API? Describe the data you need to mask.
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed solution
+      description: What JMaskify should do, and how it should behave on edge cases such as `null`, empty, or malformed input.
+    validations:
+      required: true
+  - type: textarea
+    id: api-usage
+    attributes:
+      label: Desired API usage
+      description: Optional. A short Java snippet showing how you would like to use the public API.
+      placeholder: |
+        // Hypothetical API
+        var masker = Masker.email();
+        System.out.println(masker.apply("jane@example.com")); // j***@example.com
+      render: java
+    validations:
+      required: false
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional. Other approaches or workarounds you tried, such as composing existing maskers with `andThen`.
+    validations:
+      required: false
+  - type: textarea
+    id: backward-compatibility
+    attributes:
+      label: Backward compatibility
+      description: Optional. Does this change the behavior or signature of any existing masker or public API? If so, how?
+    validations:
+      required: false

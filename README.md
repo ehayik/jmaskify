@@ -456,7 +456,7 @@ Mutation is supported for both `JsonMasker` and `MultilinePatternMasker`.
 
 ## Contributing
 
-If you found a bug or a missing feature—you're very welcome to submit an issue and a pull request with a fix.
+Bug reports, feature ideas, and pull requests are welcome. [Open an issue](https://github.com/ehayik/jmaskify/issues/new/choose) to report a bug, or to propose a feature before you write code. Read [CONTRIBUTING.md](CONTRIBUTING.md) to learn how to set up the project, propose a change, and use the repository's AI agent setup.
 
 Report security vulnerabilities privately as described in [SECURITY.md](SECURITY.md), not in a public issue.
 

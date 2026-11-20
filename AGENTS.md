@@ -2,6 +2,9 @@
 
 This document outlines coding standards, contribution practices, and development workflows for the JMaskify project.
 
+> **NOTE**
+> Human contributors should start with [CONTRIBUTING.md](CONTRIBUTING.md), which explains how to contribute and how to use this agent setup.
+
 ## Table of Contents
 
 - [Quick-start checklist](#quick-start-checklist)
