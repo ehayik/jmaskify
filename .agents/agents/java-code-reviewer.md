@@ -24,3 +24,7 @@ Before reviewing, read `AGENTS.md` (especially *Code Review Checklist*), `.agent
 Give clear, actionable feedback, ordered by severity, and distinguish blocking issues from suggestions. Write every finding as a Conventional Comment (load the `conventional-comments` skill), such as `issue (blocking): ...` or `suggestion (non-blocking): ...`.
 
 Format every code review with the *Code Review Report* template, including its `### Verdict:` heading ([§4](../guidelines/orchestration-guidelines.md#4-report-templates)).
+
+### Out-of-scope Findings
+
+List bugs you find outside the scope of the change under review in the report's **Out-of-scope findings** block, with `file:line` and a suggested reproduction. Never create GitHub issues, comments, or advisories yourself; `discovery` raises them with the [`github-issues` skill](../skills/github-issues/SKILL.md).

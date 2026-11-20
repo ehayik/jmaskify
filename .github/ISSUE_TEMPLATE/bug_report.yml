@@ -1,0 +1,65 @@
+name: Bug report
+description: Report a defect in JMaskify with a minimal, reproducible example.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug.
+
+        > [!WARNING]
+        > **Do not report security vulnerabilities here.** If the bug exposes masked or sensitive data (including in logs or exceptions), reveals more than the masker documents or skips masking on malformed input, makes masking reversible or predictable, enables ReDoS or another denial of service, allows injection, or comes from an exploitable dependency, report it privately instead (see [SECURITY.md](https://github.com/ehayik/jmaskify/blob/master/SECURITY.md)).
+        >
+        > Use only synthetic data in this report (for example `jane@example.com`, `s3cr3tValue`). Never paste real personal data, card numbers, or credentials.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: In 2–4 sentences, describe the defect, where it is (e.g. `File.java:line`), and why it matters.
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      description: A minimal Java snippet that reproduces the bug using only the public API.
+      placeholder: |
+        var masker = Masker.fixedLength();
+        System.out.println(masker.apply("jane@example.com"));
+      render: java
+    validations:
+      required: true
+  - type: textarea
+    id: actual-output
+    attributes:
+      label: Actual output
+      description: The real output from running the snippet, copied verbatim.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected-output
+    attributes:
+      label: Expected output
+      description: What should happen, and which contract or documentation (Javadoc, README) says so.
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Optional. Related code with the same pattern (mark it "not reproduced" if you haven't run it).
+    validations:
+      required: false
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: JMaskify version (plus the commit SHA if built from source, e.g. master), Java version, and relevant dependency versions.
+      value: |
+        - JMaskify version:
+        - Commit SHA (if built from source, e.g. master):
+        - Java version:
+        - Relevant dependency versions (e.g. Jackson):
+    validations:
+      required: true

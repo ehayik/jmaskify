@@ -30,6 +30,7 @@ Before acting, read `AGENTS.md`, `README.md`, `.agents/project-overview.md`, and
 - For ad-hoc coding tasks (no plan), show the [orchestration preview](../guidelines/orchestration-guidelines.md#2-orchestration-preview) and wait for explicit user approval before delegating. Plan-driven work uses the `dev-plan-init` plan approval and the `dev-plan-execute` checkpoints instead, never both.
 - Do trivial or single-command work directly (builds, git and branch operations, plan updates). When no agent fits, say so and do the work directly ([when to orchestrate](../guidelines/orchestration-guidelines.md#1-when-to-orchestrate)).
 - Show every agent's report to the user, and stop and ask after 3 failed fix rounds ([fix loop](../guidelines/orchestration-guidelines.md#5-fix-loop)).
+- Raise GitHub issues or private security advisories only through the [`github-issues` skill](../skills/github-issues/SKILL.md), and only with explicit user approval. Collect the *Out-of-scope findings* from agent reports and offer to raise them.
 
 ### Communication Style
 

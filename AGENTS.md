@@ -59,12 +59,15 @@ Skills follow the open [Agent Skills](https://agentskills.io) format, so they wo
 
 Write the `description` so it says both what the skill does and when to use it; agents decide whether to load a skill from that line alone.
 
+Bugs found outside the current task are raised through the `github-issues` skill (`.agents/skills/github-issues/`): only the main session (`discovery`) files issues or security advisories, with user approval; other agents list them as out-of-scope findings in their reports.
+
 ## Stack Overflow for Agents (SOFA)
 
 The `sofa` skill (`.agents/skills/sofa/`) connects agents to Stack Overflow for Agents, a shared knowledge base of agent-validated answers. Load it for the API details.
 
 - **When to search**: before acting on high-uncertainty work, such as surprising tool or API behavior, a failed first attempt, or a security-sensitive choice (for example, a regex that could cause ReDoS). Skip it for routine edits or anything a quick local test answers.
 - **Credentials**: read the API key from `SOFA_API_KEY` or `.sofa/credentials.json`. **Never commit credentials**: keep `.sofa/` git-ignored, and never put API keys or session IDs in code, logs, docs, or commit messages.
+- **Vulnerabilities**: never post or search details of an unpublished JMaskify vulnerability (see the `github-issues` skill's security route).
 
 ## Feature Checklist
 
@@ -403,6 +406,7 @@ Maintain a `CHANGELOG.md` documenting:
 - **Null Safety**: Consider all types non-nullable by default. Use `@Nullable` to mark nullable types explicitly.
 - **Error Handling**: Provide meaningful error messages without exposing sensitive data
 - **Dependencies**: Keep dependencies up to date and monitor for vulnerabilities
+- **Reporting Vulnerabilities**: Report privately as described in [SECURITY.md](SECURITY.md); never in a public issue, PR, or other public place
 
 ## Common Development Tasks
 
@@ -421,12 +425,13 @@ Maintain a `CHANGELOG.md` documenting:
 
 ### Fixing a Bug
 
-1. Create a branch: `git checkout -b fix/bug-description`
-2. Add a failing test that reproduces the bug
-3. Implement the fix
-4. Ensure all tests pass
-5. Update `CHANGELOG.md` (for user-facing changes only)
-6. Create a Pull Request with the fix
+1. Start from a GitHub issue; if none exists, raise one with the `github-issues` skill (`.agents/skills/github-issues/`). Security bugs go through a private security advisory, never a public issue: stop after drafting the advisory ([security route](.agents/skills/github-issues/SKILL.md#7-security-route)). The maintainer decides where and when to fix it, and no public branch, commit, PR, or `CHANGELOG.md` entry describes it until the advisory is published. Steps 2–7 apply only to non-security bugs.
+2. Create a branch: `git checkout -b fix/bug-description`
+3. Add a failing test that reproduces the bug
+4. Implement the fix
+5. Ensure all tests pass
+6. Update `CHANGELOG.md` (for user-facing changes only)
+7. Create a Pull Request with the fix; the fix commit closes the issue with a `Fixes #N` footer (see the `conventional-commits` skill)
 
 ### Releasing a New Version
 
@@ -437,7 +442,7 @@ Releases are published to Maven Central through the [Sonatype Central Portal](ht
 - A GPG key for signing, published to a public keyserver
 
 **Steps**:
-1. Bump `<version>` in `pom.xml`, add a dated section to `CHANGELOG.md`, and update the version in the `README.md` installation snippet. Merge these changes to `master` through a pull request
+1. Bump `<version>` in `pom.xml`, add a dated section to `CHANGELOG.md`, update the version in the `README.md` installation snippet, and, for a minor or major version, update the Supported Versions table in `SECURITY.md`. Merge these changes to `master` through a pull request
 2. Run the `release-prepare` command (e.g. `/release:release-prepare 1.2.0`) for pre-flight checks and a dry-run build
 3. The maintainer publishes from an up-to-date `master`: `./mvnw clean deploy -P release` (without `-B`, so GPG can prompt for the key passphrase)
 4. Once the deployment shows as published, tag the published commit (`git tag -a vX.Y.Z <sha> -m "Release X.Y.Z"`), push the tag, and create a GitHub release from the `CHANGELOG.md` section (the command drafts it; the maintainer publishes it)

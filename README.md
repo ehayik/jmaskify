@@ -458,6 +458,8 @@ Mutation is supported for both `JsonMasker` and `MultilinePatternMasker`.
 
 If you found a bug or a missing feature—you're very welcome to submit an issue and a pull request with a fix.
 
+Report security vulnerabilities privately as described in [SECURITY.md](SECURITY.md), not in a public issue.
+
 ## License
 
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).

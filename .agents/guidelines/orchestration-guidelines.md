@@ -114,6 +114,8 @@ Report: files changed, commands run and their results, any deviation, open quest
 
 **Show each report to the user as soon as the agent finishes.**
 
+Agents list bugs they find outside their task in the optional **Out-of-scope findings** block, with `file:line` and a suggested reproduction. They never file issues themselves; `discovery` proposes them as issues with the [`github-issues` skill](../skills/github-issues/SKILL.md).
+
 ### Developer Report
 
 `discovery` assembles this report from the agent's reply and its own quality-gate run. Developer agents may run the build themselves, but `discovery` always reruns the gates rather than relying on the agent's results.
@@ -136,6 +138,9 @@ Report: files changed, commands run and their results, any deviation, open quest
 
 ### Key Decisions
 - {decision and rationale}
+
+### Out-of-scope findings (optional)
+- {bug outside this task}: `File.java:42`; suggested repro: {one line}
 ```
 
 ### Code Review Report
@@ -158,6 +163,9 @@ The verdict is `CHANGES REQUESTED` if and only if at least one finding is `issue
 
 ### Recommendations
 - {recommendation}
+
+### Out-of-scope findings (optional)
+- {bug outside this task}: `File.java:42`; suggested repro: {one line}
 ```
 
 ### Workflow Complete
@@ -183,12 +191,13 @@ The verdict is `CHANGES REQUESTED` if and only if at least one finding is `issue
 - **Blocking Issues:** {found} found, {resolved} resolved
 - **Non-blocking Findings:** {list, deferred to the user}
 - **Documentation:** {Javadoc / README.md / CHANGELOG.md updated | not user-facing}
+- **Proposed issues:** {out-of-scope findings to raise with the github-issues skill | none}
 
 ### Notable Decisions
 1. {decision with rationale}
 
 ### Next Steps
-{e.g. commit, push, and open the PR: ask the user first}
+{e.g. commit, push, and open the PR; offer to raise the proposed issues: ask the user first}
 ```
 
 ## 5. Fix Loop
@@ -268,4 +277,4 @@ Both agents check accuracy with web fetch and web search, against official pages
 - Use a friendly, professional tone, and keep it relaxed but focused.
 - Use emojis sparingly, mainly in headings and checkpoints.
 - State clearly what happened, what is next, and what needs the user's decision.
-- Ask before anything that leaves the machine or rewrites history (commit, push, PR); see `AGENTS.md` → [Constraints](../../AGENTS.md#constraints).
+- Ask before anything that leaves the machine or rewrites history (commit, push, PR, GitHub issue or security advisory); see `AGENTS.md` → [Constraints](../../AGENTS.md#constraints).
