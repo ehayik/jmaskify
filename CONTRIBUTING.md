@@ -256,7 +256,10 @@ Other AI coding tools are supported on a best-effort basis:
   `Bash`, `Grep`, `Glob`). If your tool uses other names, treat the list as the agent's intended permissions: agents
   without `Edit` or `Write` are read-only.
 - On Windows, enable symlink support before you clone; see [AGENTS.md → Agent Resources](AGENTS.md#agent-resources).
-- To add support for another client, ask an agent to load the
-  [`client-port` skill](.agents/skills/client-port/SKILL.md). It adds a thin entry point, verifies discovery with safe
-  probes, and records the results in `.agents/guidelines/<client>-compatibility.md` (see the
-  [Copilot CLI record](.agents/guidelines/copilot-cli-compatibility.md)).
+- To add support for another client, start a session in the repository root and ask: "Read `AGENTS.md`, then follow
+  `.agents/skills/client-port/SKILL.md` to port this repository to `<client> <version>`." The
+  [`client-port` skill](.agents/skills/client-port/SKILL.md) adds a thin entry point if one is needed, verifies
+  discovery with safe probes, and records the results in `.agents/guidelines/<client>-compatibility.md` (see the
+  [Copilot CLI record](.agents/guidelines/copilot-cli-compatibility.md)). Its
+  [Getting Started](.agents/skills/client-port/SKILL.md#getting-started) section explains which commands you may need
+  to run yourself.

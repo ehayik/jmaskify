@@ -32,6 +32,18 @@ A checklist for making JMaskify's agent setup work in another AI coding client w
 
 A port is delivered as a pull request and needs human review. Commit, push, and pull request creation need the user's approval first (see [orchestration guidelines §7](../../guidelines/orchestration-guidelines.md#7-communication) and [AGENTS.md → Constraints](../../../AGENTS.md#constraints)). Agents never merge it. If the client seems to need one of these changes, stop and ask the maintainer.
 
+## Getting Started
+
+A new client may not discover `AGENTS.md` or `.agents/skills` yet, so start it with a prompt that works either way. Open a session in the repository root and ask:
+
+> Read `AGENTS.md`, then follow `.agents/skills/client-port/SKILL.md` to port this repository to `<client> <version>`.
+
+If the client already discovers `.agents/skills` (or a client folder that links to it), asking it to load the `client-port` skill is enough.
+
+- **The agent** runs the shell commands it is permitted to run, such as the client's own CLI commands that list instructions, agents, or skills. The [probe limits](#4-probe-safely) and [approval rules](../../guidelines/orchestration-guidelines.md#7-communication) still apply.
+- **The user** runs, when the agent asks, the commands that work only inside an interactive session (such as slash commands that list instructions) and pastes the output back. The agent records that output as evidence; it counts as Verified only for what it actually shows. The user changes session settings, such as disabling a duplicate instruction source, only to test or record a workaround for the compatibility record.
+- **An entry point may not be needed.** If the client already discovers `AGENTS.md` and `.agents/skills`, add no new client file unless the client needs one to adopt the `discovery` role or to find agents or commands. The port is then the compatibility record.
+
 ## Port Checklist
 
 ### 1. Record the Client
@@ -41,7 +53,7 @@ A port is delivered as a pull request and needs human review. Commit, push, and 
 
 ### 2. Add the Entry Point
 
-- [ ] Add the smallest entry point the client needs: a thin instruction file that points to `AGENTS.md`, or symlinks into `.agents/`. Prefer what the client already discovers, such as `AGENTS.md` or `.agents/skills`, over a new file.
+- [ ] Add the smallest entry point the client needs: a thin instruction file that points to `AGENTS.md`, or symlinks into `.agents/`. Prefer what the client already discovers, such as `AGENTS.md` or `.agents/skills`, over a new file; if it discovers both, add nothing unless the client needs a file to adopt the `discovery` role or to find agents or commands.
 - [ ] The entry file adds no rules of its own beyond pointing to `AGENTS.md` and the `discovery` role.
 
 ### 3. Verify Discovery
