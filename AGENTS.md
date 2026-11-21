@@ -29,7 +29,7 @@ This document outlines coding standards, contribution practices, and development
 
 ## Agent Resources
 
-All canonical agent instructions are tool-agnostic and live in `.agents/`. Tool-specific folders may contain symlinks or thin adapter files that point to those shared instructions, plus client-only settings such as `.claude/settings.json`. Keep role content in `.agents/`; do not duplicate it in client adapters.
+All canonical agent instructions are tool-agnostic and live in `.agents/`. Maintainers and agents edit shared role instructions in their canonical `.agents/` files, not symlinks or client adapters. Tool-specific folders may contain symlinks or thin adapters that point to those shared instructions, plus client-only settings such as `.claude/settings.json`; do not duplicate role content in adapters.
 
 > **NOTE**
 > On Windows, Git checks out symlinks as plain text files unless symlink support is enabled. Turn on Developer Mode (or run Git as administrator), then clone with symlinks enabled:
@@ -45,7 +45,7 @@ All canonical agent instructions are tool-agnostic and live in `.agents/`. Tool-
 | `.agents/project-overview.md` | Project purpose, structure, and architecture                                                                     |
 | `.agents/guidelines/`         | Java, architecture, orchestration, and pull request description guidelines, and per-client compatibility records |
 | `.agents/agents/`             | Specialized agent roles (`discovery` is the main session role and orchestrates the others)                       |
-| `.codex/agents/`               | Thin Codex TOML adapters that point to the canonical role instructions in `.agents/agents/`                      |
+| `.codex/agents/`              | Thin Codex TOML adapters that point to the canonical role instructions in `.agents/agents/`                      |
 | `.agents/commands/`           | Reusable workflows (development plans, journals, and releases); `$ARGUMENTS` is user input                       |
 | `.agents/skills/`             | Agent Skills: one folder per skill containing a `SKILL.md` (see below)                                           |
 | `.agents/artifacts/`          | Generated plans and journals (git-ignored)                                                                       |

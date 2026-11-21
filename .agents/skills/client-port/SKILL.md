@@ -1,6 +1,6 @@
 ---
 name: client-port
-description: Ports JMaskify's agent setup (AGENTS.md and the shared agents, commands, skills, and guidelines in .agents/) to another AI coding client, such as Copilot CLI, Codex, Cursor, or Gemini CLI, by adding a thin entry point, verifying discovery with safe probes, and writing a dated, evidence-labelled compatibility record. Use when adding support for a new AI client, when re-verifying an existing port after a client upgrade, or when reviewing a change to client-specific folders or entry files.
+description: Ports JMaskify's agent setup (AGENTS.md and the shared agents, commands, skills, and guidelines in .agents/) to another AI coding client, such as Copilot CLI, Codex, Cursor, or Gemini CLI, by adding only the thin entry point or client-specific agent adapters needed to reference shared instructions, verifying discovery with safe probes, and writing a dated, evidence-labelled compatibility record. Use when adding support for a new AI client, when re-verifying an existing port after a client upgrade, or when reviewing a change to client-specific folders or entry files.
 ---
 
 # Client Port
@@ -12,13 +12,13 @@ A checklist for making JMaskify's agent setup work in another AI coding client w
 | Path                                           | Role in a port                                                                                                 |
 |------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
 | `AGENTS.md`, `.agents/`                        | Canonical instructions, agents, commands, skills, and guidelines                                               |
-| Client folders and entry files                 | Links, a thin entry file, or client-only settings (`.claude/`, `CLAUDE.md`, `.github/copilot-instructions.md`) |
+| Client folders and entry files                 | Links, thin entry files, thin client-specific agent adapters that point to canonical role instructions, or client-only settings (`.claude/`, `CLAUDE.md`, `.github/copilot-instructions.md`, `.codex/agents/*.toml`) |
 | `.agents/guidelines/<client>-compatibility.md` | One compatibility record per client                                                                            |
 
 ## Invariants
 
-- **`.agents/` is the single source.** Client folders hold only symlinks, a thin entry file that points to `AGENTS.md`, or client-only settings that add protection but are never the only safeguard. For example, `.claude/agents`, `.claude/commands`, and `.claude/skills` link into `.agents/`, `CLAUDE.md` contains only `@AGENTS.md`, `.github/copilot-instructions.md` points to `AGENTS.md`, and `.claude/settings.json` holds Claude Code deny rules.
-- **Never duplicate content into client folders.** If a client needs another file name or format, link to or point at the shared file instead of copying it.
+- **`.agents/` is the single source.** Maintainers and agents edit shared instructions in their canonical `.agents/` files, not symlinks or client adapters. Client folders may contain symlinks, thin entry files that point to `AGENTS.md`, thin client-specific agent adapters that point to canonical role instructions (such as `.codex/agents/*.toml`), or client-only settings that add protection but are never the only safeguard. For example, `.claude/agents`, `.claude/commands`, and `.claude/skills` link into `.agents/`, `CLAUDE.md` contains only `@AGENTS.md`, `.github/copilot-instructions.md` points to `AGENTS.md`, and `.claude/settings.json` holds Claude Code deny rules.
+- **Never duplicate shared content into client folders.** If a client needs another file name or format, link to or point at the canonical shared file instead of copying its role instructions or safety rules. A client-specific adapter may contain the minimal metadata and reference needed by that client's format.
 - **Safety rules are shared, not client settings.** Never publish, the maintainer-only release step, and the read-only `java-code-reviewer` and `security-auditor` roles live in `AGENTS.md` and `.agents/`. They must not depend on one client's settings file, such as `.claude/settings.json`; those settings are extra protection for that client only.
 - **Don't claim isolation without evidence.** A client may also discover another client's folders (for example `.claude/skills`). Record that as residual discovery; never claim strict isolation between clients unless the client's own commands show it.
 - **Project rules go in `AGENTS.md` or `.agents/`.** Never add them to vendored third-party files such as `.agents/skills/sofa/SKILL.md`, which has a `SKILL.md.sha256` and is replaced from upstream.
@@ -53,8 +53,8 @@ If the client already discovers `.agents/skills` (or a client folder that links 
 
 ### 2. Add the Entry Point
 
-- [ ] Add the smallest entry point the client needs: a thin instruction file that points to `AGENTS.md`, or symlinks into `.agents/`. Prefer what the client already discovers, such as `AGENTS.md` or `.agents/skills`, over a new file; if it discovers both, add nothing unless the client needs a file to adopt the `discovery` role or to find agents or commands.
-- [ ] The entry file adds no rules of its own beyond pointing to `AGENTS.md` and the `discovery` role.
+- [ ] Add only the entry point the client needs: a thin instruction file that points to `AGENTS.md`, symlinks into `.agents/`, or a thin client-specific agent adapter that points to a canonical role instruction (for example, `.codex/agents/*.toml`). Prefer resources the client already discovers, such as `AGENTS.md` or `.agents/skills`, over a new file. If it needs an adapter to discover a shared role, keep its role instructions and safety rules in `.agents/` and avoid duplicating them.
+- [ ] The entry file or agent adapter contains only client-required metadata and references to canonical shared instructions; it adds no independent project rules or safety controls.
 
 ### 3. Verify Discovery
 
