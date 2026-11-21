@@ -41,8 +41,8 @@ A new client may not discover `AGENTS.md` or `.agents/skills` yet, so start it w
 If the client already discovers `.agents/skills` (or a client folder that links to it), asking it to load the `client-port` skill is enough.
 
 - **The agent** runs the shell commands it is permitted to run, such as the client's own CLI commands that list instructions, agents, or skills. The [probe limits](#4-probe-safely) and [approval rules](../../guidelines/orchestration-guidelines.md#7-communication) still apply.
-- **The user** runs, when the agent asks, the commands that work only inside an interactive session (such as slash commands that list instructions) and pastes the output back. The agent records that output as evidence; it counts as Verified only for what it actually shows. The user changes session settings, such as disabling a duplicate instruction source, only to test or record a workaround for the compatibility record.
-- **An entry point may not be needed.** If the client already discovers `AGENTS.md` and `.agents/skills`, add no new client file unless the client needs one to adopt the `discovery` role or to find agents or commands. The port is then the compatibility record.
+- When the agent asks, **the user** runs the commands that work only inside an interactive session (such as slash commands that list instructions) and pastes the output back. The agent records that output as evidence; it counts as Verified only for what it actually shows. The user changes session settings, such as disabling a duplicate instruction source, only to test or record a workaround for the compatibility record.
+- **An entry point may not be needed.** If the client already discovers `AGENTS.md` and `.agents/skills`, add no new client file unless the client needs one to adopt the `discovery` role or to find agents or commands. If no file is needed, the port is just the compatibility record.
 
 ## Port Checklist
 
