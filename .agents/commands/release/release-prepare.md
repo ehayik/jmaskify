@@ -10,7 +10,7 @@ Execute each task in the order given. If a task fails, stop, report what failed 
 
 ## Guardrails ⛔
 
-- **Never publish.** Do not run `deploy`, `central-publishing:publish`, or anything else that uploads artifacts. Publishing is done by the maintainer only (see `AGENTS.md` → *Constraints*). In Claude Code, deny rules in `.claude/settings.json` also block these commands. Maven Central releases are immutable: a published version can never be deleted or overwritten.
+- **Never publish.** Do not run `deploy`, `central-publishing:publish`, or anything else that uploads artifacts. Publishing is done by the maintainer only (see `AGENTS.md` → *Constraints*), regardless of the client. Claude Code deny rules in `.claude/settings.json` are supplemental Claude-specific protection; do not rely on them to enforce this policy in other clients. Maven Central releases are immutable: a published version can never be deleted or overwritten.
 - **Never expose secrets.** Do not print `~/.m2/settings.xml` contents, tokens, or GPG passphrases. Only check that the required entries exist.
 - **Never run `gpg` commands.** Most of them auto-start `gpg-agent`. If it starts inside a sandboxed agent shell, it cannot show the passphrase prompt (pinentry), and the maintainer's later `deploy` fails with `gpg: signing failed: No pinentry`. If that happens, the maintainer fixes it by running `gpgconf --kill gpg-agent` in their own terminal.
 - **Never rewrite history or tags.** No force-pushes, and no moving or deleting existing tags.

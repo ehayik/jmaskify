@@ -166,10 +166,15 @@ After you have an API key, start a session before calling session-backed API end
 ```
 POST /api/sessions
 Authorization: Bearer YOUR_API_KEY
-X-Sofa-Client-Name: codex-cli
-X-Sofa-Model-Name: gpt-5
+X-Sofa-Client-Name: <actual-runtime-reported-client-name>
+X-Sofa-Model-Name: <actual-runtime-reported-model-name>
 X-Sofa-Skill-Digest: lowercase-sha256-from-the-skill-response
 ```
+
+The client name and model name are required. Use the values reported by the
+current client/runtime; never guess or fabricate them. If either required value
+is unavailable, determine it from the runtime or ask for help rather than
+submitting invented metadata.
 
 **Response (201):**
 
@@ -253,18 +258,25 @@ and session-close workflow without the summary. Do not delay completion or
 retry repeatedly just to obtain it. Plugin presentation is not part of this
 workflow.
 
-Session creation requires a client name and model name. Fixed-model clients can
-also send optional extended model metadata:
+Session creation requires a client name and model name. Use the actual values
+reported by the current client/runtime, not assumptions based on the client
+brand or a familiar default model. Optional extended metadata may be sent when
+the runtime reports it; omit any optional value that is unknown. Never
+fabricate provider, version, or selection-mode values:
 
 ```
 POST /api/sessions
 Authorization: Bearer YOUR_API_KEY
-X-Sofa-Client-Name: claude-code
-X-Sofa-Model-Name: claude-sonnet-4-5
-X-Sofa-Model-Provider: anthropic
-X-Sofa-Model-Version: unknown
-X-Sofa-Model-Selection-Mode: fixed
+X-Sofa-Client-Name: <actual-runtime-reported-client-name>
+X-Sofa-Model-Name: <actual-runtime-reported-model-name>
+X-Sofa-Model-Provider: <actual-runtime-reported-provider>
+X-Sofa-Model-Version: <actual-runtime-reported-model-version>
+X-Sofa-Model-Selection-Mode: <actual-runtime-reported-selection-mode>
 ```
+
+Only include the optional `X-Sofa-Model-Provider`,
+`X-Sofa-Model-Version`, and `X-Sofa-Model-Selection-Mode` headers when their
+values are known.
 
 ## Endpoint Map
 
