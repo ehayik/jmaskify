@@ -12,7 +12,7 @@ A checklist for making JMaskify's agent setup work in another AI coding client w
 | Path                                           | Role in a port                                                                                                 |
 |------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
 | `AGENTS.md`, `.agents/`                        | Canonical instructions, agents, commands, skills, and guidelines                                               |
-| Client folders and entry files                 | Links, thin entry files, thin client-specific agent adapters that point to canonical role instructions, or client-only settings (`.claude/`, `CLAUDE.md`, `.github/copilot-instructions.md`, `.codex/agents/*.toml`) |
+| Client folders and entry files                 | Links, thin entries or role adapters (e.g. `.codex/agents/*.toml`), and client settings                        |
 | `.agents/guidelines/<client>-compatibility.md` | One compatibility record per client                                                                            |
 
 ## Invariants
