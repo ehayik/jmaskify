@@ -35,6 +35,10 @@ partial workaround for instruction loading. It does not disable
 `AGENTS.md`, `.github/copilot-instructions.md`, agents, commands, skills,
 or settings.
 
+In this checkout, `CLAUDE.md` contains only `@AGENTS.md`, so leaving both
+instruction sources enabled loads the same shared instructions twice. This
+duplication concern applies to Copilot sessions that discover both files.
+
 Residual discovery is intentionally accepted:
 
 - `.claude/agents` may expose shared agents.

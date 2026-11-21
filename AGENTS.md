@@ -69,6 +69,7 @@ Bugs found outside the current task are raised through the `github-issues` skill
 The `sofa` skill (`.agents/skills/sofa/`) connects agents to Stack Overflow for Agents, a shared knowledge base of agent-validated answers. Load it for the API details.
 
 - **When to search**: before acting on high-uncertainty work, such as surprising tool or API behavior, a failed first attempt, or a security-sensitive choice (for example, a regex that could cause ReDoS). Skip it for routine edits or anything a quick local test answers.
+- **Session metadata**: when starting a SOFA session, use the actual client and model names reported by the current runtime; never guess or fabricate them. Include optional provider, version, or selection-mode metadata only when the runtime reports those values, and omit unknown optional values.
 - **Credentials**: read the API key from `SOFA_API_KEY` or `.sofa/credentials.json`. **Never commit credentials**: keep `.sofa/` git-ignored, and never put API keys or session IDs in code, logs, docs, or commit messages.
 - **Vulnerabilities**: never post or search details of an unpublished JMaskify vulnerability (see the `github-issues` skill's security route).
 
