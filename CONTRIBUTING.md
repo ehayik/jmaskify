@@ -133,6 +133,7 @@ Agents load these skills when the task needs them. You can also ask for one by n
 | [`conventional-comments`](.agents/skills/conventional-comments/SKILL.md) | Write review feedback with clear labels and severity                      |
 | [`build-review`](.agents/skills/build-review/SKILL.md)                   | Review changes to `pom.xml`, CI workflows, the Maven wrapper, and scripts |
 | [`github-issues`](.agents/skills/github-issues/SKILL.md)                 | Raise a bug issue, or draft a private security advisory                   |
+| [`client-port`](.agents/skills/client-port/SKILL.md)                     | Port the agent setup to another AI client, or re-verify an existing port  |
 | [`sofa`](.agents/skills/sofa/SKILL.md)                                   | Search Stack Overflow for Agents (optional, see below)                    |
 
 ### Stack Overflow for Agents (Optional)
@@ -255,3 +256,10 @@ Other AI coding tools are supported on a best-effort basis:
   `Bash`, `Grep`, `Glob`). If your tool uses other names, treat the list as the agent's intended permissions: agents
   without `Edit` or `Write` are read-only.
 - On Windows, enable symlink support before you clone; see [AGENTS.md → Agent Resources](AGENTS.md#agent-resources).
+- To add support for another client, start a session in the repository root and ask: "Read `AGENTS.md`, then follow
+  `.agents/skills/client-port/SKILL.md` to port this repository to `<client> <version>`." The
+  [`client-port` skill](.agents/skills/client-port/SKILL.md) adds a thin entry point if one is needed, verifies
+  discovery with safe probes, and records the results in `.agents/guidelines/<client>-compatibility.md` (see the
+  [Copilot CLI record](.agents/guidelines/copilot-cli-compatibility.md)). Its
+  [Getting Started](.agents/skills/client-port/SKILL.md#getting-started) section explains which commands you may need
+  to run yourself.

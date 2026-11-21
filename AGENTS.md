@@ -29,7 +29,7 @@ This document outlines coding standards, contribution practices, and development
 
 ## Agent Resources
 
-All agent instructions are tool-agnostic and live in `.agents/`. Tool-specific folders (e.g. `.claude/`) contain only symlinks to it, so edit the files in `.agents/`, never the links.
+All agent instructions are tool-agnostic and live in `.agents/`. Tool-specific folders (e.g. `.claude/`) contain only symlinks to it (plus client-only settings such as `.claude/settings.json`), so edit the files in `.agents/`, never the links.
 
 > **NOTE**
 > On Windows, Git checks out symlinks as plain text files unless symlink support is enabled. Turn on Developer Mode (or run Git as administrator), then clone with symlinks enabled:
@@ -40,14 +40,14 @@ All agent instructions are tool-agnostic and live in `.agents/`. Tool-specific f
 >
 > For an existing clone, run `git config core.symlinks true` and restore the links with `git checkout -- .claude`.
 
-| Path                          | Contents                                                                                   |
-|-------------------------------|--------------------------------------------------------------------------------------------|
-| `.agents/project-overview.md` | Project purpose, structure, and architecture                                               |
-| `.agents/guidelines/`         | Java, architecture, orchestration, and pull request description guidelines                 |
-| `.agents/agents/`             | Specialized agent roles (`discovery` is the main session role and orchestrates the others) |
-| `.agents/commands/`           | Reusable workflows (development plans, journals, and releases); `$ARGUMENTS` is user input |
-| `.agents/skills/`             | Agent Skills: one folder per skill containing a `SKILL.md` (see below)                     |
-| `.agents/artifacts/`          | Generated plans and journals (git-ignored)                                                 |
+| Path                          | Contents                                                                                                         |
+|-------------------------------|------------------------------------------------------------------------------------------------------------------|
+| `.agents/project-overview.md` | Project purpose, structure, and architecture                                                                     |
+| `.agents/guidelines/`         | Java, architecture, orchestration, and pull request description guidelines, and per-client compatibility records |
+| `.agents/agents/`             | Specialized agent roles (`discovery` is the main session role and orchestrates the others)                       |
+| `.agents/commands/`           | Reusable workflows (development plans, journals, and releases); `$ARGUMENTS` is user input                       |
+| `.agents/skills/`             | Agent Skills: one folder per skill containing a `SKILL.md` (see below)                                           |
+| `.agents/artifacts/`          | Generated plans and journals (git-ignored)                                                                       |
 
 Agent frontmatter `tools` lists use Claude Code tool names (`Read`, `Edit`, `Write`, `Bash`, `Grep`, `Glob`). Agents without a `tools` list may use every tool. Other tools that don't recognize these names should treat the list as the agent's intended permissions: agents without `Edit`/`Write` are read-only.
 
@@ -63,6 +63,8 @@ Skills follow the open [Agent Skills](https://agentskills.io) format, so they wo
 Write the `description` so it says both what the skill does and when to use it; agents decide whether to load a skill from that line alone.
 
 Bugs found outside the current task are raised through the `github-issues` skill (`.agents/skills/github-issues/`): only the main session (`discovery`) files issues or security advisories, with user approval; other agents list them as out-of-scope findings in their reports.
+
+To add another AI coding client, or to re-verify one after a client upgrade, load the `client-port` skill (`.agents/skills/client-port/`). It keeps `.agents/` as the single source and records each client's verified behavior in `.agents/guidelines/<client>-compatibility.md`.
 
 ## Stack Overflow for Agents (SOFA)
 
