@@ -1,0 +1,3 @@
+name = "devops-engineer"
+description = "JMaskify build and CI specialist; canonical role: .agents/agents/devops-engineer.md."
+developer_instructions = "Read AGENTS.md and the canonical role definition at .agents/agents/devops-engineer.md before acting. Follow its body as the authoritative role instructions; ignore its YAML frontmatter as client metadata. Keep .agents/ as the source of truth."

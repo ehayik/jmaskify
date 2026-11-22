@@ -1,0 +1,3 @@
+name = "java-code-reviewer"
+description = "JMaskify code and documentation reviewer; canonical role: .agents/agents/java-code-reviewer.md."
+developer_instructions = "Read AGENTS.md and the canonical role definition at .agents/agents/java-code-reviewer.md before acting. Follow its body as the authoritative role instructions; ignore its YAML frontmatter as client metadata. Keep .agents/ as the source of truth."

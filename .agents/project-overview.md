@@ -14,8 +14,9 @@ JMaskify is an open-source Java library designed to safeguard sensitive data wit
 - `README.md`: Main project documentation.
 - `CHANGELOG.md`: Record of all notable changes to the project.
 - `AGENTS.md`: Tool-agnostic guide for AI coding agents (entry point).
-- `.agents`: Tool-agnostic agent definitions, commands, and guidelines. Tool-specific folders (e.g. `.claude`) only link to it.
+- `.agents`: Tool-agnostic agent definitions, commands, and guidelines. Tool-specific folders may contain symlinks or thin adapters pointing to shared instructions, plus client-only settings; keep role content in `.agents/`.
 - `.agents/guidelines/copilot-cli-compatibility.md`: Records an observed Copilot CLI discovery and invocation matrix.
+- `.agents/guidelines/codex-compatibility.md`: Records Codex CLI compatibility evidence; `.codex/agents/*.toml` adapters point to canonical role instructions in `.agents/agents/`.
 
 ## Architecture
 The library follows a clean and extensible architecture centered around the `Masker<T>` interface.
