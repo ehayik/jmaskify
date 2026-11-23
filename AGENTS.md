@@ -48,6 +48,7 @@ All canonical agent instructions are tool-agnostic and live in `.agents/`. Maint
 | `.codex/agents/`              | Thin Codex TOML adapters that point to the canonical role instructions in `.agents/agents/`                      |
 | `.agents/commands/`           | Reusable workflows (development plans, journals, and releases); `$ARGUMENTS` is user input                       |
 | `.agents/skills/`             | Agent Skills: one folder per skill containing a `SKILL.md` (see below)                                           |
+| `.codex/skills/`              | Thin Codex skill adapters that point to canonical workflows in `.agents/commands/`                               |
 | `.agents/artifacts/`          | Generated plans and journals (git-ignored)                                                                       |
 
 Agent frontmatter `tools` lists use Claude Code tool names (`Read`, `Edit`, `Write`, `Bash`, `Grep`, `Glob`). Agents without a `tools` list may use every tool. Other tools that don't recognize these names should treat the list as the agent's intended permissions: agents without `Edit`/`Write` are read-only.
@@ -62,6 +63,8 @@ Skills follow the open [Agent Skills](https://agentskills.io) format, so they wo
 ```
 
 Write the `description` so it says both what the skill does and when to use it; agents decide whether to load a skill from that line alone.
+
+Codex CLI 0.171.0 did not recognize shared command paths as custom slash commands. The mapping to Codex skill adapters is documented in `.agents/guidelines/codex-compatibility.md`; use `$<skill-name>` for an adapter listed in Codex's skill catalog, or read its mapped `.codex/skills/<name>/SKILL.md` when the legacy command ID appears in ordinary prompt text. The current runtime listed all five Codex adapters as available skills; record picker and invocation evidence by client version in the compatibility guide.
 
 Bugs found outside the current task are raised through the `github-issues` skill (`.agents/skills/github-issues/`): only the main session (`discovery`) files issues or security advisories, with user approval; other agents list them as out-of-scope findings in their reports.
 
